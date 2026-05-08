@@ -27,7 +27,7 @@ public class ScheduleConfig {
             "12:45 - 13:25"
     };
 
-    private static final String[] GROUP_NAMES = {
+    private final String[] GROUP_NAMES = {
             "ГС-Д21", "ГС-Д31", "ГС-Д41", "ГС-Д51",
             "ДОУ-Д31", "ДОУ-Д41", "ДОУ-Д51",
             "ЗУ-Д31", "ЗУ-Д41", "ЗУ-Д42", "ЗУ-Д51", "ЗУ-Д52",
@@ -60,5 +60,9 @@ public class ScheduleConfig {
 
     public String[] getBREAKS_TIME_SLOTS_FOR_MONDAY() {
         return BREAKS_TIME_SLOTS_FOR_MONDAY;
+    }
+
+    public String[] getGROUP_NAMES() {
+        return GROUP_NAMES;
     }
 }

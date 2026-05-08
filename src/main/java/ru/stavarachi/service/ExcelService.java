@@ -46,7 +46,7 @@ public class ExcelService {
                 }
             } else {
                 for (int i = 1; i <= 3; i++) {
-                    Row row = sheet.getRow(colIndex -1 + i);
+                    Row row = sheet.getRow(rowIndex -1 + i);
                     Cell cell = row.getCell(colIndex);
 
                     String pairText = formatter.formatCellValue(cell);

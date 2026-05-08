@@ -1,22 +1,39 @@
 package ru.stavarachi.app;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.stavarachi.handler.CommandHandler;
+import ru.stavarachi.handler.GroupCallbackHandler;
 
 public class BotApplication extends TelegramLongPollingBot {
     private String userName;
     private final CommandHandler commandHandler;
+    private final GroupCallbackHandler groupCallbackHandler;
+    private final Logger log = LoggerFactory.getLogger(BotApplication.class);
 
     public BotApplication(String botToken, String userName) {
         this.userName = userName;
         super(botToken);
         this.commandHandler = new CommandHandler();
+        this.groupCallbackHandler = new GroupCallbackHandler();
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        commandHandler.handle(update, this);
+        try {
+            if (update.hasMessage()) {
+                commandHandler.handle(update, this);
+            }
+
+            if (update.hasCallbackQuery()) {
+                groupCallbackHandler.handle(update, this);
+            }
+        } catch (Exception e) {
+            log.error("Error: ", e);
+        }
     }
 
     @Override
