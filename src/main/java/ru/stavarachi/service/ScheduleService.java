@@ -61,10 +61,9 @@ public class ScheduleService {
         }
     }
 
-    public String generateScheduleImage(String path, String group) {
+    public String generateScheduleImage(String path, String group, String day) {
         log.info("Start ScheduleService");
         String sheet = excelRepository.findTargetSheet(path, group);
-        String day = timeUtil.getDayOfWeek();
 
         int row = excelRepository.findTargetDay(path, sheet, day);
         int col = excelRepository.findTargetGroup(path, sheet, group);

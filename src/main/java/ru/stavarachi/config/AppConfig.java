@@ -12,6 +12,7 @@ public class AppConfig {
     private final String userNameMain = dotenv.get("BOT_USERNAME_MAIN");
     private final String userNameDev = dotenv.get("BOT_USERNAME_DEV");
     private final long adminId = Long.parseLong(dotenv.get("ADMIN_ID"));
+    private final String changeInSchedule = dotenv.get("FILE_URL");
 
     public String getTokenMain() {
         return tokenMain;
@@ -31,5 +32,9 @@ public class AppConfig {
 
     public long getAdminId() {
         return adminId;
+    }
+
+    public String getChangeInSchedule() {
+        return changeInSchedule;
     }
 }

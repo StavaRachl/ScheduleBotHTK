@@ -7,6 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.stavarachi.handler.CommandHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
+import ru.stavarachi.service.BotCommandService;
 import ru.stavarachi.service.UserSettingService;
 
 public class BotApplication extends TelegramLongPollingBot {
@@ -19,6 +20,7 @@ public class BotApplication extends TelegramLongPollingBot {
     public BotApplication(String botToken, String userName) {
         this.userName = userName;
         super(botToken);
+        new BotCommandService().register(this);
         this.userSettingService = new UserSettingService();
         this.commandHandler = new CommandHandler(userSettingService);
         this.groupCallbackHandler = new GroupCallbackHandler(userSettingService);

@@ -3,6 +3,7 @@ package ru.stavarachi.handler;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import ru.stavarachi.config.AppConfig;
 import ru.stavarachi.config.BotConfig;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.ScheduleConfig;
@@ -26,6 +27,7 @@ public class CommandHandler {
     PathConfig pathConfig = new PathConfig();
     ScheduleConfig scheduleConfig = new ScheduleConfig();
     BotConfig botConfig = new BotConfig();
+    AppConfig appConfig = new AppConfig();
 
     String callsPath = pathConfig.getCallsPath();
     String catPath = pathConfig.getCatPath();
@@ -59,9 +61,20 @@ public class CommandHandler {
                 }
 
                 String group = userSettingService.getDefaultGroup(chatId);
-                String path = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), group);
+                String path = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), group, timeUtil.getDayOfWeek());
 
-                messageUtil.sendPhoto(bot, chatId, "Расписание для " + group + " на " + timeUtil.getDayOfWeek(), path);
+                messageUtil.sendPhoto(bot, chatId, "Расписание для " + group + " на " + timeUtil.getDayOfWeek() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
+                break;
+            case "/nextrasp":
+                if (!userSettingService.hasDefaultGroup(chatId)) {
+                    messageUtil.sendMessage(bot, chatId, "Сначала выберите группу через /setdefaultgroup");
+                    break;
+                }
+
+                String groupForNextDay = userSettingService.getDefaultGroup(chatId);
+                String pathForNextDay = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), groupForNextDay, timeUtil.getDayOfWeekPlusDay());
+
+                messageUtil.sendPhoto(bot, chatId, "Расписание для " + groupForNextDay + " на " + timeUtil.getDayOfWeekPlusDay(), pathForNextDay);
                 break;
             case "/setdefaultgroup":
                 InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);

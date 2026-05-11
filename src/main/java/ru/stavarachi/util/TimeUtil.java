@@ -25,4 +25,23 @@ public class TimeUtil {
 
         return dayOfWeek.substring(0,1).toUpperCase() + dayOfWeek.substring(1);
     }
+
+    public String getDayOfWeekPlusDay() {
+        ZoneId zone = ZoneId.of("Asia/Vladivostok");
+        ZonedDateTime now = ZonedDateTime.now(zone);
+
+        DayOfWeek day = now.getDayOfWeek().plus(1);
+
+        if (now.getHour() > 14) {
+            day = day.plus(2);
+        }
+
+        if (day == DayOfWeek.SUNDAY) {
+            day = DayOfWeek.TUESDAY;
+        }
+
+        String dayOfWeek = day.getDisplayName(TextStyle.FULL, new Locale("ru"));
+
+        return dayOfWeek.substring(0,1).toUpperCase() + dayOfWeek.substring(1);
+    }
 }
