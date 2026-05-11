@@ -62,20 +62,38 @@ public class ExcelService {
     }
 
     public List<Object> loadPairWithBreaks(List<Pair> listOfPair, String targetDay) {
+
         List<Object> listOfSchedule = new ArrayList<>();
 
         for (int i = 0; i < listOfPair.size(); i++) {
+
             Pair currentPair = listOfPair.get(i);
+
             listOfSchedule.add(currentPair);
 
             if (targetDay.equals("Понедельник")) {
-                Break breaks = new Break("Перемена", breaksSlotsForMonday[i]);
-                listOfSchedule.add(breaks);
+
+                if (i < listOfPair.size() - 1) {
+
+                    Break breaks = new Break(
+                            "Перемена",
+                            breaksSlotsForMonday[i]
+                    );
+
+                    listOfSchedule.add(breaks);
+                }
+
             } else if (i < listOfPair.size() - 1) {
-                Break breaks = new Break("Перемена", breaksSlots[i]);
+
+                Break breaks = new Break(
+                        "Перемена",
+                        breaksSlots[i]
+                );
+
                 listOfSchedule.add(breaks);
             }
         }
+
         return listOfSchedule;
     }
 }

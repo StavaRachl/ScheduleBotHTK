@@ -9,6 +9,7 @@ import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.repository.ExcelRepository;
 import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.ScheduleService;
+import ru.stavarachi.service.UserSettingService;
 import ru.stavarachi.service.telegram.CallService;
 import ru.stavarachi.service.telegram.InfoService;
 import ru.stavarachi.service.telegram.SixSevenService;
@@ -16,6 +17,12 @@ import ru.stavarachi.util.MessageUtil;
 import ru.stavarachi.util.TimeUtil;
 
 public class CommandHandler {
+    private final UserSettingService userSettingService;
+
+    public CommandHandler(UserSettingService userSettingService) {
+        this.userSettingService = userSettingService;
+    }
+
     PathConfig pathConfig = new PathConfig();
     ScheduleConfig scheduleConfig = new ScheduleConfig();
     BotConfig botConfig = new BotConfig();
@@ -46,8 +53,15 @@ public class CommandHandler {
                 messageUtil.sendMessage(bot, chatId, "ВНИМАНИЕ! Перед использованием бота просим вас установить необходимую вам группу командой /setdefaultgroup.");
                 break;
             case "/rasp":
-                String path = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), "ИСП-Д52");
-                messageUtil.sendPhoto(bot, chatId, "Расписание для ИСП-Д53", path);
+                if (!userSettingService.hasDefaultGroup(chatId)) {
+                    messageUtil.sendMessage(bot, chatId, "Сначала выберите группу через /setdefaultgroup");
+                    break;
+                }
+
+                String group = userSettingService.getDefaultGroup(chatId);
+                String path = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), group);
+
+                messageUtil.sendPhoto(bot, chatId, "Расписание для " + group + " на " + timeUtil.getDayOfWeek(), path);
                 break;
             case "/setdefaultgroup":
                 InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);

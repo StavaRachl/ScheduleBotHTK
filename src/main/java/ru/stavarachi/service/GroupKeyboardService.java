@@ -29,7 +29,7 @@ public class GroupKeyboardService {
         for (int i = startPage; i < end; i++) {
             InlineKeyboardButton button = new InlineKeyboardButton();
             button.setText(groups[i]);
-            button.setCallbackData(groups[i]);
+            button.setCallbackData("group:" + groups[i]);
 
             row.add(button);
 

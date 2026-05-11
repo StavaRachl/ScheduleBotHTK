@@ -1,2 +1,18 @@
-2026-05-07 17:06:35 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
-2026-05-07 17:06:53 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-05-11 13:09:41 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-05-11 13:10:09 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-05-11 13:10:35 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:44:36 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-05-11 13:45:01 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-05-11 13:45:51 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:46:17 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:48:50 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-05-11 13:49:10 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-05-11 13:49:23 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:49:43 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:52:49 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-05-11 13:52:50 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-05-11 13:53:03 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:58:17 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-05-11 13:58:36 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-05-11 13:58:53 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-05-11 13:59:02 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService

@@ -1,9 +1,6 @@
 package ru.stavarachi.service;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.Locator;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.model.Pair;
@@ -15,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class ScheduleService {
+    private final Playwright playwright;
     private final Browser browser;
     private final String pathToSave = "src/main/resources/images/schedule.png";
     private static final Logger log = LoggerFactory.getLogger(ScheduleService.class);
@@ -25,21 +23,42 @@ public class ScheduleService {
     ExcelService excelService = new ExcelService();
 
     public ScheduleService() {
-        Playwright playwright = Playwright.create();
-        this.browser = playwright.chromium().launch();
+
+        this.playwright = Playwright.create();
+
+        this.browser = playwright.chromium().launch(
+                new BrowserType.LaunchOptions()
+                        .setHeadless(true)
+        );
     }
 
     public void save(String html, String path) {
-        Page page = browser.newPage();
-        Locator card = page.locator(".card");
-        page.setContent(html);
 
-        card.screenshot(new Locator.ScreenshotOptions()
-                .setPath(Paths.get(path))
-        );
+        Page page = null;
 
-        page.close();
-        browser.close();
+        try {
+
+            page = browser.newPage();
+
+            page.setContent(html);
+
+            Locator card = page.locator(".card");
+
+            card.screenshot(
+                    new Locator.ScreenshotOptions()
+                            .setPath(Paths.get(path))
+            );
+
+        } catch (Exception e) {
+
+            log.error("Error while saving schedule image", e);
+
+        } finally {
+
+            if (page != null) {
+                page.close();
+            }
+        }
     }
 
     public String generateScheduleImage(String path, String group) {
