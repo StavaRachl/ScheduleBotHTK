@@ -61,8 +61,6 @@
 
 ## 📅 Просмотр расписания
 
-> Здесь можно разместить скриншот отображения расписания
-
 <img src="docs/screenshots/rasp.jpg" alt="ScheduleBotHTK Banner" width="600px">
 
 ---
