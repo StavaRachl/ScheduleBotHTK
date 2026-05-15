@@ -4,9 +4,10 @@ import com.microsoft.playwright.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.model.Pair;
+import ru.stavarachi.model.User;
 import ru.stavarachi.repository.ExcelRepository;
+import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
-import ru.stavarachi.util.TimeUtil;
 
 import java.nio.file.Paths;
 import java.util.List;
@@ -14,11 +15,12 @@ import java.util.List;
 public class ScheduleService {
     private final Playwright playwright;
     private final Browser browser;
-    private final String pathToSave = "src/main/resources/images/schedule.png";
+    private final String pathToSave = "./resources/images/schedule.png";
     private static final Logger log = LoggerFactory.getLogger(ScheduleService.class);
 
     HtmlUtil htmlUtil = new HtmlUtil();
-    TimeUtil timeUtil = new TimeUtil();
+    HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
+
     ExcelRepository excelRepository = new ExcelRepository();
     ExcelService excelService = new ExcelService();
 
@@ -61,20 +63,26 @@ public class ScheduleService {
         }
     }
 
-    public String generateScheduleImage(String path, String group, String day) {
+    public String generateScheduleImage(String path, String group, String day, User user) {
         log.info("Start ScheduleService");
-        String sheet = excelRepository.findTargetSheet(path, group);
 
+        String sheet = excelRepository.findTargetSheet(path, group);
         int row = excelRepository.findTargetDay(path, sheet, day);
         int col = excelRepository.findTargetGroup(path, sheet, group);
 
         List<Pair> listOfPairs = excelService.loadPair(path, sheet, day, group, row, col);
         List<Object> listOfPairsWithBreaks = excelService.loadPairWithBreaks(listOfPairs, day);
 
-        String html = htmlUtil.generateHTML(listOfPairsWithBreaks);
+        String html;
+
+        if (user.isDarkTheme()) {
+            html = htmlDarkThemeUtil.generateHTML(listOfPairsWithBreaks);
+        } else {
+            html = htmlUtil.generateHTML(listOfPairsWithBreaks);
+        }
 
         save(html, pathToSave);
-
+        log.info("ScheduleService complete work");
         return pathToSave;
     }
 }

@@ -5,7 +5,7 @@ import ru.stavarachi.model.Pair;
 
 import java.util.List;
 
-public class HtmlUtil {
+public class HtmlDarkThemeUtil {
     public String generateHTML(List<Object> pairList) {
         StringBuilder html = new StringBuilder("""
                 <html>
@@ -17,12 +17,13 @@ public class HtmlUtil {
                                 width: 100%;
                             }
                             th, td {
-                                border: 1px solid #ddd;
+                                border: 1px solid #3B3B3B;
                             }
                             th {
-                                background-color: #C4C4C4;
+                                background-color: #0D0D0D;
+                                color: #FFFFFF
                             }
-                            tr:nth-child(even) { background-color: #f2f2f2; }
+                            tr:nth-child(even) { background-color: #252525; color: #FFFFFF}
                         </style>
                         </head>
                         <body>
@@ -39,7 +40,7 @@ public class HtmlUtil {
                         .append("<td style='padding: 20px 0;'>").append(pair.getTime()).append("</td>")
                         .append("</tr>");
             } else if (objects instanceof Break breaks) {
-                html.append("<tr style='background-color:#35FF2E; text-align:center'>")
+                html.append("<tr style='background-color:#05A300; color: #FFFFFF; text-align:center'>")
                         .append("<td style='padding: 8px 0;'></td>")
                         .append("<td style='padding: 8px 0;'>").append(breaks.getBreaks()).append("</td>")
                         .append("<td style='padding: 8px 0;'>").append(breaks.getTime()).append("</td>")

@@ -7,7 +7,9 @@ import ru.stavarachi.config.AppConfig;
 import ru.stavarachi.config.BotConfig;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.ScheduleConfig;
+import ru.stavarachi.model.User;
 import ru.stavarachi.repository.ExcelRepository;
+import ru.stavarachi.repository.UserGroupRepository;
 import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.ScheduleService;
 import ru.stavarachi.service.UserSettingService;
@@ -35,8 +37,6 @@ public class CommandHandler {
     MessageUtil messageUtil = new MessageUtil();
     TimeUtil timeUtil = new TimeUtil();
 
-    ExcelRepository excelRepository = new ExcelRepository();
-
     ScheduleService scheduleService = new ScheduleService();
     InfoService infoService = new InfoService();
     CallService callService = new CallService();
@@ -46,8 +46,14 @@ public class CommandHandler {
     public void handle(Update update, TelegramLongPollingBot bot) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
-        String command = update.getMessage().getText();
+        String command = update.getMessage().getText().split(" ")[0];
         long chatId = update.getMessage().getChatId();
+
+        User user = userSettingService.getUser(chatId);
+
+        if (command.contains("@")) {
+            command = command.substring(0, command.indexOf("@"));
+        }
 
         switch (command) {
             case "/start":
@@ -60,8 +66,10 @@ public class CommandHandler {
                     break;
                 }
 
+                messageUtil.sendMessage(bot, chatId, "Идёт получение расписания, пожалуйста подождите⌛");
+
                 String group = userSettingService.getDefaultGroup(chatId);
-                String path = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), group, timeUtil.getDayOfWeek());
+                String path = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), group, timeUtil.getDayOfWeek(), user);
 
                 messageUtil.sendPhoto(bot, chatId, "Расписание для " + group + " на " + timeUtil.getDayOfWeek() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
                 break;
@@ -71,8 +79,11 @@ public class CommandHandler {
                     break;
                 }
 
+                messageUtil.sendMessage(bot, chatId, "Идёт получение расписания, пожалуйста подождите⌛");
+
+
                 String groupForNextDay = userSettingService.getDefaultGroup(chatId);
-                String pathForNextDay = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), groupForNextDay, timeUtil.getDayOfWeekPlusDay());
+                String pathForNextDay = scheduleService.generateScheduleImage(pathConfig.getExcelPath(), groupForNextDay, timeUtil.getDayOfWeekPlusDay(), user);
 
                 messageUtil.sendPhoto(bot, chatId, "Расписание для " + groupForNextDay + " на " + timeUtil.getDayOfWeekPlusDay(), pathForNextDay);
                 break;

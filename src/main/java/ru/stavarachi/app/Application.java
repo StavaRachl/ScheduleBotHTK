@@ -16,8 +16,8 @@ public class Application {
 
             log.info("initializing telegram bot...");
 
-            String token = appConfig.getTokenDev();
-            String userName = appConfig.getUserNameDev();
+            String token = appConfig.getTokenMain();
+            String userName = appConfig.getUserNameMain();
 
             TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
             api.registerBot(new BotApplication(token, userName));
