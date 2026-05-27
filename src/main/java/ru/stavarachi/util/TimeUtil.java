@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.TextStyle;
+import java.time.temporal.WeekFields;
 import java.util.Locale;
 
 public class TimeUtil {
@@ -43,5 +44,18 @@ public class TimeUtil {
         String dayOfWeek = day.getDisplayName(TextStyle.FULL, new Locale("ru"));
 
         return dayOfWeek.substring(0,1).toUpperCase() + dayOfWeek.substring(1);
+    }
+
+    public String getNumeratorOrDenominator() {
+        ZoneId zone = ZoneId.of("Asia/Vladivostok");
+        ZonedDateTime now = ZonedDateTime.now(zone);
+
+        int week = now.get(WeekFields.ISO.weekOfWeekBasedYear());
+
+        if (week % 2 == 0) {
+            return "Числитель";
+        } else {
+            return "Знаменатель";
+        }
     }
 }
