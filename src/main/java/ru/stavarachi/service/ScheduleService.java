@@ -3,6 +3,7 @@ package ru.stavarachi.service;
 import com.microsoft.playwright.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.model.Pair;
 import ru.stavarachi.model.User;
 import ru.stavarachi.repository.ExcelRepository;
@@ -13,21 +14,23 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class ScheduleService {
-    private final Playwright playwright;
-    private final Browser browser;
-    private final String pathToSave = "./resources/images/schedule.png";
     private static final Logger log = LoggerFactory.getLogger(ScheduleService.class);
 
-    HtmlUtil htmlUtil = new HtmlUtil();
-    HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
+    private final Playwright playwright;
+    private final Browser browser;
+    private final PathConfig pathConfig;
+    private final HtmlUtil htmlUtil;
+    private final HtmlDarkThemeUtil htmlDarkThemeUtil;
+    private final ExcelRepository excelRepository;
+    private final ExcelService excelService;
 
-    ExcelRepository excelRepository = new ExcelRepository();
-    ExcelService excelService = new ExcelService();
-
-    public ScheduleService() {
-
+    public ScheduleService(PathConfig pathConfig, HtmlUtil htmlUtil, HtmlDarkThemeUtil htmlDarkThemeUtil, ExcelService excelService, ExcelRepository excelRepository) {
+        this.htmlDarkThemeUtil = htmlDarkThemeUtil;
+        this.htmlUtil = htmlUtil;
+        this.pathConfig = pathConfig;
+        this.excelService = excelService;
+        this.excelRepository = excelRepository;
         this.playwright = Playwright.create();
-
         this.browser = playwright.chromium().launch(
                 new BrowserType.LaunchOptions()
                         .setHeadless(true)
@@ -66,9 +69,11 @@ public class ScheduleService {
     public String generateScheduleImage(String path, String group, String day, User user) {
         log.info("Start ScheduleService");
 
-        String sheet = excelRepository.findTargetSheet(path, group);
-        int row = excelRepository.findTargetDay(path, sheet, day);
-        int col = excelRepository.findTargetGroup(path, sheet, group);
+        String pathToSave = pathConfig.getPathToSave();
+
+        String sheet = excelRepository.findTargetSheet(group);
+        int row = excelRepository.findTargetDay(sheet, day);
+        int col = excelRepository.findTargetGroup(sheet, group);
 
         List<Pair> listOfPairs = excelService.loadPair(path, sheet, day, group, row, col);
         List<Object> listOfPairsWithBreaks = excelService.loadPairWithBreaks(listOfPairs, day);

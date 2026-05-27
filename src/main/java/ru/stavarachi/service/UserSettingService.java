@@ -1,5 +1,7 @@
 package ru.stavarachi.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.model.User;
 import ru.stavarachi.repository.UserGroupRepository;
@@ -11,11 +13,20 @@ public class UserSettingService {
     private final Map<Long, User> userMap;
 
     private final UserGroupRepository userGroupRepository = new UserGroupRepository();
+    private final Logger log = LoggerFactory.getLogger(UserSettingService.class);
 
     private final PathConfig pathConfig = new PathConfig();
 
     public UserSettingService() {
         this.userMap = new ConcurrentHashMap<>(userGroupRepository.loadUsersFromJson(pathConfig.getJsonPath()));
+    }
+
+    public void toggleTheme(long chatId) {
+        User user = userMap.get(chatId);
+
+        user.setDarkTheme(!user.isDarkTheme());
+
+        userGroupRepository.saveUsersToJson(userMap, pathConfig.getPathToSave());
     }
 
     public void setDefaultGroup(Long chatId, String group) {

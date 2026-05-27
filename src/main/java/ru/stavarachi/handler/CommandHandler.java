@@ -8,8 +8,6 @@ import ru.stavarachi.config.BotConfig;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.model.User;
-import ru.stavarachi.repository.ExcelRepository;
-import ru.stavarachi.repository.UserGroupRepository;
 import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.ScheduleService;
 import ru.stavarachi.service.UserSettingService;
@@ -21,27 +19,31 @@ import ru.stavarachi.util.TimeUtil;
 
 public class CommandHandler {
     private final UserSettingService userSettingService;
+    private final ScheduleService scheduleService;
+    private final InfoService infoService;
+    private final CallService callService;
+    private final SixSevenService sixSevenService;
+    private final GroupKeyboardService groupKeyboardService;
+    private final MessageUtil messageUtil;
+    private final TimeUtil timeUtil;
 
-    public CommandHandler(UserSettingService userSettingService) {
+    private final PathConfig pathConfig = new PathConfig();
+    private final ScheduleConfig scheduleConfig = new ScheduleConfig();
+    private final BotConfig botConfig = new BotConfig();
+    private final AppConfig appConfig = new AppConfig();
+
+    public CommandHandler(UserSettingService userSettingService, ScheduleService scheduleService, InfoService infoService, CallService callService, SixSevenService sixSevenService, GroupKeyboardService groupKeyboardService, MessageUtil messageUtil, TimeUtil timeUtil) {
         this.userSettingService = userSettingService;
+        this.scheduleService = scheduleService;
+        this.infoService = infoService;
+        this.callService = callService;
+        this.sixSevenService = sixSevenService;
+        this.groupKeyboardService = groupKeyboardService;
+        this.messageUtil = messageUtil;
+        this.timeUtil = timeUtil;
     }
-
-    PathConfig pathConfig = new PathConfig();
-    ScheduleConfig scheduleConfig = new ScheduleConfig();
-    BotConfig botConfig = new BotConfig();
-    AppConfig appConfig = new AppConfig();
-
-    String callsPath = pathConfig.getCallsPath();
-    String catPath = pathConfig.getCatPath();
-
-    MessageUtil messageUtil = new MessageUtil();
-    TimeUtil timeUtil = new TimeUtil();
-
-    ScheduleService scheduleService = new ScheduleService();
-    InfoService infoService = new InfoService();
-    CallService callService = new CallService();
-    SixSevenService sixSevenService = new SixSevenService();
-    GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
+    private final String callsPath = pathConfig.getCallsPath();
+    private final String catPath = pathConfig.getCatPath();
 
     public void handle(Update update, TelegramLongPollingBot bot) {
         if (!update.hasMessage() || !update.getMessage().hasText()) return;
@@ -90,6 +92,10 @@ public class CommandHandler {
             case "/setdefaultgroup":
                 InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);
                 messageUtil.sendKeyboard(bot, chatId, botConfig.getKeyboardMessage(), keyboardMarkup);
+                break;
+            case "/settheme":
+                userSettingService.toggleTheme(chatId);
+                messageUtil.sendMessage(bot, chatId, "Тема сменена");
                 break;
             case "/zvonki":
                 callService.sendCall(bot, chatId, callsPath);

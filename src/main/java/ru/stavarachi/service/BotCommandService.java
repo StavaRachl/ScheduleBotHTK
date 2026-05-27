@@ -18,6 +18,7 @@ public class BotCommandService {
                 new BotCommand("/rasp", "Получить расписание"),
                 new BotCommand("/nextrasp", "Получить расписание на день вперед"),
                 new BotCommand("/setdefaultgroup", "Выбрать группу"),
+                new BotCommand("/settheme", "Поменять тему на светлую/темную"),
                 new BotCommand("/zvonki", "Получить расписание звонков"),
                 new BotCommand("/info", "Информация о боте")
         );

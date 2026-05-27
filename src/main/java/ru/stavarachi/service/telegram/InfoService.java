@@ -12,7 +12,8 @@ public class InfoService {
         String info = """
                 Информация о боте
                 Разработчик: @StavaRaChiii
-                Версия: 5.0
+                Версия: 5.3
+                Поддержать проект финансово можно по номеру телефона +79841757768
                 """;
 
         SendMessage sendMessage = new SendMessage();

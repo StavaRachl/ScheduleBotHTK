@@ -10,80 +10,67 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class ExcelRepository {
+    private final FileInputStream fileInputStream;
+    private final Workbook workbook;
+    private final DataFormatter dataFormatter;
     ScheduleConfig scheduleConfig = new ScheduleConfig();
     String[] listOfSheet = scheduleConfig.getLIST_OF_SHEET();
     private static final Logger log = LoggerFactory.getLogger(ExcelRepository.class);
 
-    public int findTargetDay(String path, String sheetName, String targetDay) {
-        try (FileInputStream fileInputStream = new FileInputStream(path)){
-            int rowIndex = 0;
-            DataFormatter formatter = new DataFormatter();
-            Workbook workbook = new XSSFWorkbook(fileInputStream);
-            Sheet sheet = workbook.getSheet(sheetName);
-
-            for (Row row : sheet) {
-                Cell cell = row.getCell(0);
-
-                String text = formatter.formatCellValue(cell);
-
-                if (text.equals(targetDay)) {
-                    rowIndex = row.getRowNum();
-                }
-            }
-            return rowIndex;
-        } catch (IOException e) {
-            log.error("Error: ", e);
-            return 0;
-        }
+    public ExcelRepository(String path) throws IOException {
+        this.fileInputStream = new FileInputStream(path);
+        dataFormatter = new DataFormatter();
+        workbook = new XSSFWorkbook(fileInputStream);
     }
 
-    public int findTargetGroup(String path, String sheetName, String targetGroup) {
-        try (FileInputStream fileInputStream = new FileInputStream(path)) {
-            int colIndex = 0;
-            Workbook workbook = new XSSFWorkbook(fileInputStream);
-            DataFormatter formatter = new DataFormatter();
+    public int findTargetDay(String sheetName, String targetDay) {
+        int rowIndex = 0;
+        Sheet sheet = workbook.getSheet(sheetName);
 
+        for (Row row : sheet) {
+            Cell cell = row.getCell(0);
+
+            String text = dataFormatter.formatCellValue(cell);
+
+            if (text.equals(targetDay)) {
+                rowIndex = row.getRowNum();
+            }
+        }
+        return rowIndex;
+    }
+
+    public int findTargetGroup(String sheetName, String targetGroup) {
+        int colIndex = 0;
+
+        Sheet sheet = workbook.getSheet(sheetName);
+        for (Row row : sheet) {
+            for (Cell cell : row) {
+                String group = dataFormatter.formatCellValue(cell);
+
+                if (group.equals(targetGroup)) {
+                    colIndex = cell.getColumnIndex();
+                }
+            }
+        }
+        return colIndex;
+    }
+
+    public String findTargetSheet(String targetGroup) {
+        String targetSheet = "";
+
+        for (String sheetName : listOfSheet) {
             Sheet sheet = workbook.getSheet(sheetName);
+
             for (Row row : sheet) {
                 for (Cell cell : row) {
-                    String group = formatter.formatCellValue(cell);
+                    String group = dataFormatter.formatCellValue(cell);
 
                     if (group.equals(targetGroup)) {
-                        colIndex = cell.getColumnIndex();
+                        return targetSheet = sheetName;
                     }
                 }
             }
-            return colIndex;
-        } catch (Exception e) {
-            log.error("Error", e);
-            return 0;
         }
-    }
-
-    public String findTargetSheet(String path, String targetGroup) {
-        try (FileInputStream fileInputStream = new FileInputStream(path)) {
-            String targetSheet = "";
-
-            Workbook workbook = new XSSFWorkbook(fileInputStream);
-            DataFormatter formatter = new DataFormatter();
-
-            for (String sheetName : listOfSheet) {
-                Sheet sheet = workbook.getSheet(sheetName);
-
-                for (Row row : sheet) {
-                    for (Cell cell : row) {
-                        String group = formatter.formatCellValue(cell);
-
-                        if (group.equals(targetGroup)) {
-                            return targetSheet = sheetName;
-                        }
-                    }
-                }
-            }
-            return targetSheet;
-        } catch (Exception e) {
-            log.error("Error: ", e);
-            return "";
-        }
+        return targetSheet;
     }
 }

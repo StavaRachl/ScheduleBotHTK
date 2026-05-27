@@ -9,16 +9,15 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.UserSettingService;
-import ru.stavarachi.util.MessageUtil;
 
 public class GroupCallbackHandler {
-    GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
-    ScheduleConfig scheduleConfig = new ScheduleConfig();
-    MessageUtil messageUtil = new MessageUtil();
+    private final GroupKeyboardService groupKeyboardService;
     private final UserSettingService userSettingService;
+    private final ScheduleConfig scheduleConfig = new ScheduleConfig();
 
-    public GroupCallbackHandler(UserSettingService userSettingService) {
+    public GroupCallbackHandler(UserSettingService userSettingService, GroupKeyboardService groupKeyboardService) {
         this.userSettingService = userSettingService;
+        this.groupKeyboardService = groupKeyboardService;
     }
 
     private static final Logger log = LoggerFactory.getLogger(GroupCallbackHandler.class);
