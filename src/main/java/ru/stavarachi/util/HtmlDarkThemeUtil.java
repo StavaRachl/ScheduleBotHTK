@@ -1,12 +1,13 @@
 package ru.stavarachi.util;
 
 import ru.stavarachi.model.Break;
+import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
 
 import java.util.List;
 
 public class HtmlDarkThemeUtil {
-    public String generateHTML(List<Object> pairList) {
+    public String generateHTML(List<Object> pairList, List<Change> changePairList, List<Change> changeClassroomList) {
         StringBuilder html = new StringBuilder("""
                 <html>
                         <head>
@@ -47,7 +48,26 @@ public class HtmlDarkThemeUtil {
                         .append("</tr>");
             }
         }
+        html.append("<tr><th style='padding: 13px 0;'></th><th style='padding: 13px 0;'>Замены</th><th style='padding: 13px 0;'></th></tr>");
+        for (Change change : changePairList) {
 
+            html.append("<tr style='background-color:#252525; color: #FFFFFF; text-align:center'>")
+                    .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
+                    .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
+                    .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
+                    .append("</tr>");
+
+        }
+        for (Change change : changeClassroomList) {
+
+            html.append("<tr style='background-color:#252525; color: #FFFFFF; text-align:center'>")
+                    .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
+                    .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
+                    .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
+                    .append("</tr>");
+
+
+        }
         html.append("</table></body></html>");
 
         return html.toString();

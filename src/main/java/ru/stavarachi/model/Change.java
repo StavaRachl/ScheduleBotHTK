@@ -1,21 +1,21 @@
 package ru.stavarachi.model;
 
-public class Pair {
-    private int count;
+public class Change {
+    private Integer count;
     private String pair;
-    private String time;
+    private String teacher;
 
-    public Pair(int count, String pair, String time) {
+    public Change(Integer count, String pair, String teacher) {
         this.count = count;
         this.pair = pair;
-        this.time = time;
+        this.teacher = teacher;
     }
 
-    public int getCount() {
+    public Integer getCount() {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
@@ -27,20 +27,20 @@ public class Pair {
         this.pair = pair;
     }
 
-    public String getTime() {
-        return time;
+    public String getTeacher() {
+        return teacher;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setTeacher(String teacher) {
+        this.teacher = teacher;
     }
 
     @Override
     public String toString() {
-        return "Pair{" +
+        return "Change{" +
                 "count=" + count +
                 ", pair='" + pair + '\'' +
-                ", time='" + time + '\'' +
+                ", teacher='" + teacher + '\'' +
                 '}';
     }
 }

@@ -24,4 +24,12 @@ public class Break {
     public void setTime(String time) {
         this.time = time;
     }
+
+    @Override
+    public String toString() {
+        return "Break{" +
+                "breaks='" + breaks + '\'' +
+                ", time='" + time + '\'' +
+                '}';
+    }
 }

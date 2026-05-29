@@ -5,8 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.config.PathConfig;
+import ru.stavarachi.config.ScheduleConfig;
+import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.handler.CommandHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
+import ru.stavarachi.repository.ExcelChangeRepository;
 import ru.stavarachi.repository.ExcelRepository;
 import ru.stavarachi.service.*;
 import ru.stavarachi.service.telegram.CallService;
@@ -25,6 +28,7 @@ public class BotApplication extends TelegramLongPollingBot {
     private final GroupCallbackHandler groupCallbackHandler;
     private final Logger log = LoggerFactory.getLogger(BotApplication.class);
     private final PathConfig pathConfig = new PathConfig();
+    private final ScheduleConfig scheduleConfig = new ScheduleConfig();
     private final String path = pathConfig.getExcelPath();
 
     public BotApplication(String botToken, String userName) throws IOException {
@@ -32,13 +36,16 @@ public class BotApplication extends TelegramLongPollingBot {
         super(botToken);
         new BotCommandService().register(this);
 
+        ExcelChangeService excelChangeService = new ExcelChangeService(pathConfig.getChangePath());
+        ExcelChangeRepository excelChangeRepository = new ExcelChangeRepository(pathConfig.getChangePath());
+        ClientHandler clientHandler = new ClientHandler();
         ExcelRepository excelRepository = new ExcelRepository(path);
         ExcelService excelService = new ExcelService();
         UserSettingService userSettingService = new UserSettingService();
         PathConfig pathConfig = new PathConfig();
         HtmlUtil htmlUtil = new HtmlUtil();
         HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
-        ScheduleService scheduleService = new ScheduleService(pathConfig, htmlUtil, htmlDarkThemeUtil, excelService, excelRepository);
+        ScheduleService scheduleService = new ScheduleService(clientHandler, pathConfig, scheduleConfig, htmlUtil, htmlDarkThemeUtil, excelService, excelRepository, excelChangeRepository, excelChangeService);
         InfoService infoService = new InfoService();
         CallService callService = new CallService();
         SixSevenService sixSevenService = new SixSevenService();

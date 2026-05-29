@@ -42,6 +42,10 @@ public class ScheduleConfig {
             "ЭГС-Д41", "ЭГС-Д51", "ЭМС-Д41", "ЭМС-Д51", "ЭУ-Д31", "ЭУ-Д41", "ЭУ-Д51"
     };
 
+    private final String PAIRS_CHANGE = "ЗАМЕНА ПАР";
+
+    private final String CLASSROOM_CHANGE = "ЗАМЕНА КАБИНЕТОВ";
+
     public String[] getLIST_OF_SHEET() {
         return LIST_OF_SHEET;
     }
@@ -64,5 +68,13 @@ public class ScheduleConfig {
 
     public String[] getGROUP_NAMES() {
         return GROUP_NAMES;
+    }
+
+    public String getPAIRS_CHANGE() {
+        return PAIRS_CHANGE;
+    }
+
+    public String getCLASSROOM_CHANGE() {
+        return CLASSROOM_CHANGE;
     }
 }

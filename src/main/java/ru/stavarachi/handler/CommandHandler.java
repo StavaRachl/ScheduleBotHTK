@@ -43,9 +43,10 @@ public class CommandHandler {
         this.timeUtil = timeUtil;
     }
     private final String callsPath = pathConfig.getCallsPath();
+    private final String callsJunePath = pathConfig.getCallsJunePath();
     private final String catPath = pathConfig.getCatPath();
 
-    public void handle(Update update, TelegramLongPollingBot bot) {
+    public void handle(Update update, TelegramLongPollingBot bot) throws Exception {
         if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
         String command = update.getMessage().getText().split(" ")[0];
@@ -99,6 +100,9 @@ public class CommandHandler {
                 break;
             case "/zvonki":
                 callService.sendCall(bot, chatId, callsPath);
+                break;
+            case "/zvonkijune":
+                callService.sendCall(bot, chatId, callsJunePath);
                 break;
             case "/info":
                 infoService.sendInfo(bot, chatId);

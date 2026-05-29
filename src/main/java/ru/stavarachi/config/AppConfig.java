@@ -5,12 +5,17 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class AppConfig {
     private final Dotenv dotenv = Dotenv.configure().load();
 
+    private final String urlToChange = dotenv.get("FILE_URL");
     private final String tokenMain = dotenv.get("TELEGRAM_TOKEN");
     private final String tokenDev = dotenv.get("TELEGRAM_TOKEN_DEV");
     private final String userNameMain = dotenv.get("BOT_USERNAME");
     private final String userNameDev = dotenv.get("BOT_USERNAME_DEV");
     private final long adminId = Long.parseLong(dotenv.get("ADMIN_ID"));
     private final String changeInSchedule = dotenv.get("FILE_URL");
+
+    public String getUrlToChange() {
+        return urlToChange;
+    }
 
     public String getTokenMain() {
         return tokenMain;

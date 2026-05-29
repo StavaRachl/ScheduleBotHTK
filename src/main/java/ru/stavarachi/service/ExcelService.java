@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.model.Break;
+import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
 
 import java.io.FileInputStream;
@@ -95,5 +96,15 @@ public class ExcelService {
         }
 
         return listOfSchedule;
+    }
+
+    public List<Object> loadPairWithChange(List<Change> listPairWithPairChange, List<Change> listPairWithChangeClassroom) {
+        List<Object> listPairWithChange = new ArrayList<>();
+
+        listPairWithChange.addAll(listPairWithPairChange);
+
+        listPairWithChange.addAll(listPairWithChangeClassroom);
+
+        return listPairWithChange;
     }
 }

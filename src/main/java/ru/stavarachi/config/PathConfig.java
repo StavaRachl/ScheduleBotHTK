@@ -5,12 +5,16 @@ public class PathConfig {
     private final String pathToSave = "./resources/images/schedule.png";
 
     private final String callsPath = "./resources/images/calls.jpg";
+    private final String callsJunePath = "./resources/images/callsJune.jpg";
     private final String excelPath = "./resources/tabels/РАСПИСАНИЕ 2 СЕМЕСТР 25-26 .xlsx";
     private final String jsonPath = "./resources/data/users.json";
+    private final String changePath = "./resources/Новая таблица (25).xlsx";
 
-    //private final String callsPath = "src/main/resources/images/calls.jpg";
-    //private final String excelPath = "src/main/resources/tabels/РАСПИСАНИЕ 2 СЕМЕСТР 25-26 .xlsx";
-    //private final String jsonPath = "src/main/resources/data/users.json";
+    /*private final String changePath = "src/main/resources/Новая таблица (25).xlsx";
+    private final String callsPath = "src/main/resources/images/calls.jpg";
+    private final String callsJunePath = "src/main/resources/images/callsJune.jpg";
+    private final String excelPath = "src/main/resources/tabels/РАСПИСАНИЕ 2 СЕМЕСТР 25-26 .xlsx";
+    private final String jsonPath = "src/main/resources/data/users.json";*/
 
     public String getCallsPath() {
         return callsPath;
@@ -30,5 +34,13 @@ public class PathConfig {
 
     public String getPathToSave() {
         return pathToSave;
+    }
+
+    public String getChangePath() {
+        return changePath;
+    }
+
+    public String getCallsJunePath() {
+        return callsJunePath;
     }
 }
