@@ -14,7 +14,7 @@ public class SixSevenService {
             SendPhoto photo = new SendPhoto();
 
             photo.setPhoto(new InputFile(path));
-            photo.setCaption("Котость");
+            photo.setCaption("🐈Котость");
             photo.setChatId(chatId);
 
             bot.execute(photo);

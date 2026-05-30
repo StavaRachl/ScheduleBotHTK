@@ -13,10 +13,6 @@ public class AppConfig {
     private final long adminId = Long.parseLong(dotenv.get("ADMIN_ID"));
     private final String changeInSchedule = dotenv.get("FILE_URL");
 
-    public String getUrlToChange() {
-        return urlToChange;
-    }
-
     public String getTokenMain() {
         return tokenMain;
     }

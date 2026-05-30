@@ -12,7 +12,7 @@ public class InfoService {
         String info = """
                 Информация о боте
                 Разработчик: @StavaRaChiii
-                Версия: 6.0
+                Версия: 6.3
                 """;
 
         SendMessage sendMessage = new SendMessage();

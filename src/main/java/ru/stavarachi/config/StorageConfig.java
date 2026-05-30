@@ -34,4 +34,8 @@ public class StorageConfig {
     public static Path scheduleImage() {
         return GENERATED.resolve("schedule.jpg");
     }
+
+    public static Path logger() {
+        return LOGS.resolve("error.log");
+    }
 }

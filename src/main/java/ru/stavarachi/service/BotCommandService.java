@@ -20,7 +20,7 @@ public class BotCommandService {
                 new BotCommand("/setdefaultgroup", "Выбрать группу"),
                 new BotCommand("/settheme", "Поменять тему на светлую/темную"),
                 new BotCommand("/zvonki", "Получить расписание звонков"),
-                new BotCommand("/zvonkijune", "Получить расписание звонков на  июнь понедельник"),
+                new BotCommand("/zvonkijune", "Получить расписание звонков на июнь"),
                 new BotCommand("/info", "Информация о боте")
         );
 

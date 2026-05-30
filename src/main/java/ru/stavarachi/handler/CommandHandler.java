@@ -59,12 +59,12 @@ public class CommandHandler {
 
         switch (command) {
             case "/start":
-                messageUtil.sendMessage(bot, chatId, "Бот запущен.");
-                messageUtil.sendMessage(bot, chatId, "ВНИМАНИЕ! Перед использованием бота просим вас установить необходимую вам группу командой /setdefaultgroup.");
+                messageUtil.sendMessage(bot, chatId, "✅Бот запущен.");
+                messageUtil.sendMessage(bot, chatId, "⚠️ВНИМАНИЕ! Перед использованием бота просим вас установить необходимую вам группу командой /setdefaultgroup.");
                 break;
             case "/rasp":
                 if (!userSettingService.hasDefaultGroup(chatId)) {
-                    messageUtil.sendMessage(bot, chatId, "Сначала выберите группу через /setdefaultgroup");
+                    messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
                     break;
                 }
 
@@ -73,11 +73,11 @@ public class CommandHandler {
                 String group = userSettingService.getDefaultGroup(chatId);
                 Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), user, timeUtil.getMonth());
 
-                messageUtil.sendPhoto(bot, chatId, "Расписание для " + group + " на " + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
+                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + " на " + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
                 break;
             case "/nextrasp":
                 if (!userSettingService.hasDefaultGroup(chatId)) {
-                    messageUtil.sendMessage(bot, chatId, "Сначала выберите группу через /setdefaultgroup");
+                    messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
                     break;
                 }
 
@@ -87,7 +87,7 @@ public class CommandHandler {
                 String groupForNextDay = userSettingService.getDefaultGroup(chatId);
                 Path pathForNextDay = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), groupForNextDay, timeUtil.getDayOfWeekPlusDay(), user, timeUtil.getMonth());
 
-                messageUtil.sendPhoto(bot, chatId, "Расписание для " + groupForNextDay + " на " + timeUtil.getDayOfWeekPlusDay() + ": " + timeUtil.getNumeratorOrDenominator(), pathForNextDay);
+                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + groupForNextDay + " на " + timeUtil.getDayOfWeekPlusDay() + ": " + timeUtil.getNumeratorOrDenominator(), pathForNextDay);
                 break;
             case "/setdefaultgroup":
                 InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);
@@ -105,6 +105,13 @@ public class CommandHandler {
                 break;
             case "/info":
                 infoService.sendInfo(bot, chatId);
+                break;
+            case "/log":
+                if (chatId == appConfig.getAdminId()) {
+                    messageUtil.sendDocument(bot, chatId, "🗒️Отсчет о работе бота:", StorageConfig.logger());
+                } else {
+                    messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
+                }
                 break;
             case "/67":
                 sixSevenService.sendSixSeven(bot, chatId, catPath);
