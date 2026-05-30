@@ -5,6 +5,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 
 public class ExcelChangeRepository {
     private final FileInputStream fileInputStream;
@@ -12,8 +14,8 @@ public class ExcelChangeRepository {
     private final DataFormatter dataFormatter;
     private final Sheet sheet;
 
-    public ExcelChangeRepository(String path) throws IOException {
-        fileInputStream = new FileInputStream(path);
+    public ExcelChangeRepository(Path path) throws IOException {
+        fileInputStream = new FileInputStream(path.toFile());
         workbook = new XSSFWorkbook(fileInputStream);
         dataFormatter = new DataFormatter();
         sheet = workbook.getSheet("замена");

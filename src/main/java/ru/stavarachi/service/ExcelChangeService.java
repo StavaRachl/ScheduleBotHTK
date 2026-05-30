@@ -7,6 +7,8 @@ import ru.stavarachi.model.Pair;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +18,8 @@ public class ExcelChangeService {
     private final DataFormatter dataFormatter;
     private final Sheet sheet;
 
-    public ExcelChangeService(String path) throws IOException {
-        fileInputStream = new FileInputStream(path);
+    public ExcelChangeService(Path path) throws IOException {
+        fileInputStream = new FileInputStream(path.toFile());
         workbook = new XSSFWorkbook(fileInputStream);
         dataFormatter = new DataFormatter();
         sheet = workbook.getSheet("замена");

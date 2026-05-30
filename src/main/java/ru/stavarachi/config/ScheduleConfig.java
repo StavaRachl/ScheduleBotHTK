@@ -3,6 +3,12 @@ package ru.stavarachi.config;
 public class ScheduleConfig {
     private final String[] LIST_OF_SHEET = {"1,2", "2,3", "3,4"};
 
+    private final String[] TIME_SLOTS_FOR_JUNE = {
+            "8:30 - 9:15 | 9:20 - 10:05",
+            "10:15 - 11:00 | 11:05 - 11:50",
+            "12:20 - 13:05 | 13:10 - 13:55"
+    };
+
     private final String[] TIME_SLOTS_FOR_MONDAY = {
             "8:30 - 9:15",
             "9:25 - 10:10 | 10:15 - 11:00",
@@ -76,5 +82,9 @@ public class ScheduleConfig {
 
     public String getCLASSROOM_CHANGE() {
         return CLASSROOM_CHANGE;
+    }
+
+    public String[] getTIME_SLOTS_FOR_JUNE() {
+        return TIME_SLOTS_FOR_JUNE;
     }
 }

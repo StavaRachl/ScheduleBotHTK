@@ -18,7 +18,7 @@ public class FileDownloadService {
         this.downloader = downloader;
     }
 
-    public Path download(String viewUrl, String targetDir) throws Exception {
+    public Path download(String viewUrl, Path targetDir) throws Exception {
         String publicKey = parser.extractPublicKey(viewUrl);
         JsonNode meta = client.getPublicMeta(publicKey);
 

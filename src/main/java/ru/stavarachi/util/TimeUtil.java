@@ -58,4 +58,10 @@ public class TimeUtil {
             return "Знаменатель";
         }
     }
+
+    public String getMonth() {
+        ZoneId zone = ZoneId.of("Asia/Vladivostok");
+        ZonedDateTime now = ZonedDateTime.now(zone);
+        return String.valueOf(now.getMonth());
+    }
 }

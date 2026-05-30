@@ -17,7 +17,7 @@ public class FileDownloader {
         this.client = client;
     }
 
-    public Path download(String url, String fileName, String targetDir) throws Exception {
+    public Path download(String url, String fileName, Path targetDir) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("User-Agent", "Mozilla/5.0")
@@ -33,7 +33,7 @@ public class FileDownloader {
             throw new RuntimeException("Download failed: " + response.statusCode());
         }
 
-        Path output = Paths.get(targetDir, fileName);
+        Path output = targetDir.resolve(fileName);
         Files.createDirectories(output.getParent());
 
         try (InputStream inputStream = response.body()){

@@ -6,18 +6,20 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.stavarachi.config.AppConfig;
+import ru.stavarachi.config.StorageConfig;
 
 public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
     public void initialize() {
         try {
             final Logger log = LoggerFactory.getLogger(Application.class);
+            StorageConfig.initialize();
             AppConfig appConfig = new AppConfig();
 
             log.info("initializing telegram bot...");
 
-            String token = appConfig.getTokenMain();
-            String userName = appConfig.getUserNameMain();
+            String token = appConfig.getTokenDev();
+            String userName = appConfig.getUserNameDev();
 
             TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
             api.registerBot(new BotApplication(token, userName));

@@ -7,16 +7,17 @@ import org.slf4j.LoggerFactory;
 import ru.stavarachi.model.User;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class UserGroupRepository {
     private final Logger log = LoggerFactory.getLogger(UserGroupRepository.class);
 
-    public Map<Long, User> saveUsersToJson(Map<Long, User> userMap, String pathToSave) {
+    public Map<Long, User> saveUsersToJson(Map<Long, User> userMap, Path path) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(pathToSave), userMap);
+            mapper.writerWithDefaultPrettyPrinter().writeValue(path.toFile(), userMap);
             log.info("User data save");
             return userMap;
         } catch (Exception e) {
@@ -25,17 +26,17 @@ public class UserGroupRepository {
         return userMap;
     }
 
-    public Map<Long, User> loadUsersFromJson(String pathToSave) {
+    public Map<Long, User> loadUsersFromJson(Path path) {
         try {
             ObjectMapper mapper = new ObjectMapper();
-            File file = new File(pathToSave);
+            File file = path.toFile();
 
             if (!file.exists() || file.length() == 0) {
                 return new HashMap<>();
             }
 
             log.info("User data load");
-            return mapper.readValue(new File(pathToSave), new TypeReference<Map<Long, User>>() {});
+            return mapper.readValue(file, new TypeReference<Map<Long, User>>() {});
         } catch (Exception e) {
             log.error("Error: ", e);
             return null;

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.ScheduleConfig;
+import ru.stavarachi.config.StorageConfig;
 import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.handler.CommandHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
@@ -21,6 +22,7 @@ import ru.stavarachi.util.MessageUtil;
 import ru.stavarachi.util.TimeUtil;
 
 import java.io.IOException;
+import java.net.URL;
 
 public class BotApplication extends TelegramLongPollingBot {
     private String userName;
@@ -29,17 +31,16 @@ public class BotApplication extends TelegramLongPollingBot {
     private final Logger log = LoggerFactory.getLogger(BotApplication.class);
     private final PathConfig pathConfig = new PathConfig();
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
-    private final String path = pathConfig.getExcelPath();
 
     public BotApplication(String botToken, String userName) throws IOException {
         this.userName = userName;
         super(botToken);
         new BotCommandService().register(this);
 
-        ExcelChangeService excelChangeService = new ExcelChangeService(pathConfig.getChangePath());
-        ExcelChangeRepository excelChangeRepository = new ExcelChangeRepository(pathConfig.getChangePath());
+        ExcelChangeService excelChangeService = new ExcelChangeService(StorageConfig.changeExcel());
+        ExcelChangeRepository excelChangeRepository = new ExcelChangeRepository(StorageConfig.changeExcel());
         ClientHandler clientHandler = new ClientHandler();
-        ExcelRepository excelRepository = new ExcelRepository(path);
+        ExcelRepository excelRepository = new ExcelRepository(StorageConfig.scheduleExcel());
         ExcelService excelService = new ExcelService();
         UserSettingService userSettingService = new UserSettingService();
         PathConfig pathConfig = new PathConfig();

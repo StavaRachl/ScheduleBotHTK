@@ -9,9 +9,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.stavarachi.service.GroupKeyboardService;
 
 import java.io.File;
+import java.nio.file.Path;
 
 public class MessageUtil {
     private static final Logger log = LoggerFactory.getLogger(MessageUtil.class);
@@ -31,12 +31,12 @@ public class MessageUtil {
         }
     }
 
-    public void sendPhoto(TelegramLongPollingBot bot, long chatId, String text, String pathToFile) {
+    public void sendPhoto(TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
         try {
             SendPhoto sendPhoto = new SendPhoto();
 
             sendPhoto.setChatId(chatId);
-            sendPhoto.setPhoto(new InputFile(new File(pathToFile)));
+            sendPhoto.setPhoto(new InputFile(pathToFile.toFile()));
             sendPhoto.setCaption(text);
             sendPhoto.setParseMode("HTML");
 
@@ -48,14 +48,14 @@ public class MessageUtil {
         }
     }
 
-    public void sendDocument(TelegramLongPollingBot bot, long chatId, String text, String pathToFile) {
+    public void sendDocument(TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
         try {
             SendDocument sendDocument = new SendDocument();
 
             sendDocument.setChatId(chatId);
 
             sendDocument.setDocument(
-                    new InputFile(pathToFile)
+                    new InputFile(pathToFile.toFile())
             );
 
             sendDocument.setCaption(text);

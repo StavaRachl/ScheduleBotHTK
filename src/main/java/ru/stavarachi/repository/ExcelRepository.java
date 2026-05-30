@@ -8,6 +8,8 @@ import ru.stavarachi.config.ScheduleConfig;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
 
 public class ExcelRepository {
     private final FileInputStream fileInputStream;
@@ -17,8 +19,8 @@ public class ExcelRepository {
     String[] listOfSheet = scheduleConfig.getLIST_OF_SHEET();
     private static final Logger log = LoggerFactory.getLogger(ExcelRepository.class);
 
-    public ExcelRepository(String path) throws IOException {
-        this.fileInputStream = new FileInputStream(path);
+    public ExcelRepository(Path path) throws IOException {
+        this.fileInputStream = new FileInputStream(path.toFile());
         dataFormatter = new DataFormatter();
         workbook = new XSSFWorkbook(fileInputStream);
     }

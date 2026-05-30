@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.ScheduleConfig;
+import ru.stavarachi.config.StorageConfig;
 import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
@@ -14,6 +15,8 @@ import ru.stavarachi.repository.ExcelRepository;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
 
+import java.net.URL;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -49,7 +52,7 @@ public class ScheduleService {
         );
     }
 
-    public void save(String html, String path) {
+    public void save(String html, Path path) {
 
         Page page = null;
 
@@ -63,7 +66,7 @@ public class ScheduleService {
 
             card.screenshot(
                     new Locator.ScreenshotOptions()
-                            .setPath(Paths.get(path))
+                            .setPath(path)
             );
 
         } catch (Exception e) {
@@ -78,10 +81,10 @@ public class ScheduleService {
         }
     }
 
-    public String generateScheduleImage(String path, String group, String day, User user) throws Exception {
+    public Path generateScheduleImage(Path excelPath, String group, String day, User user, String month) throws Exception {
         log.info("Start ScheduleService");
 
-        String pathToSave = pathConfig.getPathToSave();
+        Path pathToSave = StorageConfig.scheduleImage();
 
         String sheet = excelRepository.findTargetSheet(group);
         int row = excelRepository.findTargetDay(sheet, day);
@@ -95,7 +98,7 @@ public class ScheduleService {
         int startRowPairsChange = excelChangeRepository.getTargetGroup(group, pairsChangeVariable);
         int startRowClassroomChange = excelChangeRepository.getTargetGroup(group, classroomChangeVariable);
 
-        List<Pair> listOfPairs = excelService.loadPair(path, sheet, day, group, row, col);
+        List<Pair> listOfPairs = excelService.loadPair(excelPath, sheet, day, group, month, row, col);
 
         List<Change> listOfChangePairs = excelChangeService.getChangeOfPair(group, scheduleConfig.getPAIRS_CHANGE(), startRowPairsChange);
         List<Change> listOfChangeClassroom = excelChangeService.getChangeOfPair(group, scheduleConfig.getCLASSROOM_CHANGE(), startRowClassroomChange);

@@ -6,16 +6,19 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.stavarachi.config.ResourceLoader;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 
 public class CallService {
     private static final Logger log = LoggerFactory.getLogger(CallService.class);
     public void sendCall(TelegramLongPollingBot bot, long chatId, String path) {
-        try {
+        try (InputStream inputStream = ResourceLoader.resourceStream(path)){
             SendPhoto photo = new SendPhoto();
 
-            photo.setPhoto(new InputFile(new File(path)));
+            photo.setPhoto(new InputFile(inputStream, "calls.jpg"));
             photo.setChatId(chatId);
 
             bot.execute(photo);
