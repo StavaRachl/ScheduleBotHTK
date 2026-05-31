@@ -4,7 +4,7 @@
 
 <img src="docs/screenshots/banner.png" alt="ScheduleBotHTK Banner" width="100px">
 
-### Telegram-бот для удобного просмотра расписания занятий
+### Telegram-бот для студентов ХТК, предоставляющий актуальное расписание занятий, замены, информацию о звонках и настройку групп непосредственно в Telegram.
 
 <p>
   <img src="https://img.shields.io/badge/Java-26-orange?style=for-the-badge&logo=openjdk" alt="Java">
@@ -20,15 +20,18 @@
 ---
 
 ## 📌 О проекте
+**ScheduleBotHTK** — Telegram-бот для студентов ХТК, предназначенный для получения актуального расписания занятий и замен.
 
-**ScheduleBotHTK** — это Telegram-бот, разработанный для автоматизации просмотра учебного расписания.
-Проект предоставляет студентам быстрый и удобный доступ к:
+Бот автоматически загружает и обрабатывает Excel-файлы расписания, хранит выбранные пользователем группы и предоставляет быстрый доступ к учебной информации через Telegram-интерфейс.
 
-* 📅 расписанию занятий;
-* ⏰ времени звонков;
-* 👥 выбору группы;
-* ℹ️ дополнительной информации;
-* 📊 обработке Excel-файлов с расписанием.
+Основные функции:
+
+- просмотр расписания занятий;
+- просмотр замен;
+- информация о звонках;
+- сохранение выбранной группы;
+- автоматическая загрузка данных из внешних источников;
+- обработка Excel-файлов через Apache POI.
 
 Бот написан на **Java** с использованием библиотеки **TelegramBots API** и поддерживает работу с `.xlsx` файлами через **Apache POI**.
 
@@ -42,7 +45,13 @@
 * Поддержка нескольких групп;
 * Удобная навигация через inline-кнопки;
 * Автоматическая обработка Excel-таблиц.
-* Обработка замен в расписании через API яндекса
+
+## 📥 Автоматическое обновление расписания
+
+* Загрузка расписания с Яндекс.Диска;
+* Обработка публичных ссылок;
+* Автоматическое получение актуальных Excel-файлов;
+* Поддержка расписания замен.
 
 ## ⏱ Информация о звонках
 
@@ -82,23 +91,84 @@
 
 ```text
 src
- └── main
-     ├── java
-     │   └── ru/stavarachi
-     │       ├── app
-     |       ├── client
-     │       ├── config
-     |       ├── downloader
-     │       ├── handler
-     │       ├── model
-     |       ├── parser
-     │       ├── repository
-     │       ├── service
-     │       └── util
-     └── resources
-         ├── images
-         └── tabels
+└── main
+    ├── java
+    │   └── ru.stavarachi
+    │       ├── app
+    │       │   ├── Application.java
+    │       │   └── BotApplication.java
+    │       │
+    │       ├── config
+    │       │   ├── AppConfig.java
+    │       │   ├── BotConfig.java
+    │       │   ├── PathConfig.java
+    │       │   ├── ScheduleConfig.java
+    │       │   ├── StorageConfig.java
+    │       │   └── ResourceLoader.java
+    │       │
+    │       ├── handler
+    │       │   ├── CommandHandler.java
+    │       │   ├── GroupCallbackHandler.java
+    │       │   └── ClientHandler.java
+    │       │
+    │       ├── service
+    │       │   ├── ScheduleService.java
+    │       │   ├── ExcelService.java
+    │       │   ├── ExcelChangeService.java
+    │       │   ├── FileDownloadService.java
+    │       │   ├── UserSettingService.java
+    │       │   ├── GroupKeyboardService.java
+    │       │   ├── BotCommandService.java
+    │       │   ├── CallService.java
+    │       │   ├── InfoService.java
+    │       │   └── SixSevenService.java
+    │       │
+    │       ├── repository
+    │       │   ├── ExcelRepository.java
+    │       │   ├── ExcelChangeRepository.java
+    │       │   └── UserGroupRepository.java
+    │       │
+    │       ├── client
+    │       │   └── YandexDiskClient.java
+    │       │
+    │       ├── downloader
+    │       │   └── FileDownloader.java
+    │       │
+    │       ├── parser
+    │       │   └── PublicLinkParser.java
+    │       │
+    │       ├── model
+    │       │   ├── User.java
+    │       │   ├── Pair.java
+    │       │   ├── Break.java
+    │       │   └── Change.java
+    │       │
+    │       └── util
+    │           ├── MessageUtil.java
+    │           ├── HtmlUtil.java
+    │           ├── HtmlDarkThemeUtil.java
+    │           └── TimeUtil.java
+    │
+    └── resources
+        ├── images
+        └── tabels
 ```
+
+# Назначение пакетов
+
+| Пакет        | Ответственность                                         |
+| ------------ | ------------------------------------------------------- |
+| `app`        | Точка входа и запуск приложения                         |
+| `config`     | Конфигурация приложения, путей и бота                   |
+| `handler`    | Обработка команд и callback-запросов Telegram           |
+| `service`    | Основная бизнес-логика приложения                       |
+| `repository` | Работа с данными расписания и настройками пользователей |
+| `client`     | Взаимодействие с внешними API                           |
+| `downloader` | Загрузка файлов расписания                              |
+| `parser`     | Парсинг публичных ссылок и данных                       |
+| `model`      | Доменные модели приложения                              |
+| `util`       | Вспомогательные утилиты                                 |
+
 
 ---
 
