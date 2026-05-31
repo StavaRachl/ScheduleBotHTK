@@ -120,7 +120,7 @@ src
 ## 1️⃣ Клонирование репозитория
 
 ```bash
-git clone https://github.com/USERNAME/ScheduleBotHTK.git
+git clone https://github.com/StavaRachl/ScheduleBotHTK.git
 cd ScheduleBotHTK
 ```
 
