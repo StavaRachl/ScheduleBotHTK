@@ -113,6 +113,13 @@ public class CommandHandler {
                     messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
                 }
                 break;
+            case "/users":
+                if (chatId == appConfig.getAdminId()) {
+                    messageUtil.sendDocument(bot, chatId, "🗒️Информация о пользователях:", StorageConfig.userJson());
+                } else {
+                    messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
+                }
+                break;
             case "/67":
                 sixSevenService.sendSixSeven(bot, chatId, catPath);
                 break;
