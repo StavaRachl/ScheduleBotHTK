@@ -133,6 +133,7 @@ cd ScheduleBotHTK
 ```env
 BOT_TOKEN=your_bot_token
 BOT_USERNAME=your_bot_username
+ADMIN_ID=your_telegram_user_id
 ```
 
 ---
@@ -180,7 +181,7 @@ src/main/resources/tabels/
 Логи приложения сохраняются в:
 
 ```text
-/logs/error.log
+runtime/logs/error.log
 ```
 
 Настройка логирования находится в:
