@@ -2,6 +2,8 @@ package ru.stavarachi.service;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
 
@@ -16,7 +18,7 @@ import java.util.List;
 public class ExcelChangeService {
     private final Path path;
     private final DataFormatter dataFormatter = new DataFormatter();
-
+    private static final Logger logger = LoggerFactory.getLogger(ExcelChangeService.class);
     public ExcelChangeService(Path path) {
         this.path = path;
     }
@@ -48,10 +50,8 @@ public class ExcelChangeService {
             } else {
                 listOfChangePair.addFirst(new Change(null, typeOfChange.toLowerCase(), null));
             }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("Error: ", e);
         }
         return listOfChangePair;
     }

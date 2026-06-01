@@ -2,6 +2,8 @@ package ru.stavarachi.repository;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.nio.file.Path;
 public class ExcelChangeRepository {
     private final Path path;
     private final DataFormatter dataFormatter = new DataFormatter();
+    private static final Logger logger = LoggerFactory.getLogger(ExcelChangeRepository.class);
 
     public ExcelChangeRepository(Path path) {
         this.path = path;
@@ -33,7 +36,7 @@ public class ExcelChangeRepository {
             }
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("Error: ", e);
         }
         return -1;
     }
@@ -53,7 +56,7 @@ public class ExcelChangeRepository {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            logger.error("Error: ", e);
         }
         return -1;
     }

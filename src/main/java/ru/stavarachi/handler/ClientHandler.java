@@ -28,6 +28,6 @@ public class ClientHandler {
         String url = "https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F6%2F9ALAKFdkSkkpd4OGR6si%2BQt6ofAx4265zSd2fuUCb3K2yBSDEZ%2F4Ef13a8ampdq%2FJ6bpmRyOJonT3VoXnDag%3D%3D&name=%D0%9D%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%82%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D0%B0%20.xlsx";
         Path result = service.download(url, StorageConfig.DOWNLOADS);
 
-        log.info("Info Success saved");
+        log.info("Success saved");
     }
 }

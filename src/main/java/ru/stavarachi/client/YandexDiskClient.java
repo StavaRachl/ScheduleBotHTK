@@ -1,8 +1,12 @@
 package ru.stavarachi.client;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
@@ -13,12 +17,12 @@ import java.nio.charset.StandardCharsets;
 public class YandexDiskClient {
     private final HttpClient client;
     private final ObjectMapper mapper = new ObjectMapper();
-
+    private static final Logger logger = LoggerFactory.getLogger(YandexDiskClient.class);
     public YandexDiskClient(HttpClient client) {
         this.client = client;
     }
 
-    public JsonNode getPublicMeta(String publicKey) throws Exception {
+    public JsonNode getPublicMeta(String publicKey){
         String url =
                 "https://cloud-api.yandex.net/v1/disk/public/resources?public_key="
                         + URLEncoder.encode(publicKey, StandardCharsets.UTF_8);
@@ -28,12 +32,22 @@ public class YandexDiskClient {
                 .GET()
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            throw new RuntimeException("Yandex api error: " + response.body());
+        HttpResponse<String> response = null;
+        try {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error: ", e);
         }
 
-        return mapper.readTree(response.body());
+        if (response.statusCode() != 200) {
+            logger.error("Yandex api error: {}", response.body());
+        }
+
+        try {
+            return mapper.readTree(response.body());
+        } catch (JsonProcessingException e) {
+            logger.error("Error: ", e);
+        }
+        return null;
     }
 }

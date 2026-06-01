@@ -1,14 +1,19 @@
 package ru.stavarachi.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
 public class PublicLinkParser {
-    public String extractPublicKey(String viewUrl) throws IllegalAccessException {
+    private static final Logger logger = LoggerFactory.getLogger(PublicLinkParser.class);
+
+    public String extractPublicKey(String viewUrl) {
         String encoded = extractParam(viewUrl, "url");
 
         if (encoded == null) {
-            throw new IllegalAccessException("Missing url param");
+            logger.error("Missing url param");
         }
 
         String decoded = URLDecoder.decode(encoded, StandardCharsets.UTF_8);

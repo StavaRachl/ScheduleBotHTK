@@ -10,8 +10,6 @@ import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
 
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +23,7 @@ public class ExcelService {
     String[] breaksSlotsForMonday = scheduleConfig.getBREAKS_TIME_SLOTS_FOR_MONDAY();
     String[] breaksSlots = scheduleConfig.getBREAKS_TIME_SLOTS();
 
-    private static final Logger log = LoggerFactory.getLogger(ExcelService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExcelService.class);
 
     public List<Pair> loadPair(Path path, String targetSheet, String targetDay, String targetGroup, String targetMonth, int rowIndex, int colIndex) {
         try (FileInputStream fileInputStream = new FileInputStream(String.valueOf(path))) {
@@ -48,15 +46,6 @@ public class ExcelService {
                     Pair pair = new Pair(i, textOfPair, timeSlotsForMonday[i]);
                     listOfPair.add(pair);
                 }
-            } else if (targetMonth.equals("JUNE")) {
-                for (int i = 1; i <= 3; i++) {
-                    Row row = sheet.getRow(rowIndex -1 + i);
-                    Cell cell = row.getCell(colIndex);
-
-                    String pairText = formatter.formatCellValue(cell);
-                    Pair pair = new Pair(i, pairText, timeSlotsForMonth[i - 1]);
-                    listOfPair.add(pair);
-                }
             } else {
                 for (int i = 1; i <= 3; i++) {
                     Row row = sheet.getRow(rowIndex -1 + i);
@@ -69,7 +58,7 @@ public class ExcelService {
             }
             return listOfPair;
         } catch (Exception e) {
-            log.error("Error: ", e);
+            logger.error("Error: ", e);
             return null;
         }
     }

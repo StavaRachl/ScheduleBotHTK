@@ -49,23 +49,35 @@ public class HtmlUtil {
         }
         html.append("<tr><th style='padding: 13px 0;'></th><th style='padding: 13px 0;'>Замены</th><th style='padding: 13px 0;'></th></tr>");
         for (Change change : changePairList) {
-
-            html.append("<tr style='text-align:center'>")
-                    .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
-                    .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
-                    .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
-                    .append("</tr>");
+            if (change.getCount() == null && change.getTeacher() == null) {
+                html.append("<tr style='background-color:#FFF300; text-align:center'>")
+                        .append("<td style='padding: 8px 0;'></td>")
+                        .append("<td style='padding: 8px 0;'>").append(change.getPair()).append("</td>")
+                        .append("<td style='padding: 8px 0;'></td>")
+                        .append("</tr>");
+            } else {
+                html.append("<tr style='text-align:center'>")
+                        .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
+                        .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
+                        .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
+                        .append("</tr>");
+            }
 
         }
         for (Change change : changeClassroomList) {
-
-            html.append("<tr style='text-align:center'>")
-                    .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
-                    .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
-                    .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
-                    .append("</tr>");
-
-
+            if (change.getCount() == null && change.getTeacher() == null) {
+                html.append("<tr style='background-color:#FFF300; text-align:center'>")
+                        .append("<td style='padding: 8px 0;'></td>")
+                        .append("<td style='padding: 8px 0;'>").append(change.getPair()).append("</td>")
+                        .append("<td style='padding: 8px 0;'></td>")
+                        .append("</tr>");
+            } else {
+                html.append("<tr style='text-align:center'>")
+                        .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
+                        .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
+                        .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
+                        .append("</tr>");
+            }
         }
         html.append("</table></body></html>");
 
