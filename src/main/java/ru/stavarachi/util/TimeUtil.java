@@ -14,7 +14,7 @@ public class TimeUtil {
 
         DayOfWeek day = now.getDayOfWeek();
 
-        if (now.getHour() > 14) {
+        if (now.getHour() > 13) {
             day = day.plus(1);
         }
 
@@ -33,7 +33,7 @@ public class TimeUtil {
 
         DayOfWeek day = now.getDayOfWeek().plus(1);
 
-        if (now.getHour() > 14) {
+        if (now.getHour() > 13) {
             day = day.plus(2);
         }
 

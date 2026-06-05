@@ -85,11 +85,14 @@ public class ScheduleService {
         log.info("Start ScheduleService");
 
         Path pathToSave = StorageConfig.scheduleImage();
-
+        //static schedule
         String sheet = excelRepository.findTargetSheet(group);
         int row = excelRepository.findTargetDay(sheet, day);
         int col = excelRepository.findTargetGroup(sheet, group);
 
+        List<Pair> listOfPairs = excelService.loadPair(excelPath, sheet, day, group, month, row, col);
+
+        //change schedule
         clientHandler.getChange();
 
         int pairsChangeVariable = excelChangeRepository.getChangeVariable(scheduleConfig.getPAIRS_CHANGE());
@@ -98,11 +101,9 @@ public class ScheduleService {
         int startRowPairsChange = excelChangeRepository.getTargetGroup(group, pairsChangeVariable);
         int startRowClassroomChange = excelChangeRepository.getTargetGroup(group, classroomChangeVariable);
 
-        List<Pair> listOfPairs = excelService.loadPair(excelPath, sheet, day, group, month, row, col);
-
+        //schedule lists
         List<Change> listOfChangePairs = excelChangeService.getChangeOfPair(group, scheduleConfig.getPAIRS_CHANGE(), startRowPairsChange);
         List<Change> listOfChangeClassroom = excelChangeService.getChangeOfPair(group, scheduleConfig.getCLASSROOM_CHANGE(), startRowClassroomChange);
-
         List<Object> listOfPairsWithBreaks = excelService.loadPairWithBreaks(listOfPairs, day);
 
         String html;

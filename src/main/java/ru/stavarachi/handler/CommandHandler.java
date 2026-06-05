@@ -73,7 +73,7 @@ public class CommandHandler {
                 String group = userSettingService.getDefaultGroup(chatId);
                 Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), user, timeUtil.getMonth());
 
-                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + " на " + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
+                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
                 break;
             case "/nextrasp":
                 if (!userSettingService.hasDefaultGroup(chatId)) {
@@ -87,7 +87,7 @@ public class CommandHandler {
                 String groupForNextDay = userSettingService.getDefaultGroup(chatId);
                 Path pathForNextDay = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), groupForNextDay, timeUtil.getDayOfWeekPlusDay(), user, timeUtil.getMonth());
 
-                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + groupForNextDay + " на " + timeUtil.getDayOfWeekPlusDay() + ": " + timeUtil.getNumeratorOrDenominator(), pathForNextDay);
+                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + groupForNextDay + "\n" + timeUtil.getDayOfWeekPlusDay() + ": " + timeUtil.getNumeratorOrDenominator(), pathForNextDay);
                 break;
             case "/setdefaultgroup":
                 InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);
