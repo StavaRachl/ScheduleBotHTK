@@ -10,14 +10,12 @@ import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
 import ru.stavarachi.model.User;
-import ru.stavarachi.repository.ExcelChangeRepository;
-import ru.stavarachi.repository.ExcelRepository;
+import ru.stavarachi.repository.ExcelChangeRepositoryImpl;
+import ru.stavarachi.repository.ExcelRepositoryImpl;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
 
-import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class ScheduleService {
@@ -30,19 +28,19 @@ public class ScheduleService {
     private final ScheduleConfig scheduleConfig;
     private final HtmlUtil htmlUtil;
     private final HtmlDarkThemeUtil htmlDarkThemeUtil;
-    private final ExcelRepository excelRepository;
-    private final ExcelChangeRepository excelChangeRepository;
+    private final ExcelRepositoryImpl excelRepositoryImpl;
+    private final ExcelChangeRepositoryImpl excelChangeRepositoryImpl;
     private final ExcelService excelService;
     private final ExcelChangeService excelChangeService;
 
-    public ScheduleService(ClientHandler clientHandler, PathConfig pathConfig, ScheduleConfig scheduleConfig, HtmlUtil htmlUtil, HtmlDarkThemeUtil htmlDarkThemeUtil, ExcelService excelService, ExcelRepository excelRepository, ExcelChangeRepository excelChangeRepository, ExcelChangeService excelChangeService) {
+    public ScheduleService(ClientHandler clientHandler, PathConfig pathConfig, ScheduleConfig scheduleConfig, HtmlUtil htmlUtil, HtmlDarkThemeUtil htmlDarkThemeUtil, ExcelService excelService, ExcelRepositoryImpl excelRepositoryImpl, ExcelChangeRepositoryImpl excelChangeRepositoryImpl, ExcelChangeService excelChangeService) {
         this.clientHandler = clientHandler;
         this.htmlDarkThemeUtil = htmlDarkThemeUtil;
         this.htmlUtil = htmlUtil;
         this.pathConfig = pathConfig;
         this.excelService = excelService;
-        this.excelRepository = excelRepository;
-        this.excelChangeRepository = excelChangeRepository;
+        this.excelRepositoryImpl = excelRepositoryImpl;
+        this.excelChangeRepositoryImpl = excelChangeRepositoryImpl;
         this.excelChangeService = excelChangeService;
         this.scheduleConfig = scheduleConfig;
         this.playwright = Playwright.create();
@@ -86,20 +84,20 @@ public class ScheduleService {
 
         Path pathToSave = StorageConfig.scheduleImage();
         //static schedule
-        String sheet = excelRepository.findTargetSheet(group);
-        int row = excelRepository.findTargetDay(sheet, day);
-        int col = excelRepository.findTargetGroup(sheet, group);
+        String sheet = excelRepositoryImpl.findTargetSheet(group);
+        int row = excelRepositoryImpl.findTargetDay(sheet, day);
+        int col = excelRepositoryImpl.findTargetGroup(sheet, group);
 
         List<Pair> listOfPairs = excelService.loadPair(excelPath, sheet, day, group, month, row, col);
 
         //change schedule
         clientHandler.getChange();
 
-        int pairsChangeVariable = excelChangeRepository.getChangeVariable(scheduleConfig.getPAIRS_CHANGE());
-        int classroomChangeVariable = excelChangeRepository.getChangeVariable(scheduleConfig.getCLASSROOM_CHANGE());
+        int pairsChangeVariable = excelChangeRepositoryImpl.getChangeVariable(scheduleConfig.getPAIRS_CHANGE());
+        int classroomChangeVariable = excelChangeRepositoryImpl.getChangeVariable(scheduleConfig.getCLASSROOM_CHANGE());
 
-        int startRowPairsChange = excelChangeRepository.getTargetGroup(group, pairsChangeVariable);
-        int startRowClassroomChange = excelChangeRepository.getTargetGroup(group, classroomChangeVariable);
+        int startRowPairsChange = excelChangeRepositoryImpl.getTargetGroup(group, pairsChangeVariable);
+        int startRowClassroomChange = excelChangeRepositoryImpl.getTargetGroup(group, classroomChangeVariable);
 
         //schedule lists
         List<Change> listOfChangePairs = excelChangeService.getChangeOfPair(group, scheduleConfig.getPAIRS_CHANGE(), startRowPairsChange);

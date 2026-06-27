@@ -1,63 +1,7 @@
 package ru.stavarachi.repository;
 
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public interface ExcelChangeRepository {
+    int getChangeVariable(String typeOfChange);
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-
-public class ExcelChangeRepository {
-    private final Path path;
-    private final DataFormatter dataFormatter = new DataFormatter();
-    private static final Logger logger = LoggerFactory.getLogger(ExcelChangeRepository.class);
-
-    public ExcelChangeRepository(Path path) {
-        this.path = path;
-    }
-
-    public int getChangeVariable(String typeOfChange) {
-        try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-            Sheet sheet = workbook.getSheet("замена");
-            for (Row row : sheet) {
-
-                if (row == null) {
-                    continue;
-                }
-
-                String text = dataFormatter.formatCellValue(row.getCell(0));
-
-                if (text.equals(typeOfChange)) {
-                    return row.getRowNum();
-                }
-            }
-
-        } catch (IOException e) {
-            logger.error("Error: ", e);
-        }
-        return -1;
-    }
-
-    public int getTargetGroup(String targetGroup, int startRow) {
-        int rowIndex = 0;
-        try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-            Sheet sheet = workbook.getSheet("замена");
-            for (int i = startRow; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
-                if (row == null) continue;
-
-                String text = dataFormatter.formatCellValue(row.getCell(0));
-
-                if (text.equals(targetGroup)) {
-                    return row.getRowNum();
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error: ", e);
-        }
-        return -1;
-    }
+    int getTargetGroup(String targetGroup, int startRow);
 }
