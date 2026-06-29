@@ -13,9 +13,6 @@ import ru.stavarachi.handler.GroupCallbackHandler;
 import ru.stavarachi.repository.ExcelChangeRepositoryImpl;
 import ru.stavarachi.repository.ExcelRepositoryImpl;
 import ru.stavarachi.service.*;
-import ru.stavarachi.service.telegram.CallService;
-import ru.stavarachi.service.telegram.InfoService;
-import ru.stavarachi.service.telegram.SixSevenService;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
 import ru.stavarachi.util.MessageUtil;
@@ -28,7 +25,6 @@ public class BotApplication extends TelegramLongPollingBot {
     private final CommandHandler commandHandler;
     private final GroupCallbackHandler groupCallbackHandler;
     private final Logger log = LoggerFactory.getLogger(BotApplication.class);
-    private final PathConfig pathConfig = new PathConfig();
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
 
     public BotApplication(String botToken, String userName) throws IOException {
@@ -39,20 +35,18 @@ public class BotApplication extends TelegramLongPollingBot {
         ExcelChangeService excelChangeService = new ExcelChangeService(StorageConfig.changeExcel());
         ExcelChangeRepositoryImpl excelChangeRepositoryImpl = new ExcelChangeRepositoryImpl(StorageConfig.changeExcel());
         ClientHandler clientHandler = new ClientHandler();
-        ExcelRepositoryImpl excelRepositoryImpl = new ExcelRepositoryImpl(StorageConfig.scheduleExcel());
+        ExcelRepositoryImpl excelRepositoryImpl = new ExcelRepositoryImpl(StorageConfig.scheduleExcel(), scheduleConfig);
         ExcelService excelService = new ExcelService();
         UserSettingService userSettingService = new UserSettingService();
         PathConfig pathConfig = new PathConfig();
         HtmlUtil htmlUtil = new HtmlUtil();
         HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
         ScheduleService scheduleService = new ScheduleService(clientHandler, pathConfig, scheduleConfig, htmlUtil, htmlDarkThemeUtil, excelService, excelRepositoryImpl, excelChangeRepositoryImpl, excelChangeService);
-        InfoService infoService = new InfoService();
-        CallService callService = new CallService();
-        SixSevenService sixSevenService = new SixSevenService();
         GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
         MessageUtil messageUtil = new MessageUtil();
         TimeUtil timeUtil = new TimeUtil();
-        this.commandHandler = new CommandHandler(userSettingService, scheduleService, infoService, callService, sixSevenService, groupKeyboardService, messageUtil, timeUtil);
+        CommandService commandService = new CommandService(messageUtil, timeUtil, userSettingService, scheduleService, groupKeyboardService);
+        this.commandHandler = new CommandHandler(userSettingService, commandService);
         this.groupCallbackHandler = new GroupCallbackHandler(userSettingService, groupKeyboardService);
     }
 

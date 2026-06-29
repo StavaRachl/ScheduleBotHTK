@@ -10,7 +10,7 @@ import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.UserSettingService;
 
-public class GroupCallbackHandler {
+public class GroupCallbackHandler implements Handler<String>{
     private final GroupKeyboardService groupKeyboardService;
     private final UserSettingService userSettingService;
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
@@ -26,7 +26,7 @@ public class GroupCallbackHandler {
 
         try {
 
-            if (!update.hasCallbackQuery()) return "";
+            if (!update.hasCallbackQuery()) return null;
 
             String data = update.getCallbackQuery().getData();
 
@@ -57,7 +57,7 @@ public class GroupCallbackHandler {
 
                 bot.execute(edit);
 
-                return "";
+                return null;
             }
 
             if (data.startsWith("group:")) {
@@ -74,7 +74,6 @@ public class GroupCallbackHandler {
                                 .build()
                 );
 
-                return group;
             }
 
         } catch (TelegramApiException e) {
@@ -86,6 +85,6 @@ public class GroupCallbackHandler {
             log.error("Error: ", e);
         }
 
-        return "";
+        return null;
     }
 }

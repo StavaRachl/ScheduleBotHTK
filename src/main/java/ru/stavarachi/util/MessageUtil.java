@@ -48,6 +48,19 @@ public class MessageUtil {
         }
     }
 
+    public void sendPhoto(TelegramLongPollingBot bot, long chatId, InputFile inputFile) {
+        try {
+            SendPhoto sendPhoto = new SendPhoto();
+
+            sendPhoto.setChatId(chatId);
+            sendPhoto.setPhoto(inputFile);
+
+            bot.execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            log.error("Telegram Error: ", e);
+        }
+    }
+
     public void sendDocument(TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
         try {
             SendDocument sendDocument = new SendDocument();

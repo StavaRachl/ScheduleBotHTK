@@ -2,51 +2,26 @@ package ru.stavarachi.handler;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.stavarachi.config.*;
 import ru.stavarachi.model.User;
-import ru.stavarachi.service.GroupKeyboardService;
-import ru.stavarachi.service.ScheduleService;
+import ru.stavarachi.service.CommandService;
 import ru.stavarachi.service.UserSettingService;
-import ru.stavarachi.service.telegram.CallService;
-import ru.stavarachi.service.telegram.InfoService;
-import ru.stavarachi.service.telegram.SixSevenService;
-import ru.stavarachi.util.MessageUtil;
-import ru.stavarachi.util.TimeUtil;
 
-import java.nio.file.Path;
-
-public class CommandHandler {
+public class CommandHandler implements Handler<Void>{
     private final UserSettingService userSettingService;
-    private final ScheduleService scheduleService;
-    private final InfoService infoService;
-    private final CallService callService;
-    private final SixSevenService sixSevenService;
-    private final GroupKeyboardService groupKeyboardService;
-    private final MessageUtil messageUtil;
-    private final TimeUtil timeUtil;
+    private final CommandService commandService;
 
     private final PathConfig pathConfig = new PathConfig();
-    private final ScheduleConfig scheduleConfig = new ScheduleConfig();
-    private final BotConfig botConfig = new BotConfig();
-    private final AppConfig appConfig = new AppConfig();
 
-    public CommandHandler(UserSettingService userSettingService, ScheduleService scheduleService, InfoService infoService, CallService callService, SixSevenService sixSevenService, GroupKeyboardService groupKeyboardService, MessageUtil messageUtil, TimeUtil timeUtil) {
+    public CommandHandler(UserSettingService userSettingService, CommandService commandService) {
         this.userSettingService = userSettingService;
-        this.scheduleService = scheduleService;
-        this.infoService = infoService;
-        this.callService = callService;
-        this.sixSevenService = sixSevenService;
-        this.groupKeyboardService = groupKeyboardService;
-        this.messageUtil = messageUtil;
-        this.timeUtil = timeUtil;
+        this.commandService = commandService;
     }
-    private final String callsPath = pathConfig.getCallsPath();
-    private final String callsJunePath = pathConfig.getCallsPathJune();
-    private final String catPath = pathConfig.getCatPath();
 
-    public void handle(Update update, TelegramLongPollingBot bot) throws Exception {
-        if (!update.hasMessage() || !update.getMessage().hasText()) return;
+    private final String callsPath = pathConfig.getCallsPath();
+
+    public Void handle(Update update, TelegramLongPollingBot bot) throws Exception {
+        if (!update.hasMessage() || !update.getMessage().hasText()) return null;
 
         String command = update.getMessage().getText().split(" ")[0];
         long chatId = update.getMessage().getChatId();
@@ -59,70 +34,33 @@ public class CommandHandler {
 
         switch (command) {
             case "/start":
-                messageUtil.sendMessage(bot, chatId, "✅Бот запущен.");
-                messageUtil.sendMessage(bot, chatId, "⚠️ВНИМАНИЕ! Перед использованием бота просим вас установить необходимую вам группу командой /setdefaultgroup.");
+                commandService.startCommand(bot, chatId);
                 break;
             case "/rasp":
-                if (!userSettingService.hasDefaultGroup(chatId)) {
-                    messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
-                    break;
-                }
-
-                messageUtil.sendMessage(bot, chatId, "Идёт получение расписания, пожалуйста подождите⌛");
-
-                String group = userSettingService.getDefaultGroup(chatId);
-                Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), user, timeUtil.getMonth());
-
-                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
+                commandService.raspCommand(bot, chatId, user);
                 break;
             case "/nextrasp":
-                if (!userSettingService.hasDefaultGroup(chatId)) {
-                    messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
-                    break;
-                }
-
-                messageUtil.sendMessage(bot, chatId, "Идёт получение расписания, пожалуйста подождите⌛");
-
-
-                String groupForNextDay = userSettingService.getDefaultGroup(chatId);
-                Path pathForNextDay = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), groupForNextDay, timeUtil.getDayOfWeekPlusDay(), user, timeUtil.getMonth());
-
-                messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + groupForNextDay + "\n" + timeUtil.getDayOfWeekPlusDay() + ": " + timeUtil.getNumeratorOrDenominator(), pathForNextDay);
+                commandService.nextRaspCommand(bot, chatId, user);
                 break;
             case "/setdefaultgroup":
-                InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);
-                messageUtil.sendKeyboard(bot, chatId, botConfig.getKeyboardMessage(), keyboardMarkup);
+                commandService.setDefaultGroupCommand(bot, chatId);
                 break;
             case "/settheme":
-                userSettingService.toggleTheme(chatId);
-                messageUtil.sendMessage(bot, chatId, "Тема сменена");
+                commandService.setThemeCommand(bot, chatId);
                 break;
             case "/zvonki":
-                callService.sendCall(bot, chatId, callsPath);
-                break;
-            case "/zvonkijune":
-                callService.sendCall(bot, chatId, callsJunePath);
+                commandService.zvonkiCommand(bot, chatId, callsPath);
                 break;
             case "/info":
-                infoService.sendInfo(bot, chatId);
+                commandService.infoCommand(bot, chatId);
                 break;
             case "/log":
-                if (chatId == appConfig.getAdminId()) {
-                    messageUtil.sendDocument(bot, chatId, "🗒️Отсчет о работе бота:", StorageConfig.logger());
-                } else {
-                    messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
-                }
+                commandService.logCommand(bot, chatId);
                 break;
             case "/users":
-                if (chatId == appConfig.getAdminId()) {
-                    messageUtil.sendDocument(bot, chatId, "🗒️Информация о пользователях:", StorageConfig.userJson());
-                } else {
-                    messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
-                }
-                break;
-            case "/67":
-                sixSevenService.sendSixSeven(bot, chatId, catPath);
+                commandService.usersCommand(bot, chatId);
                 break;
         }
+        return null;
     }
 }

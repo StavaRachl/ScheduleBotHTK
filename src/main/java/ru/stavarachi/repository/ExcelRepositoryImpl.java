@@ -14,12 +14,11 @@ public class ExcelRepositoryImpl implements ExcelRepository{
     private final FileInputStream fileInputStream;
     private final Workbook workbook;
     private final DataFormatter dataFormatter;
-    ScheduleConfig scheduleConfig = new ScheduleConfig();
-    String[] listOfSheet = scheduleConfig.getLIST_OF_SHEET();
-    private static final Logger log = LoggerFactory.getLogger(ExcelRepositoryImpl.class);
+    private final ScheduleConfig scheduleConfig;
 
-    public ExcelRepositoryImpl(Path path) throws IOException {
+    public ExcelRepositoryImpl(Path path, ScheduleConfig scheduleConfig) throws IOException {
         this.fileInputStream = new FileInputStream(path.toFile());
+        this.scheduleConfig = scheduleConfig;
         dataFormatter = new DataFormatter();
         workbook = new XSSFWorkbook(fileInputStream);
     }
@@ -62,7 +61,7 @@ public class ExcelRepositoryImpl implements ExcelRepository{
     public String findTargetSheet(String targetGroup) {
         String targetSheet = "";
 
-        for (String sheetName : listOfSheet) {
+        for (String sheetName : scheduleConfig.getLIST_OF_SHEET()) {
             Sheet sheet = workbook.getSheet(sheetName);
 
             for (Row row : sheet) {
