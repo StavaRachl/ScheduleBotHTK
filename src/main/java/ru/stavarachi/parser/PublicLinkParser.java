@@ -1,5 +1,6 @@
 package ru.stavarachi.parser;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,7 @@ public class PublicLinkParser {
         return decoded.replace("ya-disk-public://", "");
     }
 
-    public String extractParam(String url, String key) {
+    public String extractParam(@NotNull String url, String key) {
         String[] parts = url.split("\\?");
 
         if (parts.length < 2) return null;

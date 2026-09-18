@@ -38,22 +38,28 @@ public class ExcelService {
             }
 
             if (targetDay.equals("Понедельник") && !targetMonth.equals("JUNE")) {
-                for (int i = 1; i <= 3; i++) {
+                for (int i = 1; i <= 4; i++) {
                     Row row = sheet.getRow(rowIndex - 1 + i);
                     Cell cell = row.getCell(colIndex);
 
                     String textOfPair = formatter.formatCellValue(cell);
-                    Pair pair = new Pair(i, textOfPair, timeSlotsForMonday[i]);
-                    listOfPair.add(pair);
+
+                    if (!textOfPair.isBlank()) {
+                        Pair pair = new Pair(i, textOfPair, timeSlotsForMonday[i]);
+                        listOfPair.add(pair);
+                    }
                 }
             } else {
-                for (int i = 1; i <= 3; i++) {
+                for (int i = 1; i <= 4; i++) {
                     Row row = sheet.getRow(rowIndex -1 + i);
                     Cell cell = row.getCell(colIndex);
 
                     String pairText = formatter.formatCellValue(cell);
-                    Pair pair = new Pair(i, pairText, timeSlots[i - 1]);
-                    listOfPair.add(pair);
+
+                    if (!pairText.isBlank()) {
+                        Pair pair = new Pair(i, pairText, timeSlots[i - 1]);
+                        listOfPair.add(pair);
+                    }
                 }
             }
             return listOfPair;

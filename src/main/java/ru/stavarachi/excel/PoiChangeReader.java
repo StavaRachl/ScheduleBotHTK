@@ -1,6 +1,9 @@
-package ru.stavarachi.repository;
+package ru.stavarachi.excel;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +12,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class ExcelChangeRepositoryImpl implements ExcelChangeRepository{
+public class PoiChangeReader implements ChangeReader{
     private final Path path;
-    private final DataFormatter dataFormatter = new DataFormatter();
-    private static final Logger logger = LoggerFactory.getLogger(ExcelChangeRepositoryImpl.class);
+    private final DataFormatter dataFormatter;
+    private static final Logger logger = LoggerFactory.getLogger(PoiChangeReader.class);
 
-    public ExcelChangeRepositoryImpl(Path path) {
+    public PoiChangeReader(Path path) {
         this.path = path;
+        dataFormatter = new DataFormatter();
     }
 
     @Override

@@ -1,6 +1,6 @@
-package ru.stavarachi.repository;
+package ru.stavarachi.excel;
 
-public interface ExcelRepository {
+public interface ScheduleReader {
     int findTargetGroup(String sheetName, String targetGroup);
 
     int findTargetDay(String sheetName, String targetDay);

@@ -1,47 +1,63 @@
 package ru.stavarachi.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import ru.stavarachi.config.StorageConfig;
 import ru.stavarachi.model.User;
-import ru.stavarachi.repository.UserGroupRepositoryImpl;
+import ru.stavarachi.repository.SQLiteUserRepository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserSettingService {
     private final Map<Long, User> userMap;
+    private final SQLiteUserRepository sqLiteUserRepository;
 
-    private final UserGroupRepositoryImpl userGroupRepositoryImpl = new UserGroupRepositoryImpl();
-    private final Logger log = LoggerFactory.getLogger(UserSettingService.class);
+    public UserSettingService(SQLiteUserRepository sqLiteUserRepository) {
+        this.userMap = new ConcurrentHashMap<>();
+        this.sqLiteUserRepository = sqLiteUserRepository;
 
-    public UserSettingService() {
-        this.userMap = new ConcurrentHashMap<>(userGroupRepositoryImpl.loadUsersFromJson(StorageConfig.userJson()));
+        sqLiteUserRepository.findAll().forEach(user -> userMap.put(user.getId(), user));
     }
 
-    public void toggleTheme(long chatId) {
+    public List<User> getAllUsers() {
+        return sqLiteUserRepository.findAll();
+    }
+
+    public void toggleTheme(Long chatId) {
         User user = userMap.get(chatId);
+
+        if (user == null) {
+            user = new User(chatId, null, true);
+            userMap.put(chatId, user);
+            sqLiteUserRepository.save(user);
+            return;
+        }
 
         user.setDarkTheme(!user.isDarkTheme());
 
-        userGroupRepositoryImpl.saveUsersToJson(userMap, StorageConfig.userJson());
+        sqLiteUserRepository.update(user);
     }
 
-    public void setDefaultGroup(Long chatId, String group) {
+    public void setDefaultGroup(long chatId, String group) {
+
         User user = userMap.get(chatId);
 
         if (user == null) {
             user = new User(chatId, group, false);
-        } else {
-            user.setGroup(group);
+
+            userMap.put(chatId, user);
+            sqLiteUserRepository.save(user);
+
+            return;
         }
 
-        userMap.put(chatId, user);
+        user.setGroup(group);
 
-        userGroupRepositoryImpl.saveUsersToJson(userMap, StorageConfig.userJson());
+        sqLiteUserRepository.update(user);
     }
 
-    public String getDefaultGroup(Long chatId) {
+    public String getDefaultGroup(long chatId) {
+
         User user = userMap.get(chatId);
 
         if (user == null) {
@@ -51,11 +67,18 @@ public class UserSettingService {
         return user.getGroup();
     }
 
-    public boolean hasDefaultGroup(Long chatId) {
-        return userMap.containsKey(chatId) && userMap.get(chatId).getGroup() != null;
+    public boolean hasDefaultGroup(long chatId) {
+
+        User user = userMap.get(chatId);
+
+        return user != null && user.getGroup() != null;
     }
 
-    public User getUser(Long chatId) {
+    public User getUser(long chatId) {
         return userMap.get(chatId);
+    }
+
+    public Map<Long, User> getUsers() {
+        return userMap;
     }
 }

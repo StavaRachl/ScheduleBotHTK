@@ -3,7 +3,7 @@ package ru.stavarachi;
 import ru.stavarachi.app.Application;
 
 public class Main {
-    static void main() {
+    public static void main(String[] args) {
         Application app = new Application();
         app.initialize();
     }

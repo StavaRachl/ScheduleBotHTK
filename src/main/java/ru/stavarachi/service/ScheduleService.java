@@ -1,17 +1,18 @@
 package ru.stavarachi.service;
 
 import com.microsoft.playwright.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.config.StorageConfig;
+import ru.stavarachi.excel.PoiChangeReader;
+import ru.stavarachi.excel.PoiScheduleReader;
 import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
 import ru.stavarachi.model.User;
-import ru.stavarachi.repository.ExcelChangeRepositoryImpl;
-import ru.stavarachi.repository.ExcelRepositoryImpl;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
 
@@ -28,19 +29,19 @@ public class ScheduleService {
     private final ScheduleConfig scheduleConfig;
     private final HtmlUtil htmlUtil;
     private final HtmlDarkThemeUtil htmlDarkThemeUtil;
-    private final ExcelRepositoryImpl excelRepositoryImpl;
-    private final ExcelChangeRepositoryImpl excelChangeRepositoryImpl;
+    private final PoiChangeReader poiChangeReader;
+    private final PoiScheduleReader poiScheduleReader;
     private final ExcelService excelService;
     private final ExcelChangeService excelChangeService;
 
-    public ScheduleService(ClientHandler clientHandler, PathConfig pathConfig, ScheduleConfig scheduleConfig, HtmlUtil htmlUtil, HtmlDarkThemeUtil htmlDarkThemeUtil, ExcelService excelService, ExcelRepositoryImpl excelRepositoryImpl, ExcelChangeRepositoryImpl excelChangeRepositoryImpl, ExcelChangeService excelChangeService) {
+    public ScheduleService(ClientHandler clientHandler, PathConfig pathConfig, ScheduleConfig scheduleConfig, HtmlUtil htmlUtil, HtmlDarkThemeUtil htmlDarkThemeUtil, PoiChangeReader poiChangeReader, PoiScheduleReader poiScheduleReader, ExcelService excelService, ExcelChangeService excelChangeService) {
         this.clientHandler = clientHandler;
         this.htmlDarkThemeUtil = htmlDarkThemeUtil;
         this.htmlUtil = htmlUtil;
         this.pathConfig = pathConfig;
+        this.poiChangeReader = poiChangeReader;
+        this.poiScheduleReader = poiScheduleReader;
         this.excelService = excelService;
-        this.excelRepositoryImpl = excelRepositoryImpl;
-        this.excelChangeRepositoryImpl = excelChangeRepositoryImpl;
         this.excelChangeService = excelChangeService;
         this.scheduleConfig = scheduleConfig;
         this.playwright = Playwright.create();
@@ -79,25 +80,25 @@ public class ScheduleService {
         }
     }
 
-    public Path generateScheduleImage(Path excelPath, String group, String day, User user, String month) throws Exception {
+    public Path generateScheduleImage(Path excelPath, String group, String day, @NotNull User user, String month) throws Exception {
         log.info("Start ScheduleService");
 
         Path pathToSave = StorageConfig.scheduleImage();
         //static schedule
-        String sheet = excelRepositoryImpl.findTargetSheet(group);
-        int row = excelRepositoryImpl.findTargetDay(sheet, day);
-        int col = excelRepositoryImpl.findTargetGroup(sheet, group);
+        String sheet = poiScheduleReader.findTargetSheet(group);
+        int row = poiScheduleReader.findTargetDay(sheet, day);
+        int col = poiScheduleReader.findTargetGroup(sheet, group);
 
         List<Pair> listOfPairs = excelService.loadPair(excelPath, sheet, day, group, month, row, col);
 
         //change schedule
         clientHandler.getChange();
 
-        int pairsChangeVariable = excelChangeRepositoryImpl.getChangeVariable(scheduleConfig.getPAIRS_CHANGE());
-        int classroomChangeVariable = excelChangeRepositoryImpl.getChangeVariable(scheduleConfig.getCLASSROOM_CHANGE());
+        int pairsChangeVariable = poiChangeReader.getChangeVariable(scheduleConfig.getPAIRS_CHANGE());
+        int classroomChangeVariable = poiChangeReader.getChangeVariable(scheduleConfig.getCLASSROOM_CHANGE());
 
-        int startRowPairsChange = excelChangeRepositoryImpl.getTargetGroup(group, pairsChangeVariable);
-        int startRowClassroomChange = excelChangeRepositoryImpl.getTargetGroup(group, classroomChangeVariable);
+        int startRowPairsChange = poiChangeReader.getTargetGroup(group, pairsChangeVariable);
+        int startRowClassroomChange = poiChangeReader.getTargetGroup(group, classroomChangeVariable);
 
         //schedule lists
         List<Change> listOfChangePairs = excelChangeService.getChangeOfPair(group, scheduleConfig.getPAIRS_CHANGE(), startRowPairsChange);

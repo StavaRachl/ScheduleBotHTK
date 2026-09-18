@@ -1,5 +1,7 @@
 package ru.stavarachi.model;
 
+import org.jetbrains.annotations.Contract;
+
 public class Change {
     private Integer count;
     private String pair;

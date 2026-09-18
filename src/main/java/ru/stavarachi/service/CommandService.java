@@ -5,12 +5,15 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.stavarachi.config.*;
 import ru.stavarachi.model.User;
+import ru.stavarachi.service.report.UserReportService;
 import ru.stavarachi.util.MessageUtil;
 import ru.stavarachi.util.TimeUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class CommandService {
     private final MessageUtil messageUtil;
@@ -18,17 +21,19 @@ public class CommandService {
     private final UserSettingService userSettingService;
     private final ScheduleService scheduleService;
     private final GroupKeyboardService groupKeyboardService;
+    private final UserReportService userReportService;
 
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
     private final BotConfig botConfig = new BotConfig();
     private final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, UserSettingService userSettingService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, UserSettingService userSettingService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
         this.userSettingService = userSettingService;
         this.scheduleService = scheduleService;
         this.groupKeyboardService = groupKeyboardService;
+        this.userReportService = userReportService;
     }
 
     public void startCommand(TelegramLongPollingBot bot, Long chatId) {
@@ -97,7 +102,14 @@ public class CommandService {
 
     public void usersCommand(TelegramLongPollingBot bot, Long chatId) {
         if (chatId == appConfig.getAdminId()) {
-            messageUtil.sendDocument(bot, chatId, "🗒️Информация о пользователях:", StorageConfig.userJson());
+            try {
+                Path report = userReportService.generateUsersReport();
+                messageUtil.sendDocument(bot, chatId, "📃 Отчёт о пользователях", report);
+
+                Files.deleteIfExists(report);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
         }

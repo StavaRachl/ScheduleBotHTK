@@ -1,16 +1,24 @@
-2026-05-31 00:17:33 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
-2026-05-31 00:18:21 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
-2026-05-31 00:18:24 [INFO] ru.stavarachi.repository.UserGroupRepository - User data load
-2026-05-31 00:18:47 [INFO] ru.stavarachi.app.Application - bot success initialize
-2026-05-31 00:20:28 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
-2026-05-31 00:20:31 [INFO] ru.stavarachi.repository.UserGroupRepository - User data load
-2026-05-31 00:20:46 [INFO] ru.stavarachi.app.Application - bot success initialize
-2026-05-31 00:20:51 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
-2026-05-31 00:20:55 [INFO] ru.stavarachi.handler.ClientHandler - Info Success saved
-2026-05-31 00:20:56 [INFO] ru.stavarachi.service.ScheduleService - ScheduleService complete work
-2026-05-31 00:26:54 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
-2026-05-31 00:26:57 [INFO] ru.stavarachi.repository.UserGroupRepository - User data load
-2026-05-31 00:27:11 [INFO] ru.stavarachi.app.Application - bot success initialize
-2026-05-31 00:27:22 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
-2026-05-31 00:27:26 [INFO] ru.stavarachi.handler.ClientHandler - Info Success saved
-2026-05-31 00:27:26 [INFO] ru.stavarachi.service.ScheduleService - ScheduleService complete work
+2026-09-15 20:00:33 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-09-15 20:00:46 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-09-15 20:00:47 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-09-15 20:00:51 [INFO] ru.stavarachi.handler.ClientHandler - Success saved
+2026-09-15 20:03:41 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-09-15 20:03:51 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-09-15 20:03:54 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-09-15 20:03:57 [INFO] ru.stavarachi.handler.ClientHandler - Success saved
+2026-09-15 20:03:58 [INFO] ru.stavarachi.service.ScheduleService - ScheduleService complete work
+2026-09-15 20:06:26 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-09-15 20:06:36 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-09-15 20:06:41 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-09-15 20:06:44 [INFO] ru.stavarachi.handler.ClientHandler - Success saved
+2026-09-15 20:06:45 [INFO] ru.stavarachi.service.ScheduleService - ScheduleService complete work
+2026-09-15 20:07:00 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-09-15 20:07:09 [INFO] ru.stavarachi.app.Application - bot success initialize
+2026-09-15 20:07:11 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-09-15 20:07:14 [INFO] ru.stavarachi.handler.ClientHandler - Success saved
+2026-09-15 20:07:15 [INFO] ru.stavarachi.service.ScheduleService - ScheduleService complete work
+2026-09-15 20:07:36 [INFO] ru.stavarachi.service.ScheduleService - Start ScheduleService
+2026-09-15 20:07:38 [INFO] ru.stavarachi.handler.ClientHandler - Success saved
+2026-09-15 20:07:39 [INFO] ru.stavarachi.service.ScheduleService - ScheduleService complete work
+2026-09-15 22:13:00 [INFO] ru.stavarachi.app.Application - initializing telegram bot...
+2026-09-15 22:13:14 [INFO] ru.stavarachi.app.Application - bot success initialize
