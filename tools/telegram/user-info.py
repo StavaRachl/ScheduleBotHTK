@@ -6,12 +6,12 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-TOKEN = os.getenv('TELEGRAM_TOKEN')
+TOKEN: str = os.getenv('TELEGRAM_TOKEN')
 
 
-async def main(chat_id: int):
+async def main(user_chat_id: int) -> None:
     async with Bot(TOKEN) as bot:
-        chat = await bot.get_chat(chat_id)
+        chat = await bot.get_chat(user_chat_id)
 
         print(f"ID:          {chat.id}")
         print(f"Username:    @{chat.username}" if chat.username else "Username:    отсутствует")
@@ -22,11 +22,11 @@ async def main(chat_id: int):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Использование: python user-info.py <chat_id>")
+        print("Использование: command <chat_id>")
         sys.exit(1)
 
     try:
-        chat_id = int(sys.argv[1])
+        chat_id: int = int(sys.argv[1])
     except ValueError:
         print("chat_id должен быть числом")
         sys.exit(1)
