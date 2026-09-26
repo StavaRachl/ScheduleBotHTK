@@ -39,7 +39,7 @@ services:
     restart: "no"
 
   postgres:
-    image: postgres:18
+    image: postgres:17
 
     container_name: schedulebot-postgres
 
@@ -50,7 +50,6 @@ services:
 
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./postgresql/init:/docker-entrypoint-initdb.d:ro
 
     healthcheck:
       test:
