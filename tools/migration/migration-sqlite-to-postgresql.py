@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
@@ -8,9 +9,13 @@ import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extensions import connection as PostgresConnection
 
-PROJECT_ROOT: Path = Path(__file__).resolve().parent.parent.parent
+
+PROJECT_ROOT = Path("/tools")
+RUNTIME_DIR = PROJECT_ROOT / "runtime"
+SQLITE_DATABASE = RUNTIME_DIR / "data" / "schedule.db"
 
 load_dotenv(PROJECT_ROOT / ".env")
+
 
 @dataclass(frozen=True)
 class PostgresConfig:
@@ -20,19 +25,24 @@ class PostgresConfig:
     user: str
     password: str
 
+
 @dataclass(frozen=True)
 class User:
     chat_id: int
     group_name: str
     dark_theme: bool
 
+
 def get_required_env(name: str) -> str:
-    value: str | None = __import__("os").getenv(name)
+    value = os.getenv(name)
 
     if value is None or value.strip() == "":
-        raise RuntimeError(f"Enviroment variable '{value}' is not set")
+        raise RuntimeError(
+            f"Environment variable '{name}' is not set"
+        )
 
     return value
+
 
 def load_postgres_config() -> PostgresConfig:
     return PostgresConfig(
@@ -43,8 +53,9 @@ def load_postgres_config() -> PostgresConfig:
         password=get_required_env("POSTGRES_PASSWORD")
     )
 
+
 def create_postgres_table(connection: PostgresConnection) -> None:
-    sql: str = """
+    sql = """
         CREATE TABLE IF NOT EXISTS users (
             chat_id BIGINT PRIMARY KEY,
             group_name VARCHAR(255) NOT NULL,
@@ -55,17 +66,21 @@ def create_postgres_table(connection: PostgresConnection) -> None:
     with connection.cursor() as cursor:
         cursor.execute(sql)
 
+
 def read_users(connection: sqlite3.Connection) -> list[User]:
     users: list[User] = []
 
-    cursor: sqlite3.Cursor = connection.cursor()
+    cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT chat_id, group_name, dark_theme
-        FROM users
-    """)
+    try:
+        cursor.execute("""
+            SELECT chat_id, group_name, dark_theme
+            FROM users
+        """)
 
-    rows: list[tuple[int, str, bool]] = cursor.fetchall()
+        rows = cursor.fetchall()
+    finally:
+        cursor.close()
 
     for chat_id, group_name, dark_theme in rows:
         users.append(
@@ -75,17 +90,21 @@ def read_users(connection: sqlite3.Connection) -> list[User]:
                 dark_theme=bool(dark_theme)
             )
         )
-    
+
     return users
 
-def migrate_users(users: list[User], connection: PostgresConnection) -> None:
-    sql: str = """
+
+def migrate_users(
+        users: list[User],
+        connection: PostgresConnection
+) -> None:
+    sql = """
         INSERT INTO users (
             chat_id,
             group_name,
             dark_theme
         )
-        VALUES(%s, %s, %s)
+        VALUES (%s, %s, %s)
         ON CONFLICT (chat_id)
         DO UPDATE SET
             group_name = EXCLUDED.group_name,
@@ -95,56 +114,61 @@ def migrate_users(users: list[User], connection: PostgresConnection) -> None:
     with connection.cursor() as cursor:
         for user in users:
             cursor.execute(
-                sql, (
+                sql,
+                (
                     user.chat_id,
                     user.group_name,
                     user.dark_theme
                 )
             )
 
+
 def count_sqlite_users(connection: sqlite3.Connection) -> int:
-    cursor: sqlite3.Cursor = connection.cursor()
+    cursor = connection.cursor()
 
-    cursor.execute("SELECT COUNT(*) FROM users")
-
-    result: tuple[int] | None = cursor.fetchone()
+    try:
+        cursor.execute("SELECT COUNT(*) FROM users")
+        result = cursor.fetchone()
+    finally:
+        cursor.close()
 
     if result is None:
         raise RuntimeError("Failed to get SQLite users count")
 
     return result[0]
 
+
 def count_postgresql_users(connection: PostgresConnection) -> int:
     with connection.cursor() as cursor:
         cursor.execute("SELECT COUNT(*) FROM users")
 
-        result: tuple[int] = cursor.fetchone()
+        result = cursor.fetchone()
 
-        if result is None:
-            raise RuntimeError("Failed to get PostgreSQL users count")
+    if result is None:
+        raise RuntimeError("Failed to get PostgreSQL users count")
 
-        return result[0]
+    return result[0]
+
 
 def verify_migration(
-        sqlite_connection: sqlite3.Connection, 
+        sqlite_connection: sqlite3.Connection,
         postgresql_connection: PostgresConnection
-    ) -> None:
+) -> None:
+    sqlite_count = count_sqlite_users(sqlite_connection)
+    postgresql_count = count_postgresql_users(postgresql_connection)
 
-    sqlite_count: int = count_sqlite_users(sqlite_connection)
-
-    postgresql_count: int = count_postgresql_users(postgresql_connection)
-
-    print(f"SQLite {sqlite_count}")
-    print(f"PostgreSQL {postgresql_count}")
+    print(f"SQLite users: {sqlite_count}")
+    print(f"PostgreSQL users: {postgresql_count}")
 
     if sqlite_count != postgresql_count:
         raise RuntimeError(
             f"User count mismatch: "
-            f"SQLite={sqlite_count}"
+            f"SQLite={sqlite_count}, "
             f"PostgreSQL={postgresql_count}"
         )
 
     print("Migration verification passed.")
+
 
 def main() -> None:
     sqlite_connection: sqlite3.Connection | None = None
@@ -153,17 +177,16 @@ def main() -> None:
     try:
         print("Loading configuration...")
 
-        config: PostgresConfig = load_postgres_config()
+        config = load_postgres_config()
 
-        sqlite_database: Path = (
-            PROJECT_ROOT / "runtime" / "data" / "schedule.db"
-        )
+        print(f"SQLite: {SQLITE_DATABASE}")
 
-        print(f"SQLite: {sqlite_database}")
+        if not SQLITE_DATABASE.exists():
+            raise FileNotFoundError(
+                f"SQLite database not found: {SQLITE_DATABASE}"
+            )
 
-        sqlite_connection = sqlite3.connect(
-            sqlite_database
-        )
+        sqlite_connection = sqlite3.connect(SQLITE_DATABASE)
 
         print("Connecting to PostgreSQL...")
 
@@ -181,17 +204,23 @@ def main() -> None:
 
         print("Reading SQLite users...")
 
-        users: list[User] = read_users(sqlite_connection)
+        users = read_users(sqlite_connection)
 
         print(f"Found users: {len(users)}")
 
         print("Migrating users...")
 
-        migrate_users(users, postgresql_connection)
+        migrate_users(
+            users,
+            postgresql_connection
+        )
 
         print("Verifying migration...")
 
-        verify_migration(sqlite_connection, postgresql_connection)
+        verify_migration(
+            sqlite_connection,
+            postgresql_connection
+        )
 
         postgresql_connection.commit()
 
@@ -200,13 +229,16 @@ def main() -> None:
     except Exception:
         if postgresql_connection is not None:
             postgresql_connection.rollback()
+
         raise
+
     finally:
         if sqlite_connection is not None:
             sqlite_connection.close()
 
         if postgresql_connection is not None:
             postgresql_connection.close()
+
 
 if __name__ == "__main__":
     main()
