@@ -25,6 +25,16 @@ public class AppConfig {
     private final long adminId = Long.parseLong(get("ADMIN_ID"));
     private final String changeInSchedule = get("FILE_URL");
 
+    public DatabaseConfig getDatabaseConfig() {
+        return new DatabaseConfig(
+                get("POSTGRES_HOST"),
+                Integer.parseInt(get("POSTGRES_PORT")),
+                get("POSTGRES_DB"),
+                get("POSTGRES_USER"),
+                get("POSTGRES_PASSWORD")
+        );
+    }
+
     public String getTokenMain() {
         return tokenMain;
     }

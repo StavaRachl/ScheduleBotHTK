@@ -6,7 +6,11 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.stavarachi.config.AppConfig;
+import ru.stavarachi.config.ConfigLoader;
+import ru.stavarachi.config.DatabaseConfig;
 import ru.stavarachi.config.StorageConfig;
+import ru.stavarachi.database.DatabaseInitializer;
+import ru.stavarachi.database.DatabaseManager;
 
 public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -15,6 +19,17 @@ public class Application {
             final Logger log = LoggerFactory.getLogger(Application.class);
             StorageConfig.initialize();
             AppConfig appConfig = new AppConfig();
+
+            ConfigLoader configLoader = new ConfigLoader();
+            DatabaseConfig databaseConfig = configLoader.database();
+
+            DatabaseManager databaseManager =
+                    new DatabaseManager(databaseConfig);
+
+            DatabaseInitializer databaseInitializer =
+                    new DatabaseInitializer(databaseManager);
+
+            databaseInitializer.initialize();
 
             log.info("initializing telegram bot...");
 
