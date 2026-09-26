@@ -1,0 +1,68 @@
+services:
+
+  java:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: schedulebot-java
+
+    env_file:
+      - .env
+
+    volumes:
+      - ./runtime:/app/runtime
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: unless-stopped
+
+  python:
+    build:
+      context: ./tools
+      dockerfile: Dockerfile
+
+    container_name: schedulebot-python
+
+    env_file:
+      - ./tools/.env
+
+    volumes:
+      - ./runtime:/tools/runtime
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    restart: "no"
+
+  postgres:
+    image: postgres:18
+
+    container_name: schedulebot-postgres
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgresql/init:/docker-entrypoint-initdb.d:ro
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

@@ -1,5 +1,5 @@
 import sqlite3
-from sqlite3 import Cursor, Connection
+from sqlite3 import Connection, Cursor
 
 
 class User:

@@ -1,5 +1,7 @@
 package ru.stavarachi.repository;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.database.DatabaseManager;
 import ru.stavarachi.model.User;
 
@@ -8,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class SQLiteUserRepository implements UserRepository<User, Long> {
+public class PostgresUserRepository implements UserRepository<User, Long> {
     private final DatabaseManager databaseManager;
 
-    public SQLiteUserRepository(DatabaseManager databaseManager) {
+    public PostgresUserRepository(DatabaseManager databaseManager) {
         this.databaseManager = databaseManager;
     }
 
@@ -62,10 +64,14 @@ public class SQLiteUserRepository implements UserRepository<User, Long> {
     }
 
     @Override
-    public void save(User user) {
+    public void save(@NotNull User user) {
         String sql = """
                 INSERT INTO users (chat_id, group_name, dark_theme)
                 VALUES (?, ?, ?)
+                ON CONFLICT (chat_id)
+                DO UPDATE SET
+                    group_name = EXCLUDED.group_name,
+                    dark_theme = EXCLUDED.dark_theme
                 """;
 
         try (Connection connection = databaseManager.getConnection();
@@ -82,7 +88,7 @@ public class SQLiteUserRepository implements UserRepository<User, Long> {
     }
 
     @Override
-    public void update(User user) {
+    public void update(@NotNull User user) {
         String sql = """
                 UPDATE users
                 SET group_name = ?,
@@ -120,7 +126,8 @@ public class SQLiteUserRepository implements UserRepository<User, Long> {
         }
     }
 
-    private User mapUser(ResultSet resultSet) throws SQLException {
+    @Contract("_ -> new")
+    private @NotNull User mapUser(@NotNull ResultSet resultSet) throws SQLException {
         return new User(
                 resultSet.getLong("chat_id"),
                 resultSet.getString("group_name"),

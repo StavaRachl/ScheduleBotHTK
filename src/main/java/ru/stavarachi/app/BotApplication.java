@@ -1,20 +1,18 @@
 package ru.stavarachi.app;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.stavarachi.config.PathConfig;
-import ru.stavarachi.config.ScheduleConfig;
-import ru.stavarachi.config.StorageConfig;
-import ru.stavarachi.database.DatabaseInitializer;
+import ru.stavarachi.config.*;
 import ru.stavarachi.database.DatabaseManager;
 import ru.stavarachi.excel.PoiChangeReader;
 import ru.stavarachi.excel.PoiScheduleReader;
 import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.handler.CommandHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
-import ru.stavarachi.repository.SQLiteUserRepository;
+import ru.stavarachi.repository.PostgresUserRepository;
 import ru.stavarachi.service.*;
 import ru.stavarachi.service.report.UserExcelGenerator;
 import ru.stavarachi.service.report.UserReportService;
@@ -37,14 +35,16 @@ public class BotApplication extends TelegramLongPollingBot {
         this.userName = userName;
         new BotCommandService().register(this);
 
-        DatabaseManager databaseManager = new DatabaseManager();
-        SQLiteUserRepository sqLiteUserRepository = new SQLiteUserRepository(databaseManager);
+        ConfigLoader configLoader = new ConfigLoader();
+        DatabaseConfig databaseConfig = configLoader.database();
+        DatabaseManager databaseManager = new DatabaseManager(databaseConfig);
+        PostgresUserRepository postgresUserRepository = new PostgresUserRepository(databaseManager);
         PoiScheduleReader poiScheduleReader = new PoiScheduleReader(StorageConfig.scheduleExcel(), scheduleConfig);
         PoiChangeReader poiChangeReader = new PoiChangeReader(StorageConfig.changeExcel());
         ExcelChangeService excelChangeService = new ExcelChangeService(StorageConfig.changeExcel());
         ClientHandler clientHandler = new ClientHandler();
         ExcelService excelService = new ExcelService();
-        UserSettingService userSettingService = new UserSettingService(sqLiteUserRepository);
+        UserSettingService userSettingService = new UserSettingService(postgresUserRepository);
         PathConfig pathConfig = new PathConfig();
         HtmlUtil htmlUtil = new HtmlUtil();
         HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();

@@ -1,5 +1,6 @@
 package ru.stavarachi.handler;
 
+import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.config.*;
@@ -20,7 +21,7 @@ public class CommandHandler implements Handler<Void>{
 
     private final String callsPath = pathConfig.getCallsPath();
 
-    public Void handle(Update update, TelegramLongPollingBot bot) throws Exception {
+    public Void handle(@NotNull Update update, TelegramLongPollingBot bot) throws Exception {
         if (!update.hasMessage() || !update.getMessage().hasText()) return null;
 
         String command = update.getMessage().getText().split(" ")[0];

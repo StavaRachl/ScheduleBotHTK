@@ -1,26 +1,25 @@
 package ru.stavarachi.service;
 
 import ru.stavarachi.model.User;
-import ru.stavarachi.repository.SQLiteUserRepository;
+import ru.stavarachi.repository.PostgresUserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class UserSettingService {
     private final Map<Long, User> userMap;
-    private final SQLiteUserRepository sqLiteUserRepository;
+    private final PostgresUserRepository postgresUserRepository;
 
-    public UserSettingService(SQLiteUserRepository sqLiteUserRepository) {
+    public UserSettingService(PostgresUserRepository postgresUserRepository) {
         this.userMap = new ConcurrentHashMap<>();
-        this.sqLiteUserRepository = sqLiteUserRepository;
+        this.postgresUserRepository = postgresUserRepository;
 
-        sqLiteUserRepository.findAll().forEach(user -> userMap.put(user.getId(), user));
+        postgresUserRepository.findAll().forEach(user -> userMap.put(user.getId(), user));
     }
 
     public List<User> getAllUsers() {
-        return sqLiteUserRepository.findAll();
+        return postgresUserRepository.findAll();
     }
 
     public void toggleTheme(Long chatId) {
@@ -29,13 +28,13 @@ public class UserSettingService {
         if (user == null) {
             user = new User(chatId, null, true);
             userMap.put(chatId, user);
-            sqLiteUserRepository.save(user);
+            postgresUserRepository.save(user);
             return;
         }
 
         user.setDarkTheme(!user.isDarkTheme());
 
-        sqLiteUserRepository.update(user);
+        postgresUserRepository.update(user);
     }
 
     public void setDefaultGroup(long chatId, String group) {
@@ -46,14 +45,14 @@ public class UserSettingService {
             user = new User(chatId, group, false);
 
             userMap.put(chatId, user);
-            sqLiteUserRepository.save(user);
+            postgresUserRepository.save(user);
 
             return;
         }
 
         user.setGroup(group);
 
-        sqLiteUserRepository.update(user);
+        postgresUserRepository.update(user);
     }
 
     public String getDefaultGroup(long chatId) {
