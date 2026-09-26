@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre
+FROM mcr.microsoft.com/playwright/java:v1.58.0-noble
 
 WORKDIR /app
 
