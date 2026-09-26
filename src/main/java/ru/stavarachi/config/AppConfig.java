@@ -3,15 +3,27 @@ package ru.stavarachi.config;
 import io.github.cdimascio.dotenv.Dotenv;
 
 public class AppConfig {
-    private final Dotenv dotenv = Dotenv.configure().load();
+    private final Dotenv dotenv = Dotenv.configure()
+            .ignoreIfMissing()
+            .load();
 
-    private final String urlToChange = dotenv.get("FILE_URL");
-    private final String tokenMain = dotenv.get("TELEGRAM_TOKEN");
-    private final String tokenDev = dotenv.get("TELEGRAM_TOKEN_DEV");
-    private final String userNameMain = dotenv.get("BOT_USERNAME");
-    private final String userNameDev = dotenv.get("BOT_USERNAME_DEV");
-    private final long adminId = Long.parseLong(dotenv.get("ADMIN_ID"));
-    private final String changeInSchedule = dotenv.get("FILE_URL");
+    private String get(String key) {
+        String value = System.getenv(key);
+
+        if (value != null && !value.isBlank()) {
+            return value;
+        }
+
+        return dotenv.get(key);
+    }
+
+    private final String urlToChange = get("FILE_URL");
+    private final String tokenMain = get("TELEGRAM_TOKEN");
+    private final String tokenDev = get("TELEGRAM_TOKEN_DEV");
+    private final String userNameMain = get("BOT_USERNAME");
+    private final String userNameDev = get("BOT_USERNAME_DEV");
+    private final long adminId = Long.parseLong(get("ADMIN_ID"));
+    private final String changeInSchedule = get("FILE_URL");
 
     public String getTokenMain() {
         return tokenMain;
