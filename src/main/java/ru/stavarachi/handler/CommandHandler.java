@@ -34,33 +34,15 @@ public class CommandHandler implements Handler<Void>{
         }
 
         switch (command) {
-            case "/start":
-                commandService.startCommand(bot, chatId);
-                break;
-            case "/rasp":
-                commandService.raspCommand(bot, chatId, user);
-                break;
-            case "/nextrasp":
-                commandService.nextRaspCommand(bot, chatId, user);
-                break;
-            case "/setdefaultgroup":
-                commandService.setDefaultGroupCommand(bot, chatId);
-                break;
-            case "/settheme":
-                commandService.setThemeCommand(bot, chatId);
-                break;
-            case "/zvonki":
-                commandService.zvonkiCommand(bot, chatId, callsPath);
-                break;
-            case "/info":
-                commandService.infoCommand(bot, chatId);
-                break;
-            case "/log":
-                commandService.logCommand(bot, chatId);
-                break;
-            case "/users":
-                commandService.usersCommand(bot, chatId);
-                break;
+            case "/start" -> commandService.startCommand(bot, chatId);
+            case "/rasp" -> commandService.raspCommand(bot, chatId, user);
+            case "/nextrasp" -> commandService.nextRaspCommand(bot, chatId, user);
+            case "/setdefaultgroup" -> commandService.setDefaultGroupCommand(bot, chatId);
+            case "/settheme" -> commandService.setThemeCommand(bot, chatId);
+            case "/zvonki" -> commandService.zvonkiCommand(bot, chatId, callsPath);
+            case "/info" -> commandService.infoCommand(bot, chatId);
+            case "/log" -> commandService.logCommand(bot, chatId);
+            case "/users" -> commandService.usersCommand(bot, chatId);
         }
         return null;
     }

@@ -2,6 +2,7 @@ package ru.stavarachi.service;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.ScheduleConfig;
@@ -69,7 +70,7 @@ public class ExcelService {
         }
     }
 
-    public List<Object> loadPairWithBreaks(List<Pair> listOfPair, String targetDay) {
+    public List<Object> loadPairWithBreaks(@NotNull List<Pair> listOfPair, String targetDay) {
 
         List<Object> listOfSchedule = new ArrayList<>();
 
