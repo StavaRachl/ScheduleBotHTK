@@ -56,7 +56,7 @@ public class BotApplication extends TelegramLongPollingBot {
         UserReportService userReportService = new UserReportService(userSettingService, excelGenerator);
         CommandService commandService = new CommandService(messageUtil, timeUtil, userSettingService, scheduleService, groupKeyboardService, userReportService);
         this.commandHandler = new CommandHandler(userSettingService, commandService);
-        this.groupCallbackHandler = new GroupCallbackHandler(userSettingService, groupKeyboardService);
+        this.groupCallbackHandler = new GroupCallbackHandler(userSettingService, groupKeyboardService, messageUtil);
     }
 
     @Override

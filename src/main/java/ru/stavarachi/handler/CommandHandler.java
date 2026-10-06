@@ -43,6 +43,7 @@ public class CommandHandler implements Handler<Void>{
             case "/info" -> commandService.infoCommand(bot, chatId);
             case "/log" -> commandService.logCommand(bot, chatId);
             case "/users" -> commandService.usersCommand(bot, chatId);
+            default -> {}
         }
         return null;
     }

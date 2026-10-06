@@ -4,20 +4,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.UserSettingService;
+import ru.stavarachi.util.MessageUtil;
 
 public class GroupCallbackHandler implements Handler<String>{
     private final GroupKeyboardService groupKeyboardService;
     private final UserSettingService userSettingService;
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
+    private final MessageUtil messageUtil;
 
-    public GroupCallbackHandler(UserSettingService userSettingService, GroupKeyboardService groupKeyboardService) {
+    public GroupCallbackHandler(UserSettingService userSettingService, GroupKeyboardService groupKeyboardService, MessageUtil messageUtil) {
         this.userSettingService = userSettingService;
         this.groupKeyboardService = groupKeyboardService;
+        this.messageUtil = messageUtil;
     }
 
     private static final Logger log = LoggerFactory.getLogger(GroupCallbackHandler.class);
@@ -25,14 +29,17 @@ public class GroupCallbackHandler implements Handler<String>{
     public String handle(Update update, TelegramLongPollingBot bot) {
 
         try {
-
             if (!update.hasCallbackQuery()) return null;
+
+            CallbackQuery callbackQuery = update.getCallbackQuery();
 
             String data = update.getCallbackQuery().getData();
 
             long chatId = update.getCallbackQuery().getMessage().getChatId();
 
             int messageId = update.getCallbackQuery().getMessage().getMessageId();
+
+            messageUtil.answerCallbackQuery(bot, callbackQuery, null, false);
 
             if (data.startsWith("group_page:")) {
 

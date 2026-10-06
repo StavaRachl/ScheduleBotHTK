@@ -1,21 +1,23 @@
 package ru.stavarachi.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.io.File;
 import java.nio.file.Path;
 
 public class MessageUtil {
     private static final Logger log = LoggerFactory.getLogger(MessageUtil.class);
-    public void sendMessage(TelegramLongPollingBot bot, long chatId, String text) {
+    public void sendMessage(@NotNull TelegramLongPollingBot bot, long chatId, String text) {
         try {
             SendMessage sendMessage = new SendMessage();
 
@@ -31,7 +33,7 @@ public class MessageUtil {
         }
     }
 
-    public void sendPhoto(TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
+    public void sendPhoto(@NotNull TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
         try {
             SendPhoto sendPhoto = new SendPhoto();
 
@@ -48,7 +50,7 @@ public class MessageUtil {
         }
     }
 
-    public void sendPhoto(TelegramLongPollingBot bot, long chatId, InputFile inputFile) {
+    public void sendPhoto(@NotNull TelegramLongPollingBot bot, long chatId, InputFile inputFile) {
         try {
             SendPhoto sendPhoto = new SendPhoto();
 
@@ -61,7 +63,7 @@ public class MessageUtil {
         }
     }
 
-    public void sendDocument(TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
+    public void sendDocument(@NotNull TelegramLongPollingBot bot, long chatId, String text, Path pathToFile) {
         try {
             SendDocument sendDocument = new SendDocument();
 
@@ -82,7 +84,7 @@ public class MessageUtil {
         }
     }
 
-    public void sendKeyboard(TelegramLongPollingBot bot, long chatId, String text, InlineKeyboardMarkup markup) {
+    public void sendKeyboard(@NotNull TelegramLongPollingBot bot, long chatId, String text, InlineKeyboardMarkup markup) {
         try {
           SendMessage sendMessage = new SendMessage();
 
@@ -95,6 +97,20 @@ public class MessageUtil {
             log.error("Telegram Error: ", e);
         } catch (Exception e) {
             log.error("Error: ", e);
+        }
+    }
+
+    public void answerCallbackQuery(@NotNull TelegramLongPollingBot bot, @NotNull CallbackQuery callbackQuery, String text, boolean showAlert) {
+        AnswerCallbackQuery answerCallbackQuery = new AnswerCallbackQuery();
+
+        answerCallbackQuery.setCallbackQueryId(callbackQuery.getId());
+        answerCallbackQuery.setShowAlert(showAlert);
+        answerCallbackQuery.setText(text);
+
+        try {
+            bot.execute(answerCallbackQuery);
+        } catch (TelegramApiException e) {
+            throw new RuntimeException(e);
         }
     }
 }
