@@ -2,6 +2,7 @@ package ru.stavarachi.service.report;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.model.User;
 
 import java.io.FileOutputStream;
@@ -12,7 +13,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class UserExcelGenerator {
-    public Path generateReport(List<User> userList) throws IOException {
+    public Path generateReport(@NotNull List<User> userList) throws IOException {
         Path file = Files.createTempFile("user-reports-", ".xlsx");
 
         try (Workbook workbook = new XSSFWorkbook()) {
