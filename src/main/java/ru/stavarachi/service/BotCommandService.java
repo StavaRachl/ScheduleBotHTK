@@ -12,20 +12,20 @@ import java.util.List;
 public class BotCommandService {
     private final Logger log = LoggerFactory.getLogger(BotCommandService.class);
 
-    public void register(TelegramLongPollingBot bot) {
-        List<BotCommand> botCommands = List.of(
-                new BotCommand("/start", "Запуск бота"),
-                new BotCommand("/rasp", "Получить расписание"),
-                new BotCommand("/nextrasp", "Получить расписание на день вперед"),
-                new BotCommand("/setdefaultgroup", "Выбрать группу"),
-                new BotCommand("/settheme", "Поменять тему на светлую/темную"),
-                new BotCommand("/zvonki", "Получить расписание звонков"),
-                new BotCommand("/zvonkijune", "Получить расписание звонков на июнь"),
-                new BotCommand("/info", "Информация о боте")
-        );
+    private static final List<BotCommand> COMMANDS = List.of(
+            new BotCommand("/start", "Запуск бота"),
+            new BotCommand("/rasp", "Получить расписание"),
+            new BotCommand("/nextrasp", "Получить расписание на день вперед"),
+            new BotCommand("/setdefaultgroup", "Выбрать группу"),
+            new BotCommand("/settheme", "Поменять тему на светлую/темную"),
+            new BotCommand("/zvonki", "Получить расписание звонков"),
+            new BotCommand("/zvonkijune", "Получить расписание звонков на июнь"),
+            new BotCommand("/info", "Информация о боте")
+    );
 
+    public void register(TelegramLongPollingBot bot) {
         try {
-            bot.execute(new SetMyCommands(botCommands, null, null));
+            bot.execute(new SetMyCommands(COMMANDS, null, null));
         } catch (TelegramApiException e) {
             log.error("Telegram Error: ", e);
         } catch (Exception e) {

@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import ru.stavarachi.config.*;
 import ru.stavarachi.model.User;
 import ru.stavarachi.service.report.UserReportService;
+import ru.stavarachi.service.schedule.ScheduleService;
 import ru.stavarachi.util.MessageUtil;
 import ru.stavarachi.util.TimeUtil;
 
@@ -13,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Objects;
 
 public class CommandService {
     private final MessageUtil messageUtil;
@@ -23,9 +24,13 @@ public class CommandService {
     private final GroupKeyboardService groupKeyboardService;
     private final UserReportService userReportService;
 
-    private final ScheduleConfig scheduleConfig = new ScheduleConfig();
-    private final BotConfig botConfig = new BotConfig();
-    private final AppConfig appConfig = new AppConfig();
+    private static final ScheduleConfig scheduleConfig = new ScheduleConfig();
+    private static final BotConfig botConfig = new BotConfig();
+    private static final AppConfig appConfig = new AppConfig();
+
+    private static final Long ADMIN_ID = appConfig.getAdminId();
+    private static final String[] GROUP_NAMES = scheduleConfig.getGROUP_NAMES();
+    private static final String INFO_MESSAGE = botConfig.getINFO_MESSAGE();
 
     public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, UserSettingService userSettingService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService) {
         this.messageUtil = messageUtil;
@@ -52,7 +57,7 @@ public class CommandService {
         String group = userSettingService.getDefaultGroup(chatId);
         Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), user, timeUtil.getMonth());
 
-        messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
+        messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">ИЗМЕНЕНИЯ ТОЛЬКО ПО ЭТОЙ ССЫЛКЕ(ИЗМЕНЕНИЯ В ТАБЛИЦЕ НЕДЕЙСТВИТЕЛЬНЫ)</a>", path);
     }
 
     public void nextRaspCommand(TelegramLongPollingBot bot, Long chatId, User user) throws Exception {
@@ -79,7 +84,7 @@ public class CommandService {
     }
 
     public void setDefaultGroupCommand(TelegramLongPollingBot bot, Long chatId) {
-        InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), 0);
+        InlineKeyboardMarkup keyboardMarkup = groupKeyboardService.buildKeyboardForGroup(GROUP_NAMES, 0);
         messageUtil.sendKeyboard(bot, chatId, botConfig.getKeyboardMessage(), keyboardMarkup);
     }
 
@@ -89,11 +94,11 @@ public class CommandService {
     }
 
     public void infoCommand(TelegramLongPollingBot bot, Long chatId) {
-        messageUtil.sendMessage(bot, chatId, botConfig.getINFO_MESSAGE());
+        messageUtil.sendMessage(bot, chatId, INFO_MESSAGE);
     }
 
     public void logCommand(TelegramLongPollingBot bot, Long chatId) {
-        if (chatId == appConfig.getAdminId()) {
+        if (Objects.equals(chatId, ADMIN_ID)) {
             messageUtil.sendDocument(bot, chatId, "🗒️Отсчет о работе бота:", StorageConfig.logger());
         } else {
             messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
@@ -101,7 +106,7 @@ public class CommandService {
     }
 
     public void usersCommand(TelegramLongPollingBot bot, Long chatId) {
-        if (chatId == appConfig.getAdminId()) {
+        if (Objects.equals(chatId, ADMIN_ID)) {
             try {
                 Path report = userReportService.generateUsersReport();
                 messageUtil.sendDocument(bot, chatId, "📃 Отчёт о пользователях", report);

@@ -1,5 +1,6 @@
 package ru.stavarachi.service;
 
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -15,7 +16,7 @@ public class GroupKeyboardService {
 
     private static final Logger log = LoggerFactory.getLogger(GroupKeyboardService.class);
 
-    public InlineKeyboardMarkup buildKeyboardForGroup(String[] groups, int page) {
+    public InlineKeyboardMarkup buildKeyboardForGroup(String @NotNull [] groups, int page) {
         String[] listOfGroup = groups;
 
         int totalPage = (int) Math.ceil((double) groups.length / PAGE_SIZE);

@@ -22,6 +22,7 @@ public class GroupCallbackHandler implements Handler<String>{
 
     private static final Logger log = LoggerFactory.getLogger(GroupCallbackHandler.class);
 
+    @Override
     public String handle(Update update, TelegramLongPollingBot bot) {
 
         try {

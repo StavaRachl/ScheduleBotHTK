@@ -1,6 +1,5 @@
 package ru.stavarachi.app;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -16,6 +15,8 @@ import ru.stavarachi.repository.PostgresUserRepository;
 import ru.stavarachi.service.*;
 import ru.stavarachi.service.report.UserExcelGenerator;
 import ru.stavarachi.service.report.UserReportService;
+import ru.stavarachi.service.schedule.ScheduleDataService;
+import ru.stavarachi.service.schedule.ScheduleService;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
 import ru.stavarachi.util.MessageUtil;
@@ -47,8 +48,9 @@ public class BotApplication extends TelegramLongPollingBot {
         UserSettingService userSettingService = new UserSettingService(postgresUserRepository);
         PathConfig pathConfig = new PathConfig();
         HtmlUtil htmlUtil = new HtmlUtil();
+        ScheduleDataService scheduleDataService = new ScheduleDataService(clientHandler, scheduleConfig, poiChangeReader, poiScheduleReader, excelService, excelChangeService);
         HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
-        ScheduleService scheduleService = new ScheduleService(clientHandler, pathConfig, scheduleConfig, htmlUtil, htmlDarkThemeUtil, poiChangeReader, poiScheduleReader, excelService, excelChangeService);
+        ScheduleService scheduleService = new ScheduleService(pathConfig, scheduleDataService, htmlUtil, htmlDarkThemeUtil);
         GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
         MessageUtil messageUtil = new MessageUtil();
         TimeUtil timeUtil = new TimeUtil();
