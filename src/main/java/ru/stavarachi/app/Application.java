@@ -31,7 +31,7 @@ public class Application {
 
             databaseInitializer.initialize();
 
-            log.info("initializing telegram bot...");
+            log.info("initializing telegram bot..."); 
 
             String token = appConfig.getTokenDev();
             String userName = appConfig.getUserNameDev();

@@ -5,6 +5,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class PoiChangeReader implements ChangeReader{
     @Override
     public int getChangeVariable(String typeOfChange) {
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-            Sheet sheet = workbook.getSheet("замена");
+            Sheet sheet = getSheduleSheet(workbook);
             for (Row row : sheet) {
 
                 if (row == null) {
@@ -49,7 +50,7 @@ public class PoiChangeReader implements ChangeReader{
     public int getTargetGroup(String targetGroup, int startRow) {
         int rowIndex = 0;
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-            Sheet sheet = workbook.getSheet("замена");
+            Sheet sheet = getSheduleSheet(workbook);
             for (int i = startRow; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
@@ -64,5 +65,19 @@ public class PoiChangeReader implements ChangeReader{
             logger.error("Error: ", e);
         }
         return -1;
+    }
+
+    private @NotNull Sheet getSheduleSheet(@NotNull Workbook workbook) {
+        Sheet sheet = workbook.getSheet("замена");
+
+        if (sheet == null) {
+            sheet = workbook.getSheet("Лист1");
+        }
+
+        if (sheet == null) {
+            throw new NullPointerException("Не удалось найти ни один лист");
+        }
+
+        return sheet;
     }
 }

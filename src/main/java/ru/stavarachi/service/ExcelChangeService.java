@@ -2,6 +2,7 @@ package ru.stavarachi.service;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.model.Change;
@@ -27,7 +28,7 @@ public class ExcelChangeService {
         List<Change> listOfChangePair = new ArrayList<>();
 
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
-            Sheet sheet = workbook.getSheet("замена");
+            Sheet sheet = getSheduleSheet(workbook);
             for (int i = startRow; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
@@ -54,5 +55,19 @@ public class ExcelChangeService {
             logger.error("Error: ", e);
         }
         return listOfChangePair;
+    }
+
+    private @NotNull Sheet getSheduleSheet(@NotNull Workbook workbook) {
+        Sheet sheet = workbook.getSheet("замена");
+
+        if (sheet == null) {
+            sheet = workbook.getSheet("Лист1");
+        }
+
+        if (sheet == null) {
+            throw new NullPointerException("Не удалось найти ни один лист");
+        }
+
+        return sheet;
     }
 }

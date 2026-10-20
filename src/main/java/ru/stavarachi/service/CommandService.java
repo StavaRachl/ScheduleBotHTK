@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import ru.stavarachi.config.*;
 import ru.stavarachi.model.User;
 import ru.stavarachi.service.report.UserReportService;
+import ru.stavarachi.service.schedule.ScheduleService;
 import ru.stavarachi.util.MessageUtil;
 import ru.stavarachi.util.TimeUtil;
 
@@ -52,7 +53,7 @@ public class CommandService {
         String group = userSettingService.getDefaultGroup(chatId);
         Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), user, timeUtil.getMonth());
 
-        messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n<a href=\"" + appConfig.getChangeInSchedule() + "\">Изменения в расписании</a>", path);
+        messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n[Изменения в расписании](https://1drv.ms/x/c/31511f965faf70b6/IQDyk8xKWRQKRbGz_6v0skl8AVb0i5u5S50vRRH7SabQ38g)", path);
     }
 
     public void nextRaspCommand(TelegramLongPollingBot bot, Long chatId, User user) throws Exception {

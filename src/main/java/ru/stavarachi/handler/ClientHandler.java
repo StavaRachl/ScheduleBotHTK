@@ -1,33 +1,58 @@
+
 package ru.stavarachi.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.stavarachi.client.YandexDiskClient;
+import ru.stavarachi.client.OneDriveClient;
 import ru.stavarachi.config.StorageConfig;
 import ru.stavarachi.downloader.FileDownloader;
-import ru.stavarachi.parser.PublicLinkParser;
-import ru.stavarachi.service.FileDownloadService;
 
-import java.net.http.HttpClient;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 import java.nio.file.Path;
 
 public class ClientHandler {
-    private final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
-    public void getChange() throws Exception {
-        HttpClient client = HttpClient.newBuilder()
-                .followRedirects(HttpClient.Redirect.ALWAYS)
-                .build();
+    private static final Logger log =
+            LoggerFactory.getLogger(ClientHandler.class);
 
-        FileDownloadService service = new FileDownloadService(
-                new PublicLinkParser(),
-                new YandexDiskClient(client),
-                new FileDownloader(client)
+    private final OneDriveClient oneDriveClient;
+    private final FileDownloader fileDownloader;
+
+    private static final String ONEDRIVE_URL =
+            "https://1drv.ms/x/c/31511f965faf70b6/"
+                    + "IQDyk8xKWRQKRbGz_6v0skl8AVb0i5u5S50vRRH7SabQ38g";
+
+    public ClientHandler() {
+        CookieManager cookies = new CookieManager(
+                null,
+                CookiePolicy.ACCEPT_ALL
         );
 
-        String url = "https://docs.yandex.ru/docs/view?url=ya-disk-public%3A%2F%2F6%2F9ALAKFdkSkkpd4OGR6si%2BQt6ofAx4265zSd2fuUCb3K2yBSDEZ%2F4Ef13a8ampdq%2FJ6bpmRyOJonT3VoXnDag%3D%3D&name=%D0%9D%D0%BE%D0%B2%D0%B0%D1%8F%20%D1%82%D0%B0%D0%B1%D0%BB%D0%B8%D1%86%D0%B0%20.xlsx";
-        Path result = service.download(url, StorageConfig.DOWNLOADS);
+        CookieHandler.setDefault(cookies);
 
-        log.info("Success saved");
+        this.oneDriveClient = new OneDriveClient();
+        this.fileDownloader = new FileDownloader();
+    }
+
+    public void getChange() throws Exception {
+        log.info("Starting OneDrive download");
+
+        String downloadUrl =
+                oneDriveClient.getDownloadUrl(ONEDRIVE_URL);
+
+        log.info("Resolved download URL: {}", downloadUrl);
+
+        Path result = fileDownloader.download(
+                downloadUrl,
+                "Книга.xlsx",
+                StorageConfig.DOWNLOADS
+        );
+
+        log.info(
+                "Successfully saved: {}",
+                result.toAbsolutePath()
+        );
     }
 }

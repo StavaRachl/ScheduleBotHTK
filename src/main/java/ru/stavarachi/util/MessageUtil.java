@@ -23,7 +23,7 @@ public class MessageUtil {
 
             sendMessage.setChatId(chatId);
             sendMessage.setText(text);
-            sendMessage.setParseMode("HTML");
+            sendMessage.setParseMode("Markdown");
 
             bot.execute(sendMessage);
         } catch (TelegramApiException e) {
@@ -40,7 +40,7 @@ public class MessageUtil {
             sendPhoto.setChatId(chatId);
             sendPhoto.setPhoto(new InputFile(pathToFile.toFile()));
             sendPhoto.setCaption(text);
-            sendPhoto.setParseMode("HTML");
+            sendPhoto.setParseMode("Markdown");
 
             bot.execute(sendPhoto);
         } catch (TelegramApiException e) {

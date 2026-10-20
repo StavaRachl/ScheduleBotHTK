@@ -28,7 +28,7 @@ public class StorageConfig {
     }
 
     public static Path changeExcel() {
-        return DOWNLOADS.resolve("Новая таблица (25).xlsx");
+        return DOWNLOADS.resolve("Книга.xlsx");
     }
 
     public static Path scheduleImage() {
