@@ -1,10 +1,13 @@
 package ru.stavarachi.model;
 
+import org.jetbrains.annotations.Contract;
+
 public class Pair {
     private int count;
     private String pair;
     private String time;
 
+    @Contract(pure = true)
     public Pair(int count, String pair, String time) {
         this.count = count;
         this.pair = pair;

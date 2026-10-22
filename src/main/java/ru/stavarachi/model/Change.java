@@ -3,21 +3,22 @@ package ru.stavarachi.model;
 import org.jetbrains.annotations.Contract;
 
 public class Change {
-    private Integer count;
+    private Object count;
     private String pair;
     private String teacher;
 
-    public Change(Integer count, String pair, String teacher) {
+    @Contract(pure = true)
+    public Change(Object count, String pair, String teacher) {
         this.count = count;
         this.pair = pair;
         this.teacher = teacher;
     }
 
-    public Integer getCount() {
+    public Object getCount() {
         return count;
     }
 
-    public void setCount(Integer count) {
+    public void setCount(String count) {
         this.count = count;
     }
 

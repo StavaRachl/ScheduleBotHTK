@@ -26,6 +26,7 @@ public class ExcelChangeService {
 
     public List<Change> getChangeOfPair(String targetGroup, String typeOfChange, int startRow) {
         List<Change> listOfChangePair = new ArrayList<>();
+        Object pairNum = null;
 
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = getSheduleSheet(workbook);
@@ -39,7 +40,14 @@ public class ExcelChangeService {
                     break;
                 }
 
-                int pairNum = (int) row.getCell(1).getNumericCellValue();
+                Cell pairCell = row.getCell(1);
+
+                switch (pairCell.getCellType()) {
+                    case NUMERIC -> pairNum = (int) pairCell.getNumericCellValue();
+                    case STRING -> pairNum = pairCell.getStringCellValue();
+                    default -> dataFormatter.formatCellValue(cell);
+                }
+
                 String pairName = row.getCell(2).getStringCellValue();
                 String pairAuthor = row.getCell(3).getStringCellValue();
 
@@ -69,5 +77,20 @@ public class ExcelChangeService {
         }
 
         return sheet;
+    }
+
+    private static boolean isNum(@NotNull Row row) {
+        String value = row.getCell(1).getStringCellValue();
+
+        if (value == null || value.isBlank()) {
+            return false;
+        }
+
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

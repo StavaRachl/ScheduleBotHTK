@@ -1,9 +1,12 @@
 package ru.stavarachi.model;
 
+import org.jetbrains.annotations.Contract;
+
 public class Break {
     private String breaks;
     private String time;
 
+    @Contract(pure = true)
     public Break(String breaks, String time) {
         this.breaks = breaks;
         this.time = time;

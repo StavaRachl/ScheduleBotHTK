@@ -1,5 +1,7 @@
 package ru.stavarachi.model;
 
+import org.jetbrains.annotations.Contract;
+
 public class User {
     private long id;
     private String group;
@@ -7,6 +9,7 @@ public class User {
 
     public User() {}
 
+    @Contract(pure = true)
     public User(long id, String group, boolean darkTheme) {
         this.id = id;
         this.group = group;
