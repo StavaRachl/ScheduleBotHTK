@@ -1,5 +1,6 @@
 package ru.stavarachi.parser;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,14 +8,13 @@ import org.slf4j.LoggerFactory;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
+@Slf4j
 public class PublicLinkParser {
-    private static final Logger logger = LoggerFactory.getLogger(PublicLinkParser.class);
-
     public String extractPublicKey(String viewUrl) {
         String encoded = extractParam(viewUrl, "url");
 
         if (encoded == null) {
-            logger.error("Missing url param");
+            log.error("Missing url param");
         }
 
         String decoded = URLDecoder.decode(encoded, StandardCharsets.UTF_8);

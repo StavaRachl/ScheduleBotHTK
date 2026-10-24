@@ -1,5 +1,6 @@
 package ru.stavarachi.util;
 
+import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.model.Break;
 import ru.stavarachi.model.Change;
 import ru.stavarachi.model.Pair;
@@ -7,7 +8,7 @@ import ru.stavarachi.model.Pair;
 import java.util.List;
 
 public class HtmlDarkThemeUtil {
-    public String generateHTML(List<Object> pairList, List<Change> changePairList, List<Change> changeClassroomList) {
+    public String generateHTML(@NotNull List<Object> pairList, List<Change> changePairList, List<Change> changeClassroomList) {
         StringBuilder html = new StringBuilder("""
                 <html>
                         <head>

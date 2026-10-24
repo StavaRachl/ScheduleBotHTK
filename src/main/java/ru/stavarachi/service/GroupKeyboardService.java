@@ -1,5 +1,6 @@
 package ru.stavarachi.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,12 +10,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class GroupKeyboardService {
     private static final int BUTTONS_PER_ROW = 3;
     private static final int ROWS_PER_PAGE = 5;
     private static final int PAGE_SIZE = BUTTONS_PER_ROW * ROWS_PER_PAGE;
-
-    private static final Logger log = LoggerFactory.getLogger(GroupKeyboardService.class);
 
     public InlineKeyboardMarkup buildKeyboardForGroup(String @NotNull [] groups, int page) {
         String[] listOfGroup = groups;

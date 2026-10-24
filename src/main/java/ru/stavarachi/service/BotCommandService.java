@@ -1,7 +1,6 @@
 package ru.stavarachi.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
@@ -9,9 +8,8 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
 
+@Slf4j
 public class BotCommandService {
-    private final Logger log = LoggerFactory.getLogger(BotCommandService.class);
-
     private static final List<BotCommand> COMMANDS = List.of(
             new BotCommand("/start", "Запуск бота"),
             new BotCommand("/rasp", "Получить расписание"),

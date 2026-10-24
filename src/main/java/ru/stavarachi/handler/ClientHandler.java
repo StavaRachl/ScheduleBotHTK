@@ -1,6 +1,7 @@
 
 package ru.stavarachi.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.client.OneDriveClient;
@@ -12,10 +13,8 @@ import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.nio.file.Path;
 
+@Slf4j
 public class ClientHandler {
-
-    private static final Logger log =
-            LoggerFactory.getLogger(ClientHandler.class);
 
     private final OneDriveClient oneDriveClient;
     private final FileDownloader fileDownloader;

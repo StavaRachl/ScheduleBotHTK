@@ -1,7 +1,6 @@
 package ru.stavarachi.handler;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
@@ -12,6 +11,7 @@ import ru.stavarachi.service.GroupKeyboardService;
 import ru.stavarachi.service.UserSettingService;
 import ru.stavarachi.util.MessageUtil;
 
+@Slf4j
 public class GroupCallbackHandler implements Handler<String>{
     private final GroupKeyboardService groupKeyboardService;
     private final UserSettingService userSettingService;
@@ -23,8 +23,6 @@ public class GroupCallbackHandler implements Handler<String>{
         this.groupKeyboardService = groupKeyboardService;
         this.messageUtil = messageUtil;
     }
-
-    private static final Logger log = LoggerFactory.getLogger(GroupCallbackHandler.class);
 
     @Override
     public String handle(Update update, TelegramLongPollingBot bot) {

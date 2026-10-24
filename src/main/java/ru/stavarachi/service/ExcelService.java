@@ -1,5 +1,6 @@
 package ru.stavarachi.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +16,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class ExcelService {
     ScheduleConfig scheduleConfig = new ScheduleConfig();
 
@@ -23,8 +25,6 @@ public class ExcelService {
     String[] timeSlots = scheduleConfig.getTIME_SLOTS();
     String[] breaksSlotsForMonday = scheduleConfig.getBREAKS_TIME_SLOTS_FOR_MONDAY();
     String[] breaksSlots = scheduleConfig.getBREAKS_TIME_SLOTS();
-
-    private static final Logger logger = LoggerFactory.getLogger(ExcelService.class);
 
     public List<Pair> loadPair(Path path, String targetSheet, String targetDay, String targetGroup, String targetMonth, int rowIndex, int colIndex) {
         try (FileInputStream fileInputStream = new FileInputStream(String.valueOf(path))) {
@@ -65,7 +65,7 @@ public class ExcelService {
             }
             return listOfPair;
         } catch (Exception e) {
-            logger.error("Error: ", e);
+            log.error("Error: ", e);
             return null;
         }
     }

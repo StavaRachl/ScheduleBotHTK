@@ -1,5 +1,6 @@
 package ru.stavarachi.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.database.DatabaseManager;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public class PostgresUserRepository implements UserRepository<User, Long> {
     private final DatabaseManager databaseManager;
 
@@ -35,7 +37,7 @@ public class PostgresUserRepository implements UserRepository<User, Long> {
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("SQLException: ", e);
         }
         return userList;
     }
@@ -58,7 +60,7 @@ public class PostgresUserRepository implements UserRepository<User, Long> {
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("SQLException: ", e);
         }
         return Optional.empty();
     }
@@ -83,7 +85,7 @@ public class PostgresUserRepository implements UserRepository<User, Long> {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("SQLException: ", e);
         }
     }
 
@@ -105,7 +107,7 @@ public class PostgresUserRepository implements UserRepository<User, Long> {
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("SQLException: ", e);
         }
     }
 
@@ -122,7 +124,7 @@ public class PostgresUserRepository implements UserRepository<User, Long> {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            log.error("SQLException: ", e);
         }
     }
 
