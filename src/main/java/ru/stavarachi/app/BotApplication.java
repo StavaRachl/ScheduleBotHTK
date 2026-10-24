@@ -15,6 +15,7 @@ import ru.stavarachi.repository.PostgresUserRepository;
 import ru.stavarachi.service.*;
 import ru.stavarachi.service.report.UserExcelGenerator;
 import ru.stavarachi.service.report.UserReportService;
+import ru.stavarachi.service.report.UserStatsService;
 import ru.stavarachi.service.schedule.ScheduleDataService;
 import ru.stavarachi.service.schedule.ScheduleService;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
@@ -53,10 +54,11 @@ public class BotApplication extends TelegramLongPollingBot {
         ScheduleService scheduleService = new ScheduleService(pathConfig, scheduleDataService, htmlUtil, htmlDarkThemeUtil);
         GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
         MessageUtil messageUtil = new MessageUtil();
+        UserStatsService userStatsService = new UserStatsService(userSettingService);
         TimeUtil timeUtil = new TimeUtil();
         UserExcelGenerator excelGenerator = new UserExcelGenerator();
         UserReportService userReportService = new UserReportService(userSettingService, excelGenerator);
-        CommandService commandService = new CommandService(messageUtil, timeUtil, userSettingService, scheduleService, groupKeyboardService, userReportService);
+        CommandService commandService = new CommandService(messageUtil, timeUtil, userSettingService, scheduleService, groupKeyboardService, userReportService, userStatsService);
         this.commandHandler = new CommandHandler(userSettingService, commandService);
         this.groupCallbackHandler = new GroupCallbackHandler(userSettingService, groupKeyboardService, messageUtil);
     }

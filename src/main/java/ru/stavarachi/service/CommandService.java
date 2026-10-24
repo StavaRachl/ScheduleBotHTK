@@ -6,6 +6,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import ru.stavarachi.config.*;
 import ru.stavarachi.model.User;
 import ru.stavarachi.service.report.UserReportService;
+import ru.stavarachi.service.report.UserStatsService;
 import ru.stavarachi.service.schedule.ScheduleService;
 import ru.stavarachi.util.MessageUtil;
 import ru.stavarachi.util.TimeUtil;
@@ -23,18 +24,20 @@ public class CommandService {
     private final ScheduleService scheduleService;
     private final GroupKeyboardService groupKeyboardService;
     private final UserReportService userReportService;
+    private final UserStatsService userStatsService;
 
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
     private final BotConfig botConfig = new BotConfig();
     private final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, UserSettingService userSettingService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, UserSettingService userSettingService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService, UserStatsService userStatsService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
         this.userSettingService = userSettingService;
         this.scheduleService = scheduleService;
         this.groupKeyboardService = groupKeyboardService;
         this.userReportService = userReportService;
+        this.userStatsService = userStatsService;
     }
 
     public void startCommand(TelegramLongPollingBot bot, Long chatId) {
@@ -105,7 +108,7 @@ public class CommandService {
         if (chatId == appConfig.getAdminId()) {
             try {
                 Path report = userReportService.generateUsersReport();
-                messageUtil.sendDocument(bot, chatId, "📃 Отчёт о пользователях", report);
+                messageUtil.sendDocument(bot, chatId, "📃 Отчёт о пользователях\n👥Используемые группы\n" + userStatsService.generateStats(), report);
 
                 Files.deleteIfExists(report);
             } catch (IOException e) {
