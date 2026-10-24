@@ -45,11 +45,18 @@ public class UserStatsService {
 
     public StringBuilder generateStats() {
         List<String> unique = uniqueGroup();
+        List<User> userList = userSettingService.getAllUsers();
+
+        String string;
 
         StringBuilder message = new StringBuilder();
 
+        int sum = userList.size();
+        string = "💠Всего: " + sum + "\n";
+        message.append(string);
+
         for (String group : unique) {
-            String string = "📗 " + group + ": " + countGroup(group) + "\n";
+            string = "📗" + group + " - " + countGroup(group) + "\n";
 
             message.append(string);
         }
