@@ -1,4 +1,4 @@
-package ru.stavarachi.repository;
+package ru.stavarachi.port;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package ru.stavarachi.model;
+package ru.stavarachi.domain.schedule;
 
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package ru.stavarachi.excel;
+package ru.stavarachi.infrastructure.excel;
 
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
@@ -8,23 +8,24 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.stavarachi.port.ExcelChangeFinder;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class PoiChangeReader implements ChangeReader{
+public class ApachePoiChangeReader implements ExcelChangeFinder {
     private final Path path;
     private final DataFormatter dataFormatter;
-    private static final Logger logger = LoggerFactory.getLogger(PoiChangeReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApachePoiChangeReader.class);
 
-    public PoiChangeReader(Path path) {
+    public ApachePoiChangeReader(Path path) {
         this.path = path;
         dataFormatter = new DataFormatter();
     }
 
     @Override
-    public int getChangeVariable(String typeOfChange) {
+    public int findChangeVariable(String typeOfChange) {
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = getSheduleSheet(workbook);
             for (Row row : sheet) {
@@ -47,7 +48,7 @@ public class PoiChangeReader implements ChangeReader{
     }
 
     @Override
-    public int getTargetGroup(String targetGroup, int startRow) {
+    public int findTargetGroup(String targetGroup, int startRow) {
         int rowIndex = 0;
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
             Sheet sheet = getSheduleSheet(workbook);

@@ -1,6 +1,6 @@
 package ru.stavarachi.service.report;
 
-import ru.stavarachi.model.User;
+import ru.stavarachi.domain.user.User;
 import ru.stavarachi.service.UserSettingService;
 
 import java.io.IOException;

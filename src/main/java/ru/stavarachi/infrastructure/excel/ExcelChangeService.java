@@ -1,10 +1,12 @@
-package ru.stavarachi.service;
+package ru.stavarachi.infrastructure.excel;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
-import ru.stavarachi.model.Change;
+import ru.stavarachi.domain.schedule.Change;
+import ru.stavarachi.port.ScheduleChangeReader;
+import ru.stavarachi.port.ScheduleReader;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class ExcelChangeService {
+public class ExcelChangeService implements ScheduleChangeReader<Change> {
     private final Path path;
     private final DataFormatter dataFormatter = new DataFormatter();
 
@@ -21,6 +23,7 @@ public class ExcelChangeService {
         this.path = path;
     }
 
+    @Override
     public List<Change> getChangeOfPair(String targetGroup, String typeOfChange, int startRow) {
         List<Change> listOfChangePair = new ArrayList<>();
         Object pairNum = null;

@@ -1,21 +1,22 @@
-package ru.stavarachi.excel;
+package ru.stavarachi.infrastructure.excel;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.config.ScheduleConfig;
+import ru.stavarachi.port.ExcelFinder;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 
-public class PoiScheduleReader implements ScheduleReader{
+public class ApachePoiScheduleReader implements ExcelFinder {
     private final FileInputStream fileInputStream;
     private final Workbook workbook;
     private final DataFormatter dataFormatter;
     private final ScheduleConfig scheduleConfig;
 
-    public PoiScheduleReader(@NotNull Path path, ScheduleConfig scheduleConfig) throws IOException {
+    public ApachePoiScheduleReader(@NotNull Path path, ScheduleConfig scheduleConfig) throws IOException {
         this.fileInputStream = new FileInputStream(path.toFile());
         this.scheduleConfig = scheduleConfig;
         dataFormatter = new DataFormatter();

@@ -1,10 +1,11 @@
-package ru.stavarachi.repository;
+package ru.stavarachi.infrastructure.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.database.DatabaseManager;
-import ru.stavarachi.model.User;
+import ru.stavarachi.domain.user.User;
+import ru.stavarachi.port.UserRepository;
 
 import java.sql.*;
 import java.util.ArrayList;

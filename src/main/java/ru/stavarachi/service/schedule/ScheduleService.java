@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.StorageConfig;
-import ru.stavarachi.model.User;
+import ru.stavarachi.domain.user.User;
 import ru.stavarachi.util.HtmlDarkThemeUtil;
 import ru.stavarachi.util.HtmlUtil;
 

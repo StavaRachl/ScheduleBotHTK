@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.stavarachi.config.ScheduleConfig;
-import ru.stavarachi.service.GroupKeyboardService;
+import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
 import ru.stavarachi.service.UserSettingService;
 import ru.stavarachi.util.MessageUtil;
 

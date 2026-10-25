@@ -3,9 +3,8 @@ package ru.stavarachi.service.report;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
-import ru.stavarachi.model.User;
+import ru.stavarachi.domain.user.User;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;

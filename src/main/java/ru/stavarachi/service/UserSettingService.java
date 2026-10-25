@@ -1,7 +1,7 @@
 package ru.stavarachi.service;
 
-import ru.stavarachi.model.User;
-import ru.stavarachi.repository.PostgresUserRepository;
+import ru.stavarachi.domain.user.User;
+import ru.stavarachi.infrastructure.repository.PostgresUserRepository;
 
 import java.util.List;
 import java.util.Map;

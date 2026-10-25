@@ -1,9 +1,9 @@
 package ru.stavarachi.util;
 
 import org.jetbrains.annotations.NotNull;
-import ru.stavarachi.model.Break;
-import ru.stavarachi.model.Change;
-import ru.stavarachi.model.Pair;
+import ru.stavarachi.domain.schedule.Break;
+import ru.stavarachi.domain.schedule.Change;
+import ru.stavarachi.domain.schedule.Pair;
 
 import java.util.List;
 

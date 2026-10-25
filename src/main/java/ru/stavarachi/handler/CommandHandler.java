@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.config.*;
-import ru.stavarachi.model.User;
-import ru.stavarachi.service.CommandService;
+import ru.stavarachi.domain.user.User;
+import ru.stavarachi.infrastructure.telegram.CommandService;
 import ru.stavarachi.service.UserSettingService;
 
 public class CommandHandler implements Handler<Void>{

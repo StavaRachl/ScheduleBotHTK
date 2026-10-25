@@ -1,15 +1,14 @@
-package ru.stavarachi.service;
+package ru.stavarachi.infrastructure.excel;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.ScheduleConfig;
-import ru.stavarachi.model.Break;
-import ru.stavarachi.model.Change;
-import ru.stavarachi.model.Pair;
+import ru.stavarachi.domain.schedule.Break;
+import ru.stavarachi.domain.schedule.Change;
+import ru.stavarachi.domain.schedule.Pair;
+import ru.stavarachi.port.ScheduleReader;
 
 import java.io.FileInputStream;
 import java.nio.file.Path;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class ExcelService {
+public class ExcelService implements ScheduleReader<Pair> {
     ScheduleConfig scheduleConfig = new ScheduleConfig();
 
     String[] timeSlotsForMonth = scheduleConfig.getTIME_SLOTS_FOR_JUNE();
@@ -26,6 +25,7 @@ public class ExcelService {
     String[] breaksSlotsForMonday = scheduleConfig.getBREAKS_TIME_SLOTS_FOR_MONDAY();
     String[] breaksSlots = scheduleConfig.getBREAKS_TIME_SLOTS();
 
+    @Override
     public List<Pair> loadPair(Path path, String targetSheet, String targetDay, String targetGroup, String targetMonth, int rowIndex, int colIndex) {
         try (FileInputStream fileInputStream = new FileInputStream(String.valueOf(path))) {
             List<Pair> listOfPair = new ArrayList<>();

@@ -1,10 +1,11 @@
-package ru.stavarachi.service;
+package ru.stavarachi.infrastructure.telegram;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.stavarachi.config.*;
-import ru.stavarachi.model.User;
+import ru.stavarachi.domain.user.User;
+import ru.stavarachi.service.UserSettingService;
 import ru.stavarachi.service.report.UserReportService;
 import ru.stavarachi.service.report.UserStatsService;
 import ru.stavarachi.service.schedule.ScheduleService;
@@ -15,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 public class CommandService {
     private final MessageUtil messageUtil;

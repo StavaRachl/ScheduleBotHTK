@@ -1,6 +1,6 @@
 package ru.stavarachi.service.schedule;
 
-import ru.stavarachi.model.Change;
+import ru.stavarachi.domain.schedule.Change;
 
 import java.util.List;
 
