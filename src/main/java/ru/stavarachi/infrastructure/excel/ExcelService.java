@@ -3,6 +3,7 @@ package ru.stavarachi.infrastructure.excel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.domain.schedule.Break;
@@ -19,6 +20,11 @@ import java.util.List;
 public class ExcelService implements ScheduleReader<Pair> {
     ScheduleConfig scheduleConfig = new ScheduleConfig();
 
+    private static final String MONDAY = "Понедельник";
+    private static final String TALK_ABOUT_IMPORTANT = "Разговоры о важном";
+    private static final String BREAK = "Перемена";
+    private static final String FIRS_COURSE_SHEET = "1,2";
+
     String[] timeSlotsForMonth = scheduleConfig.getTIME_SLOTS_FOR_JUNE();
     String[] timeSlotsForMonday = scheduleConfig.getTIME_SLOTS_FOR_MONDAY();
     String[] timeSlots = scheduleConfig.getTIME_SLOTS();
@@ -33,13 +39,15 @@ public class ExcelService implements ScheduleReader<Pair> {
             DataFormatter formatter = new DataFormatter();
             Sheet sheet = workbook.getSheet(targetSheet);
 
-            if (targetDay.equals("Понедельник") && !targetMonth.equals("JUNE")) {
-                Pair pair = new Pair(1, "Разговоры о важном", timeSlotsForMonday[0]);
+            if (targetDay.equals(MONDAY) && !targetMonth.equals("JUNE")) {
+                Pair pair = new Pair(1, TALK_ABOUT_IMPORTANT, timeSlotsForMonday[0]);
                 listOfPair.add(pair);
             }
 
-            if (targetDay.equals("Понедельник") && !targetMonth.equals("JUNE")) {
-                for (int i = 1; i <= 4; i++) {
+            if (targetDay.equals(MONDAY) && !targetMonth.equals("JUNE")) {
+                for (int i = 1; i <= maxPairCount(targetSheet, targetDay); i++) {
+                    System.out.println(maxPairCount(targetSheet, targetDay));
+
                     Row row = sheet.getRow(rowIndex - 1 + i);
                     Cell cell = row.getCell(colIndex);
 
@@ -51,7 +59,9 @@ public class ExcelService implements ScheduleReader<Pair> {
                     }
                 }
             } else {
-                for (int i = 1; i <= 4; i++) {
+                for (int i = 1; i <= maxPairCount(targetSheet, targetDay); i++) {
+                    System.out.println(maxPairCount(targetSheet, targetDay));
+
                     Row row = sheet.getRow(rowIndex -1 + i);
                     Cell cell = row.getCell(colIndex);
 
@@ -80,12 +90,12 @@ public class ExcelService implements ScheduleReader<Pair> {
 
             listOfSchedule.add(currentPair);
 
-            if (targetDay.equals("Понедельник")) {
+            if (targetDay.equals(MONDAY)) {
 
                 if (i < listOfPair.size() - 1) {
 
                     Break breaks = new Break(
-                            "Перемена",
+                            BREAK,
                             breaksSlotsForMonday[i]
                     );
 
@@ -95,7 +105,7 @@ public class ExcelService implements ScheduleReader<Pair> {
             } else if (i < listOfPair.size() - 1) {
 
                 Break breaks = new Break(
-                        "Перемена",
+                        BREAK,
                         breaksSlots[i]
                 );
 
@@ -114,5 +124,10 @@ public class ExcelService implements ScheduleReader<Pair> {
         listPairWithChange.addAll(listPairWithChangeClassroom);
 
         return listPairWithChange;
+    }
+
+    @Contract(pure = true)
+    private int maxPairCount(@NotNull String targetSheet, String targetDay) {
+        return (targetSheet.equals(FIRS_COURSE_SHEET) && targetDay.equals(MONDAY)) ? 3 : 4;
     }
 }

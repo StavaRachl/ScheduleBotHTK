@@ -48,11 +48,15 @@ public class ApachePoiChangeReader implements ExcelChangeFinder {
     }
 
     @Override
-    public int findTargetGroup(String targetGroup, int startRow) {
-        int rowIndex = 0;
+    public int findTargetGroup(String targetGroup, int startRow, int endRow) {
+        if (startRow < 0) return -1;
+
         try (FileInputStream fileInputStream = new FileInputStream(path.toFile()); Workbook workbook = new XSSFWorkbook(fileInputStream)) {
+
             Sheet sheet = getSheduleSheet(workbook);
-            for (int i = startRow; i <= sheet.getLastRowNum(); i++) {
+            int last = Math.min(endRow - 1, sheet.getLastRowNum());
+
+            for (int i = startRow; i <= last; i++) {
                 Row row = sheet.getRow(i);
                 if (row == null) continue;
 

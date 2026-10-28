@@ -37,35 +37,12 @@ public class BotApplication extends TelegramLongPollingBot {
     private final Logger log = LoggerFactory.getLogger(BotApplication.class);
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
 
-    public BotApplication(String botToken, String userName) throws IOException {
+    public BotApplication(String botToken, String userName, CommandHandler commandHandler, GroupCallbackHandler groupCallbackHandler) throws IOException {
         super(botToken);
-        this.userName = userName;
-        new BotCommandService().register(this);
 
-        ConfigLoader configLoader = new ConfigLoader();
-        DatabaseConfig databaseConfig = configLoader.database();
-        DatabaseManager databaseManager = new DatabaseManager(databaseConfig);
-        PostgresUserRepository postgresUserRepository = new PostgresUserRepository(databaseManager);
-        ApachePoiScheduleReader apachePoiScheduleReader = new ApachePoiScheduleReader(StorageConfig.scheduleExcel(), scheduleConfig);
-        ApachePoiChangeReader poiChangeReader = new ApachePoiChangeReader(StorageConfig.changeExcel());
-        ExcelChangeService excelChangeService = new ExcelChangeService(StorageConfig.changeExcel());
-        ClientHandler clientHandler = new ClientHandler();
-        ExcelService excelService = new ExcelService();
-        UserSettingService userSettingService = new UserSettingService(postgresUserRepository);
-        PathConfig pathConfig = new PathConfig();
-        HtmlUtil htmlUtil = new HtmlUtil();
-        ScheduleDataService scheduleDataService = new ScheduleDataService(clientHandler, scheduleConfig, poiChangeReader, apachePoiScheduleReader, excelService, excelChangeService);
-        HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
-        ScheduleService scheduleService = new ScheduleService(pathConfig, scheduleDataService, htmlUtil, htmlDarkThemeUtil);
-        GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
-        MessageUtil messageUtil = new MessageUtil();
-        UserStatsService userStatsService = new UserStatsService(userSettingService);
-        TimeUtil timeUtil = new TimeUtil();
-        UserExcelGenerator excelGenerator = new UserExcelGenerator();
-        UserReportService userReportService = new UserReportService(userSettingService, excelGenerator);
-        CommandService commandService = new CommandService(messageUtil, timeUtil, userSettingService, scheduleService, groupKeyboardService, userReportService, userStatsService);
-        this.commandHandler = new CommandHandler(userSettingService, commandService);
-        this.groupCallbackHandler = new GroupCallbackHandler(userSettingService, groupKeyboardService, messageUtil);
+        this.userName = userName;
+        this.commandHandler = commandHandler;
+        this.groupCallbackHandler = groupCallbackHandler;
     }
 
     @Override

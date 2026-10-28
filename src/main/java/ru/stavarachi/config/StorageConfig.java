@@ -1,5 +1,8 @@
 package ru.stavarachi.config;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,23 +22,28 @@ public class StorageConfig {
         Files.createDirectories(LOGS);
     }
 
-    public static Path userJson() {
+    @Contract(pure = true)
+    public static @NotNull Path userJson() {
         return DATA.resolve("users.json");
     }
 
-    public static Path scheduleExcel() {
-        return DOWNLOADS.resolve("РАСПИСАНИЕ 2 СЕМЕСТР 25-26 .xlsx");
+    @Contract(pure = true)
+    public static @NotNull Path scheduleExcel() {
+        return DOWNLOADS.resolve("schedule.xlsx");
     }
 
-    public static Path changeExcel() {
+    @Contract(pure = true)
+    public static @NotNull Path changeExcel() {
         return DOWNLOADS.resolve("Книга.xlsx");
     }
 
-    public static Path scheduleImage() {
+    @Contract(pure = true)
+    public static @NotNull Path scheduleImage() {
         return GENERATED.resolve("schedule.jpg");
     }
 
-    public static Path logger() {
+    @Contract(pure = true)
+    public static @NotNull Path logger() {
         return LOGS.resolve("error.log");
     }
 }

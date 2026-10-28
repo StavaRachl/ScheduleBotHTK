@@ -36,6 +36,7 @@ public class ScheduleDataService {
     public ScheduleData loadScheduleData(Path excelPath, String group , String day, String month) throws Exception {
         log.info("Start loading schedule data...");
 
+
         String sheet = apachePoiScheduleReader.findTargetSheet(group);
         int row = apachePoiScheduleReader.findTargetDay(sheet, day);
         int col = apachePoiScheduleReader.findTargetGroup(sheet, group);
@@ -47,8 +48,11 @@ public class ScheduleDataService {
         int pairsChangeVariable = poiChangeReader.findChangeVariable(scheduleConfig.getPAIRS_CHANGE());
         int classroomChangeVariable = poiChangeReader.findChangeVariable(scheduleConfig.getCLASSROOM_CHANGE());
 
-        int startRowPairsChange = poiChangeReader.findTargetGroup(group, pairsChangeVariable);
-        int startRowClassroomChange = poiChangeReader.findTargetGroup(group, classroomChangeVariable);
+        int pairsEnd = sectionEnd(pairsChangeVariable, classroomChangeVariable);
+        int classroomEnd = sectionEnd(classroomChangeVariable, pairsChangeVariable);
+
+        int startRowPairsChange = poiChangeReader.findTargetGroup(group, pairsChangeVariable, pairsEnd);
+        int startRowClassroomChange = poiChangeReader.findTargetGroup(group, classroomChangeVariable, classroomEnd);
 
         List<Change> changeOfPair = excelChangeService.getChangeOfPair(group, scheduleConfig.getPAIRS_CHANGE(), startRowPairsChange);
         List<Change> changeOfClassroom = excelChangeService.getChangeOfPair(group, scheduleConfig.getCLASSROOM_CHANGE(), startRowClassroomChange);
@@ -60,5 +64,9 @@ public class ScheduleDataService {
                 changeOfPair,
                 changeOfClassroom
         );
+    }
+
+    private int sectionEnd(int start, int otherHeader) {
+        return  otherHeader > start ? otherHeader : Integer.MAX_VALUE;
     }
 }

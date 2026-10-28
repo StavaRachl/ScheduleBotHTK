@@ -1,5 +1,6 @@
 package ru.stavarachi.application;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
@@ -11,9 +12,12 @@ import ru.stavarachi.config.DatabaseConfig;
 import ru.stavarachi.config.StorageConfig;
 import ru.stavarachi.database.DatabaseInitializer;
 import ru.stavarachi.database.DatabaseManager;
+import ru.stavarachi.factory.BotApplicationFactory;
+import ru.stavarachi.factory.DatabaseFactory;
+import ru.stavarachi.factory.components.DatabaseComponent;
 
+@Slf4j
 public class Application {
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
     public void initialize() {
         try {
             final Logger log = LoggerFactory.getLogger(Application.class);
@@ -23,21 +27,19 @@ public class Application {
             ConfigLoader configLoader = new ConfigLoader();
             DatabaseConfig databaseConfig = configLoader.database();
 
-            DatabaseManager databaseManager =
-                    new DatabaseManager(databaseConfig);
+            DatabaseComponent databaseComponent = DatabaseFactory.create(databaseConfig);
 
-            DatabaseInitializer databaseInitializer =
-                    new DatabaseInitializer(databaseManager);
-
-            databaseInitializer.initialize();
+            databaseComponent.databaseInitializer().initialize();
 
             log.info("initializing telegram bot...");
 
-            String token = appConfig.getTokenDev();
-            String userName = appConfig.getUserNameDev();
+            String token = appConfig.getTokenMain();
+            String userName = appConfig.getUserNameMain();
+
+            BotApplication bot = BotApplicationFactory.create(token, userName, databaseComponent);
 
             TelegramBotsApi api = new TelegramBotsApi(DefaultBotSession.class);
-            api.registerBot(new BotApplication(token, userName));
+            api.registerBot(bot);
 
             log.info("bot success initialize");
         } catch (TelegramApiException e) {
