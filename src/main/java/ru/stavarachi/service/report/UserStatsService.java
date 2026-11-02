@@ -1,9 +1,11 @@
 package ru.stavarachi.service.report;
 
+import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.domain.user.User;
 import ru.stavarachi.service.UserSettingService;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class UserStatsService {
@@ -47,19 +49,20 @@ public class UserStatsService {
         List<String> unique = uniqueGroup();
         List<User> userList = userSettingService.getAllUsers();
 
-        String string;
-
         StringBuilder message = new StringBuilder();
 
-        int sum = userList.size();
-        string = "💠Всего: " + sum + "\n";
-        message.append(string);
+        message.append("💠Всего: ")
+                .append(userList.size())
+                .append("\n");
 
-        for (String group : unique) {
-            string = "📗" + group + " - " + countGroup(group) + "\n";
-
-            message.append(string);
-        }
+        unique.stream()
+                .sorted(Comparator.comparingInt(this::countGroup).reversed())
+                .limit(5)
+                .forEach(group -> message.append("📗")
+                        .append(group)
+                        .append(" - ")
+                        .append(countGroup(group))
+                        .append("\n"));
 
         return message;
     }
