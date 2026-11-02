@@ -53,6 +53,9 @@ public class UserStatsService {
 
         message.append("💠Всего: ")
                 .append(userList.size())
+                .append("\n")
+                .append("\n")
+                .append("🏆Топ 5 самых популярных групп")
                 .append("\n");
 
         unique.stream()
