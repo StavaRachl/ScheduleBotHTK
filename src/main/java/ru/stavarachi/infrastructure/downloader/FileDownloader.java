@@ -1,5 +1,5 @@
 
-package ru.stavarachi.downloader;
+package ru.stavarachi.infrastructure.downloader;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

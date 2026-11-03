@@ -6,20 +6,21 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageRe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import ru.stavarachi.application.service.UserService;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
-import ru.stavarachi.service.UserSettingService;
-import ru.stavarachi.util.MessageUtil;
+import ru.stavarachi.application.util.MessageUtil;
+import ru.stavarachi.port.Handler;
 
 @Slf4j
-public class GroupCallbackHandler implements Handler<String>{
+public class GroupCallbackHandler implements Handler<String> {
     private final GroupKeyboardService groupKeyboardService;
-    private final UserSettingService userSettingService;
+    private final UserService userService;
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
     private final MessageUtil messageUtil;
 
-    public GroupCallbackHandler(UserSettingService userSettingService, GroupKeyboardService groupKeyboardService, MessageUtil messageUtil) {
-        this.userSettingService = userSettingService;
+    public GroupCallbackHandler(UserService userService, GroupKeyboardService groupKeyboardService, MessageUtil messageUtil) {
+        this.userService = userService;
         this.groupKeyboardService = groupKeyboardService;
         this.messageUtil = messageUtil;
     }
@@ -70,7 +71,7 @@ public class GroupCallbackHandler implements Handler<String>{
 
                 String group = data.substring("group:".length());
 
-                userSettingService.setDefaultGroup(chatId, group);
+                userService.setDefaultGroup(chatId, group);
 
                 bot.execute(
                         org.telegram.telegrambots.meta.api.methods.send.SendMessage

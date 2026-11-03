@@ -1,4 +1,4 @@
-package ru.stavarachi.util;
+package ru.stavarachi.application.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;

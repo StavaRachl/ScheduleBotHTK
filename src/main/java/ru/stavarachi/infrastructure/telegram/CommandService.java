@@ -1,16 +1,22 @@
 package ru.stavarachi.infrastructure.telegram;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import ru.stavarachi.application.service.RegistrationService;
+import ru.stavarachi.application.service.UserService;
+import ru.stavarachi.application.service.UserSettingService;
 import ru.stavarachi.config.*;
-import ru.stavarachi.domain.user.User;
-import ru.stavarachi.service.UserSettingService;
-import ru.stavarachi.service.report.UserReportService;
-import ru.stavarachi.service.report.UserStatsService;
-import ru.stavarachi.service.schedule.ScheduleService;
-import ru.stavarachi.util.MessageUtil;
-import ru.stavarachi.util.TimeUtil;
+import ru.stavarachi.application.service.report.UserReportService;
+import ru.stavarachi.application.service.report.UserStatsService;
+import ru.stavarachi.application.service.schedule.ScheduleService;
+import ru.stavarachi.application.util.MessageUtil;
+import ru.stavarachi.application.util.TimeUtil;
+import ru.stavarachi.domain.user.UserInfo;
+import ru.stavarachi.domain.user.UserSettings;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,47 +26,65 @@ import java.nio.file.Path;
 public class CommandService {
     private final MessageUtil messageUtil;
     private final TimeUtil timeUtil;
-    private final UserSettingService userSettingService;
+    private final RegistrationService registrationService;
     private final ScheduleService scheduleService;
     private final GroupKeyboardService groupKeyboardService;
     private final UserReportService userReportService;
     private final UserStatsService userStatsService;
+    private final UserService userService;
+    private final UserSettingService userSettingService;
 
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
     private final BotConfig botConfig = new BotConfig();
     private final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, UserSettingService userSettingService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService, UserStatsService userStatsService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
-        this.userSettingService = userSettingService;
+        this.registrationService = registrationService;
         this.scheduleService = scheduleService;
         this.groupKeyboardService = groupKeyboardService;
         this.userReportService = userReportService;
         this.userStatsService = userStatsService;
+        this.userService = userService;
+        this.userSettingService = userSettingService;
     }
 
-    public void startCommand(TelegramLongPollingBot bot, Long chatId) {
+    public void startCommand(TelegramLongPollingBot bot, @NotNull Update update, Long chatId) {
+        var from = update.getMessage().getFrom();
+
+        UserInfo userInfo;
+
+        if (update.getMessage().getChat().isGroupChat() || update.getMessage().getChat().isSuperGroupChat()) {
+            userInfo = createGroupUserInfo(chatId);
+        } else if (update.getMessage().getChat().isUserChat()){
+            userInfo = createPrivateUserInfo(chatId, from);
+        } else {
+            return;
+        }
+
+        registrationService.registerChat(chatId, userInfo);
+
         messageUtil.sendMessage(bot, chatId, "✅Бот запущен.");
         messageUtil.sendMessage(bot, chatId, "⚠️ВНИМАНИЕ! Перед использованием бота просим вас установить необходимую вам группу командой /setdefaultgroup.");
     }
 
-    public void raspCommand(TelegramLongPollingBot bot, Long chatId, User user) throws Exception {
-        if (!userSettingService.hasDefaultGroup(chatId)) {
+    public void raspCommand(TelegramLongPollingBot bot, Long chatId, UserSettings settings) throws Exception {
+        if (!userService.hasDefaultGroup(chatId)) {
             messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
             return;
         }
 
         messageUtil.sendMessage(bot, chatId, "Идёт получение расписания, пожалуйста подождите⌛");
 
-        String group = userSettingService.getDefaultGroup(chatId);
-        Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), user, timeUtil.getMonth());
+        String group = userService.getDefaultGroup(chatId).orElseThrow();
+        Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), settings, timeUtil.getMonth());
 
         messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n[Изменения в расписании](https://1drv.ms/x/c/31511f965faf70b6/IQDyk8xKWRQKRbGz_6v0skl8AVb0i5u5S50vRRH7SabQ38g)", path);
     }
 
-    public void nextRaspCommand(TelegramLongPollingBot bot, Long chatId, User user) throws Exception {
-        if (!userSettingService.hasDefaultGroup(chatId)) {
+    public void nextRaspCommand(TelegramLongPollingBot bot, Long chatId, UserSettings settings) throws Exception {
+        if (!userService.hasDefaultGroup(chatId)) {
             messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
             return;
         }
@@ -68,8 +92,8 @@ public class CommandService {
         messageUtil.sendMessage(bot, chatId, "Идёт получение расписания, пожалуйста подождите⌛");
 
 
-        String groupForNextDay = userSettingService.getDefaultGroup(chatId);
-        Path pathForNextDay = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), groupForNextDay, timeUtil.getDayOfWeekPlusDay(), user, timeUtil.getMonth());
+        String groupForNextDay = userService.getDefaultGroup(chatId).orElseThrow();
+        Path pathForNextDay = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), groupForNextDay, timeUtil.getDayOfWeekPlusDay(), settings, timeUtil.getMonth());
 
         messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + groupForNextDay + "\n" + timeUtil.getDayOfWeekPlusDay() + ": " + timeUtil.getNumeratorOrDenominator(), pathForNextDay);
     }
@@ -117,5 +141,29 @@ public class CommandService {
         } else {
             messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
         }
+    }
+
+    @NotNull
+    @Contract("_ -> new")
+    private UserInfo createGroupUserInfo(Long chatId) {
+        return new UserInfo(
+                chatId,
+                "Группа",
+                "Группа",
+                "Группа",
+                false
+        );
+    }
+
+    @NotNull
+    @Contract("_, _ -> new")
+    private UserInfo createPrivateUserInfo(Long chatId, org.telegram.telegrambots.meta.api.objects.User from) {
+        return new UserInfo(
+                chatId,
+                from.getUserName(),
+                from.getFirstName(),
+                from.getLastName(),
+                false
+        );
     }
 }

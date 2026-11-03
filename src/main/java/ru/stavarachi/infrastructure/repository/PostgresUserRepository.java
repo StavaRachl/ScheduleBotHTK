@@ -1,6 +1,7 @@
 package ru.stavarachi.infrastructure.repository;
 
 import lombok.extern.slf4j.Slf4j;
+import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.database.DatabaseManager;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @Slf4j
 public class PostgresUserRepository implements UserRepository<User, Long> {
+
     private final DatabaseManager databaseManager;
 
     public PostgresUserRepository(DatabaseManager databaseManager) {
@@ -22,119 +24,129 @@ public class PostgresUserRepository implements UserRepository<User, Long> {
 
     @Override
     public List<User> findAll() {
-        String sql = """
-                SELECT chat_id, group_name, dark_theme
-                FROM users
-                """;
+        @Language("SQL")
+        String sql = "SELECT chat_id, group_name FROM groups";
 
-        List<User> userList = new ArrayList<>();
+        List<User> users = new ArrayList<>();
 
         try (Connection connection = databaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
-                userList.add(mapUser(resultSet));
+                users.add(mapUser(resultSet));
             }
 
+            return users;
+
         } catch (SQLException e) {
-            log.error("SQLException: ", e);
+            log.error("Failed to retrieve users", e);
+            throw new RuntimeException("Failed to retrieve users", e);
         }
-        return userList;
     }
 
     @Override
-    public Optional<User> findById(Long aLong) {
-        String sql = """
-                SELECT chat_id, group_name, dark_theme
-                FROM users
-                WHERE chat_id = ?
-                """;
+    public Optional<User> findById(Long chatId) {
+        @Language("SQL")
+        String sql = "SELECT chat_id, group_name FROM groups WHERE chat_id = ?";
 
         try (Connection connection = databaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, aLong);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+            statement.setLong(1, chatId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
                     return Optional.of(mapUser(resultSet));
                 }
             }
+
+            return Optional.empty();
+
         } catch (SQLException e) {
-            log.error("SQLException: ", e);
+            log.error("Failed to find user: {}", chatId, e);
+            throw new RuntimeException("Failed to find user", e);
         }
-        return Optional.empty();
     }
 
     @Override
     public void save(@NotNull User user) {
+        try (Connection connection = databaseManager.getConnection()) {
+            save(user, connection);
+        } catch (SQLException e) {
+            log.error("Failed to save user: {}", user.getChatId(), e);
+            throw new RuntimeException("Failed to save user", e);
+        }
+    }
+
+    @Override
+    public void save(@NotNull User user, @NotNull Connection connection) {
+        @Language("SQL")
         String sql = """
-                INSERT INTO users (chat_id, group_name, dark_theme)
-                VALUES (?, ?, ?)
-                ON CONFLICT (chat_id)
-                DO UPDATE SET
-                    group_name = EXCLUDED.group_name,
-                    dark_theme = EXCLUDED.dark_theme
+                INSERT INTO groups (chat_id, group_name)
+                VALUES (?, ?)
+                ON CONFLICT (chat_id) DO NOTHING;
                 """;
 
-        try (Connection connection = databaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            preparedStatement.setLong(1, user.getId());
-            preparedStatement.setString(2, user.getGroup());
-            preparedStatement.setBoolean(3, user.isDarkTheme());
+            statement.setLong(1, user.getChatId());
+            statement.setString(2, user.getGroup());
 
-            preparedStatement.executeUpdate();
+            statement.executeUpdate();
+
         } catch (SQLException e) {
-            log.error("SQLException: ", e);
+            log.error("Failed to save user: {}", user.getChatId(), e);
+            throw new RuntimeException("Failed to save user", e);
         }
     }
 
     @Override
     public void update(@NotNull User user) {
+        @Language("SQL")
         String sql = """
-                UPDATE users
-                SET group_name = ?,
-                    dark_theme = ?
+                UPDATE groups
+                SET group_name = ?
                 WHERE chat_id = ?
                 """;
 
         try (Connection connection = databaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setString(1, user.getGroup());
-            preparedStatement.setBoolean(2, user.isDarkTheme());
-            preparedStatement.setLong(3, user.getId());
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            preparedStatement.executeUpdate();
+            statement.setString(1, user.getGroup());
+            statement.setLong(2, user.getChatId());
+
+            statement.executeUpdate();
 
         } catch (SQLException e) {
-            log.error("SQLException: ", e);
+            log.error("Failed to update user: {}", user.getChatId(), e);
+            throw new RuntimeException("Failed to update user", e);
         }
     }
 
     @Override
-    public void delete(Long aLong) {
-        String sql = """
-                DELETE FROM users
-                WHERE chat_id = ?
-                """;
+    public void delete(Long chatId) {
+        @Language("SQL")
+        String sql = "DELETE FROM groups WHERE chat_id = ?";
 
         try (Connection connection = databaseManager.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-            preparedStatement.setLong(1, aLong);
+             PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            preparedStatement.executeUpdate();
+            statement.setLong(1, chatId);
+            statement.executeUpdate();
+
         } catch (SQLException e) {
-            log.error("SQLException: ", e);
+            log.error("Failed to delete user: {}", chatId, e);
+            throw new RuntimeException("Failed to delete user", e);
         }
     }
 
+    @NotNull
     @Contract("_ -> new")
-    private @NotNull User mapUser(@NotNull ResultSet resultSet) throws SQLException {
+    private User mapUser(@NotNull ResultSet resultSet) throws SQLException {
         return new User(
                 resultSet.getLong("chat_id"),
-                resultSet.getString("group_name"),
-                resultSet.getBoolean("dark_theme")
+                resultSet.getString("group_name")
         );
     }
 }

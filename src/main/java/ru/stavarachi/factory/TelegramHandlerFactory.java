@@ -20,7 +20,7 @@ public final class TelegramHandlerFactory {
         );
 
         GroupCallbackHandler groupCallbackHandler = new GroupCallbackHandler(
-                telegramComponent.userSettingService(),
+                telegramComponent.userService(),
                 telegramComponent.groupKeyboardService(),
                 telegramComponent.messageUtil()
         );

@@ -1,13 +1,14 @@
-package ru.stavarachi.util;
+package ru.stavarachi.application.util;
 
+import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.domain.schedule.Break;
 import ru.stavarachi.domain.schedule.Change;
 import ru.stavarachi.domain.schedule.Pair;
 
 import java.util.List;
 
-public class HtmlUtil {
-    public String generateHTML(List<Object> pairList, List<Change> changePairList, List<Change> changeClassroomList) {
+public class HtmlDarkThemeUtil {
+    public String generateHTML(@NotNull List<Object> pairList, List<Change> changePairList, List<Change> changeClassroomList) {
         StringBuilder html = new StringBuilder("""
                 <html>
                         <head>
@@ -18,12 +19,13 @@ public class HtmlUtil {
                                 width: 100%;
                             }
                             th, td {
-                                border: 1px solid #ddd;
+                                border: 1px solid #3B3B3B;
                             }
                             th {
-                                background-color: #C4C4C4;
+                                background-color: #0D0D0D;
+                                color: #FFFFFF
                             }
-                            tr:nth-child(even) { background-color: #f2f2f2; }
+                            tr:nth-child(even) { background-color: #252525; color: #FFFFFF}
                         </style>
                         </head>
                         <body>
@@ -40,7 +42,7 @@ public class HtmlUtil {
                         .append("<td style='padding: 20px 0;'>").append(pair.getTime()).append("</td>")
                         .append("</tr>");
             } else if (objects instanceof Break breaks) {
-                html.append("<tr style='background-color:#35FF2E; text-align:center'>")
+                html.append("<tr style='background-color:#05A300; color: #FFFFFF; text-align:center'>")
                         .append("<td style='padding: 8px 0;'></td>")
                         .append("<td style='padding: 8px 0;'>").append(breaks.getBreaks()).append("</td>")
                         .append("<td style='padding: 8px 0;'>").append(breaks.getTime()).append("</td>")
@@ -50,13 +52,13 @@ public class HtmlUtil {
         html.append("<tr><th style='padding: 13px 0;'></th><th style='padding: 13px 0;'>Замены</th><th style='padding: 13px 0;'></th></tr>");
         for (Change change : changePairList) {
             if (change.getCount() == null && change.getTeacher() == null) {
-                html.append("<tr style='background-color:#FFF300; text-align:center'>")
+                html.append("<tr style='background-color:#B2D100; color: #FFFFFF; text-align:center';>")
                         .append("<td style='padding: 8px 0;'></td>")
                         .append("<td style='padding: 8px 0;'>").append(change.getPair()).append("</td>")
                         .append("<td style='padding: 8px 0;'></td>")
                         .append("</tr>");
             } else {
-                html.append("<tr style='text-align:center'>")
+                html.append("<tr style='background-color:#252525; color: #FFFFFF; text-align:center'>")
                         .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
                         .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
                         .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
@@ -66,13 +68,13 @@ public class HtmlUtil {
         }
         for (Change change : changeClassroomList) {
             if (change.getCount() == null && change.getTeacher() == null) {
-                html.append("<tr style='background-color:#FFF300; text-align:center'>")
+                html.append("<tr style='background-color:#B2D100; color: #FFFFFF; text-align:center; '>")
                         .append("<td style='padding: 8px 0;'></td>")
                         .append("<td style='padding: 8px 0;'>").append(change.getPair()).append("</td>")
                         .append("<td style='padding: 8px 0;'></td>")
                         .append("</tr>");
             } else {
-                html.append("<tr style='text-align:center'>")
+                html.append("<tr style='background-color:#252525; color: #FFFFFF; text-align:center'>")
                         .append("<td style='padding: 20px 0;'>").append(change.getCount()).append("</td>")
                         .append("<td style='padding: 20px 0;'>").append(change.getPair()).append("</td>")
                         .append("<td style='padding: 20px 0;'>").append(change.getTeacher()).append("</td>")
@@ -84,4 +86,3 @@ public class HtmlUtil {
         return html.toString();
     }
 }
-

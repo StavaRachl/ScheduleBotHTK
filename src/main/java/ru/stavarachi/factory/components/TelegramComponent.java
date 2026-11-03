@@ -1,18 +1,22 @@
 package ru.stavarachi.factory.components;
 
+import ru.stavarachi.application.service.UserInfoService;
+import ru.stavarachi.application.service.UserService;
+import ru.stavarachi.application.service.UserSettingService;
 import ru.stavarachi.infrastructure.telegram.CommandService;
 import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
-import ru.stavarachi.service.UserSettingService;
-import ru.stavarachi.service.report.UserExcelGenerator;
-import ru.stavarachi.service.report.UserReportService;
-import ru.stavarachi.service.report.UserStatsService;
-import ru.stavarachi.util.MessageUtil;
-import ru.stavarachi.util.TimeUtil;
+import ru.stavarachi.application.service.report.UserExcelGenerator;
+import ru.stavarachi.application.service.report.UserReportService;
+import ru.stavarachi.application.service.report.UserStatsService;
+import ru.stavarachi.application.util.MessageUtil;
+import ru.stavarachi.application.util.TimeUtil;
 
 public record TelegramComponent(
         MessageUtil messageUtil,
         TimeUtil timeUtil,
+        UserService userService,
         UserSettingService userSettingService,
+        UserInfoService userInfoService,
         GroupKeyboardService groupKeyboardService,
         CommandService commandService,
         UserExcelGenerator userExcelGenerator,

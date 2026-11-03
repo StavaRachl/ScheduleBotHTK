@@ -1,4 +1,4 @@
-package ru.stavarachi.service.schedule;
+package ru.stavarachi.application.service.schedule;
 
 import ru.stavarachi.domain.schedule.Change;
 

@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class User {
-    private long id;
+    private long chatId;
     private String group;
-    private boolean darkTheme;
 }

@@ -7,10 +7,10 @@ import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.factory.components.ExcelComponent;
 import ru.stavarachi.factory.components.ScheduleComponent;
 import ru.stavarachi.handler.ClientHandler;
-import ru.stavarachi.service.schedule.ScheduleDataService;
-import ru.stavarachi.service.schedule.ScheduleService;
-import ru.stavarachi.util.HtmlDarkThemeUtil;
-import ru.stavarachi.util.HtmlUtil;
+import ru.stavarachi.application.service.schedule.ScheduleDataService;
+import ru.stavarachi.application.service.schedule.ScheduleService;
+import ru.stavarachi.application.util.HtmlDarkThemeUtil;
+import ru.stavarachi.application.util.HtmlUtil;
 
 import java.io.IOException;
 

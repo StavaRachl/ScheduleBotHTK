@@ -1,32 +1,12 @@
-package ru.stavarachi.application;
+package ru.stavarachi.bootstrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.config.*;
-import ru.stavarachi.database.DatabaseManager;
-import ru.stavarachi.infrastructure.excel.ApachePoiChangeReader;
-import ru.stavarachi.infrastructure.excel.ApachePoiScheduleReader;
-import ru.stavarachi.handler.ClientHandler;
 import ru.stavarachi.handler.CommandHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
-import ru.stavarachi.infrastructure.excel.ExcelChangeService;
-import ru.stavarachi.infrastructure.excel.ExcelService;
-import ru.stavarachi.infrastructure.repository.PostgresUserRepository;
-import ru.stavarachi.infrastructure.telegram.BotCommandService;
-import ru.stavarachi.infrastructure.telegram.CommandService;
-import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
-import ru.stavarachi.service.*;
-import ru.stavarachi.service.report.UserExcelGenerator;
-import ru.stavarachi.service.report.UserReportService;
-import ru.stavarachi.service.report.UserStatsService;
-import ru.stavarachi.service.schedule.ScheduleDataService;
-import ru.stavarachi.service.schedule.ScheduleService;
-import ru.stavarachi.util.HtmlDarkThemeUtil;
-import ru.stavarachi.util.HtmlUtil;
-import ru.stavarachi.util.MessageUtil;
-import ru.stavarachi.util.TimeUtil;
 
 import java.io.IOException;
 

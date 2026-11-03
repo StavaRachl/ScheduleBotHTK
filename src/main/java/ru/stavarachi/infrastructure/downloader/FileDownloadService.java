@@ -1,9 +1,8 @@
-package ru.stavarachi.service;
+package ru.stavarachi.infrastructure.downloader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import ru.stavarachi.client.YandexDiskClient;
-import ru.stavarachi.downloader.FileDownloader;
-import ru.stavarachi.parser.PublicLinkParser;
+import ru.stavarachi.infrastructure.parser.PublicLinkParser;
 
 import java.nio.file.Path;
 

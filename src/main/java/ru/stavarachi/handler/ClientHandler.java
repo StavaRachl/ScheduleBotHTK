@@ -2,11 +2,9 @@
 package ru.stavarachi.handler;
 
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.stavarachi.client.OneDriveClient;
 import ru.stavarachi.config.StorageConfig;
-import ru.stavarachi.downloader.FileDownloader;
+import ru.stavarachi.infrastructure.downloader.FileDownloader;
 
 import java.net.CookieHandler;
 import java.net.CookieManager;

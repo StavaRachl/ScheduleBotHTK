@@ -1,7 +1,7 @@
 package ru.stavarachi.factory.components;
 
-import ru.stavarachi.service.schedule.ScheduleDataService;
-import ru.stavarachi.service.schedule.ScheduleService;
+import ru.stavarachi.application.service.schedule.ScheduleDataService;
+import ru.stavarachi.application.service.schedule.ScheduleService;
 
 public record ScheduleComponent(
         ScheduleDataService scheduleDataService,

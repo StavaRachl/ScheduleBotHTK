@@ -1,9 +1,11 @@
-package ru.stavarachi.service.report;
+package ru.stavarachi.application.service.report;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.domain.user.User;
+import ru.stavarachi.domain.user.UserInfo;
+import ru.stavarachi.domain.user.UserSettings;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -12,7 +14,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 public class UserExcelGenerator {
-    public Path generateReport(@NotNull List<User> userList) throws IOException {
+    public Path generateReport(@NotNull List<User> userList, @NotNull List<UserInfo> userInfoList, @NotNull List<UserSettings> userSettingsList) throws IOException {
         Path file = Files.createTempFile("user-reports-", ".xlsx");
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -28,18 +30,28 @@ public class UserExcelGenerator {
 
             createCell(header, 0, "ID", style);
             createCell(header, 1, "Группа", style);
-            createCell(header, 2, "Темная тема", style);
-            createCell(header, 3, "User name", style);
+            createCell(header, 2, "Юзернейм", style);
+            createCell(header, 3, "Имя", style);
+            createCell(header, 4, "Фамилия", style);
+            createCell(header, 5, "Спонсор", style);
+            createCell(header, 6, "Темная тема", style);
+            createCell(header, 7, "Оповещения", style);
 
             for (int i = 0; i < userList.size(); i++) {
                 User user = userList.get(i);
+                UserInfo userInfo = userInfoList.get(i);
+                UserSettings userSettings = userSettingsList.get(i);
 
                 Row row = sheet.createRow(i + 1);
 
-                row.createCell(0).setCellValue(user.getId());
+                row.createCell(0).setCellValue(user.getChatId());
                 row.createCell(1).setCellValue(user.getGroup());
-                row.createCell(2).setCellValue(user.isDarkTheme() ? "Да" : "Нет");
-
+                row.createCell(2).setCellValue(userInfo.getUsername());
+                row.createCell(3).setCellValue(userInfo.getFirstName());
+                row.createCell(4).setCellValue(userInfo.getLastName());
+                row.createCell(5).setCellValue(userInfo.isSponsor() ? "Да" : "Нет");
+                row.createCell(6).setCellValue(userSettings.isDarkTheme() ? "Да" : "Нет");
+                row.createCell(7).setCellValue(userSettings.isNotification() ? "Да" : "Нет");
             }
 
             for (int i = 0; i < 3; i++) {
@@ -53,7 +65,7 @@ public class UserExcelGenerator {
         return file;
     }
 
-    private void createCell(Row row, int column, String value, CellStyle style) {
+    private void createCell(@NotNull Row row, int column, String value, CellStyle style) {
         Cell cell = row.createCell(column);
         cell.setCellValue(value);
         cell.setCellStyle(style);

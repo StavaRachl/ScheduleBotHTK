@@ -1,6 +1,6 @@
 package ru.stavarachi;
 
-import ru.stavarachi.application.Application;
+import ru.stavarachi.bootstrap.Application;
 
 public class Main {
     public static void main(String[] args) {

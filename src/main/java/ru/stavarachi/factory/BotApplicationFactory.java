@@ -1,7 +1,7 @@
 package ru.stavarachi.factory;
 
 import org.jetbrains.annotations.NotNull;
-import ru.stavarachi.application.BotApplication;
+import ru.stavarachi.bootstrap.BotApplication;
 import ru.stavarachi.config.*;
 import ru.stavarachi.factory.components.*;
 

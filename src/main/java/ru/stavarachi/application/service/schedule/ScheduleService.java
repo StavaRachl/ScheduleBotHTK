@@ -1,4 +1,4 @@
-package ru.stavarachi.service.schedule;
+package ru.stavarachi.application.service.schedule;
 
 import com.microsoft.playwright.*;
 import org.jetbrains.annotations.NotNull;
@@ -7,8 +7,9 @@ import org.slf4j.LoggerFactory;
 import ru.stavarachi.config.PathConfig;
 import ru.stavarachi.config.StorageConfig;
 import ru.stavarachi.domain.user.User;
-import ru.stavarachi.util.HtmlDarkThemeUtil;
-import ru.stavarachi.util.HtmlUtil;
+import ru.stavarachi.application.util.HtmlDarkThemeUtil;
+import ru.stavarachi.application.util.HtmlUtil;
+import ru.stavarachi.domain.user.UserSettings;
 
 import java.nio.file.Path;
 
@@ -62,7 +63,7 @@ public class ScheduleService {
         }
     }
 
-    public Path generateScheduleImage(Path excelPath, String group, String day, @NotNull User user, String month) throws Exception {
+    public Path generateScheduleImage(Path excelPath, String group, String day, @NotNull UserSettings settings, String month) throws Exception {
         log.info("Start ScheduleService");
 
         Path pathToSave = StorageConfig.scheduleImage();
@@ -71,7 +72,7 @@ public class ScheduleService {
 
         String html;
 
-        if (user.isDarkTheme()) {
+        if (settings.isDarkTheme()) {
             html = htmlDarkThemeUtil.generateHTML(
                     data.pairsWithBreaks(),
                     data.changePair(),

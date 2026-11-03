@@ -1,4 +1,4 @@
-package ru.stavarachi.util;
+package ru.stavarachi.application.util;
 
 import java.time.DayOfWeek;
 import java.time.ZoneId;

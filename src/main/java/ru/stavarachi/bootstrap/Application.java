@@ -1,4 +1,4 @@
-package ru.stavarachi.application;
+package ru.stavarachi.bootstrap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -10,8 +10,6 @@ import ru.stavarachi.config.AppConfig;
 import ru.stavarachi.config.ConfigLoader;
 import ru.stavarachi.config.DatabaseConfig;
 import ru.stavarachi.config.StorageConfig;
-import ru.stavarachi.database.DatabaseInitializer;
-import ru.stavarachi.database.DatabaseManager;
 import ru.stavarachi.factory.BotApplicationFactory;
 import ru.stavarachi.factory.DatabaseFactory;
 import ru.stavarachi.factory.components.DatabaseComponent;
@@ -33,8 +31,8 @@ public class Application {
 
             log.info("initializing telegram bot...");
 
-            String token = appConfig.getTokenMain();
-            String userName = appConfig.getUserNameMain();
+            String token = appConfig.getTokenDev();
+            String userName = appConfig.getUserNameDev();
 
             BotApplication bot = BotApplicationFactory.create(token, userName, databaseComponent);
 
