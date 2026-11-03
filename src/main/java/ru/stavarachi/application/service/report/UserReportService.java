@@ -9,6 +9,7 @@ import ru.stavarachi.domain.user.UserSettings;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.List;
 
 public class UserReportService {
@@ -26,9 +27,20 @@ public class UserReportService {
 
 
     public Path generateUsersReport() throws IOException {
-        List<User> userList = userService.getAllUser();
-        List<UserInfo> userInfoList =  userInfoService.getAll();
-        List<UserSettings> userSettingsList = userSettingService.getAll();
+        List<User> userList = userService.getAllUser()
+                .stream()
+                .sorted(Comparator.comparing(User::getChatId))
+                .toList();
+
+        List<UserInfo> userInfoList =  userInfoService.getAll()
+                .stream()
+                .sorted(Comparator.comparing(UserInfo::getChatId))
+                .toList();
+
+        List<UserSettings> userSettingsList = userSettingService.getAll()
+                .stream()
+                .sorted(Comparator.comparing(UserSettings::getChatId))
+                .toList();
 
         return userExcelGenerator.generateReport(userList, userInfoList, userSettingsList);
     }
