@@ -40,5 +40,6 @@ build/
 .DS_Store
 
 .env
-
+deploy.ps1
+deploy.sh
 .idea
