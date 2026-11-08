@@ -16,11 +16,34 @@ public class DatabaseInitializer {
     }
     public void initialize() {
         String sql = """
-                CREATE TABLE IF NOT EXISTS users (
+                CREATE TABLE IF NOT EXISTS groups (
                     chat_id BIGINT PRIMARY KEY,
-                    group_name VARCHAR(255) NOT NULL,
-                    dark_theme BOOLEAN NOT NULL DEFAULT FALSE
-                )
+                    group_name VARCHAR(8)
+                );
+                
+                CREATE TABLE IF NOT EXISTS user_info (
+                    chat_id   BIGINT PRIMARY KEY,
+                    username  VARCHAR(255),
+                    firstname VARCHAR(255),
+                    lastname  VARCHAR(255),
+                    sponsor   BOOLEAN NOT NULL DEFAULT FALSE,
+                
+                    CONSTRAINT fk_user_info_chat
+                        FOREIGN KEY (chat_id)
+                            REFERENCES groups (chat_id)
+                            ON DELETE CASCADE
+                );
+                
+                CREATE TABLE IF NOT EXISTS settings (
+                    chat_id      BIGINT PRIMARY KEY,
+                    dark_theme   BOOLEAN NOT NULL DEFAULT FALSE,
+                    notification BOOLEAN NOT NULL DEFAULT TRUE,
+                
+                    CONSTRAINT fk_settings_chat
+                        FOREIGN KEY (chat_id)
+                            REFERENCES groups (chat_id)
+                            ON DELETE CASCADE
+                );
                 """;
 
         try (Connection connection = databaseManager.getConnection(); Statement statement = connection.createStatement()) {

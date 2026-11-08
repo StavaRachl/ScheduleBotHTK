@@ -5,7 +5,7 @@ public class BotConfig {
     private final String INFO_MESSAGE = """
                 📋Информация о боте
                 🧑‍💻Разработчик: @StavaRaChiii
-                🛎️Версия: 7.1.1
+                🛎️Версия: 7.1.2
                 ❗Проект не является официальным продуктом КГБ ПОУ "Хабаровский Технический Колледж"
                 📃[Политика конфиденциальности](https://telegra.ph/Politika-konfidencialnosti-Telegram-bota-10-01)
                 """;
