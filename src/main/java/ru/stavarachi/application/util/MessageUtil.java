@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -86,13 +87,30 @@ public class MessageUtil {
 
     public void sendKeyboard(@NotNull TelegramLongPollingBot bot, long chatId, String text, InlineKeyboardMarkup markup) {
         try {
-          SendMessage sendMessage = new SendMessage();
+            SendMessage sendMessage = new SendMessage();
 
-          sendMessage.setChatId(chatId);
-          sendMessage.setText(text);
-          sendMessage.setReplyMarkup(markup);
+            sendMessage.setChatId(chatId);
+            sendMessage.setText(text);
+            sendMessage.setReplyMarkup(markup);
 
-          bot.execute(sendMessage);
+            bot.execute(sendMessage);
+        } catch (TelegramApiException e) {
+            log.error("Telegram Error: ", e);
+        } catch (Exception e) {
+            log.error("Error: ", e);
+        }
+    }
+
+    public void editMessage(TelegramLongPollingBot bot, Long chatId, int messageId, String text, InlineKeyboardMarkup markup) {
+        try {
+            EditMessageText editMessageText = new EditMessageText();
+
+            editMessageText.setChatId(chatId);
+            editMessageText.setMessageId(messageId);
+            editMessageText.setText(text);
+            editMessageText.setReplyMarkup(markup);
+
+            bot.execute(editMessageText);
         } catch (TelegramApiException e) {
             log.error("Telegram Error: ", e);
         } catch (Exception e) {

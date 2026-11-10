@@ -16,6 +16,7 @@ import ru.stavarachi.application.service.report.UserReportService;
 import ru.stavarachi.application.service.report.UserStatsService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
+import ru.stavarachi.infrastructure.telegram.SettingsKeyboardService;
 
 public final class TelegramFactory {
     private TelegramFactory() {}
@@ -38,6 +39,7 @@ public final class TelegramFactory {
         UserInfoService userInfoService = new UserInfoService(databaseComponent.postgresUserInfoRepository());
 
         GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
+        SettingsKeyboardService settingsKeyboardService = new SettingsKeyboardService();
 
         UserExcelGenerator userExcelGenerator = new UserExcelGenerator();
 
@@ -57,6 +59,7 @@ public final class TelegramFactory {
                 registrationService,
                 scheduleComponent.scheduleService(),
                 groupKeyboardService,
+                settingsKeyboardService,
                 userReportService,
                 userStatsService,
                 userService,
@@ -70,6 +73,7 @@ public final class TelegramFactory {
                 userSettingService,
                 userInfoService,
                 groupKeyboardService,
+                settingsKeyboardService,
                 commandService,
                 userExcelGenerator,
                 userReportService,

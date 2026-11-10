@@ -3,10 +3,8 @@ package ru.stavarachi.handler;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.stavarachi.application.service.UserService;
 import ru.stavarachi.application.service.UserSettingService;
 import ru.stavarachi.config.*;
-import ru.stavarachi.domain.user.User;
 import ru.stavarachi.domain.user.UserSettings;
 import ru.stavarachi.infrastructure.telegram.CommandService;
 import ru.stavarachi.port.Handler;
@@ -29,7 +27,7 @@ public class CommandHandler implements Handler<Void> {
     public Void handle(@NotNull Update update, TelegramLongPollingBot bot) throws Exception {
         if (!update.hasMessage() || !update.getMessage().hasText()) return null;
 
-        String command = update.getMessage().getText().split(" ")[0];
+        String command = update.getMessage().getText();
         long chatId = update.getMessage().getChatId();
 
         Optional<UserSettings> optionalUserSettings = userSettingService.getSetting(chatId);
@@ -41,20 +39,24 @@ public class CommandHandler implements Handler<Void> {
 
         UserSettings userSettings = optionalUserSettings.get();
 
-        if (command.contains("@")) {
-            command = command.substring(0, command.indexOf("@"));
+        String[] commandSplit = command.split(" ", 2);
+        String cmd = commandSplit[0];
+
+        if (cmd.contains("@")) {
+            cmd = cmd.substring(0, cmd.indexOf("@"));
         }
 
-        switch (command) {
+        switch (cmd) {
             case "/start" -> commandService.startCommand(bot, update, chatId);
             case "/rasp" -> commandService.raspCommand(bot, chatId, userSettings);
             case "/nextrasp" -> commandService.nextRaspCommand(bot, chatId, userSettings);
             case "/setdefaultgroup" -> commandService.setDefaultGroupCommand(bot, chatId);
-            case "/settheme" -> commandService.setThemeCommand(bot, chatId);
+            case "/settings" -> commandService.settings(bot, chatId);
             case "/zvonki" -> commandService.zvonkiCommand(bot, chatId, callsPath);
             case "/info" -> commandService.infoCommand(bot, chatId);
             case "/log" -> commandService.logCommand(bot, chatId);
             case "/users" -> commandService.usersCommand(bot, chatId);
+            case "/send" -> commandService.sendMessage(bot, chatId, userSettingService.getAll(), commandSplit[1]);
             default -> {}
         }
         return null;

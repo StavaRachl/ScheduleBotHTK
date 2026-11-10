@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class CommandService {
     private final MessageUtil messageUtil;
@@ -29,6 +30,7 @@ public class CommandService {
     private final RegistrationService registrationService;
     private final ScheduleService scheduleService;
     private final GroupKeyboardService groupKeyboardService;
+    private final SettingsKeyboardService settingsKeyboardService;
     private final UserReportService userReportService;
     private final UserStatsService userStatsService;
     private final UserService userService;
@@ -36,19 +38,31 @@ public class CommandService {
 
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
     private final BotConfig botConfig = new BotConfig();
-    private final AppConfig appConfig = new AppConfig();
+    private static final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, UserReportService userReportService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, UserReportService userReportService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
         this.registrationService = registrationService;
         this.scheduleService = scheduleService;
         this.groupKeyboardService = groupKeyboardService;
+        this.settingsKeyboardService = settingsKeyboardService;
         this.userReportService = userReportService;
         this.userStatsService = userStatsService;
         this.userService = userService;
         this.userSettingService = userSettingService;
     }
+
+    private static final Long ADMIN_ID = appConfig.getAdminId();
+
+    private static final String SCHEDULE_ALERT_MESSAGE = "⚠️Сначала выберите группу через /setdefaultgroup";
+    private static final String INFO_MESSAGE = """
+                📋Информация о боте
+                🧑‍💻Разработчик: @StavaRaChiii
+                🛎️Версия: 7.1.1
+                ❗Проект не является официальным продуктом КГБ ПОУ "Хабаровский Технический Колледж"
+                📃[Политика конфиденциальности](https://telegra.ph/Politika-konfidencialnosti-Telegram-bota-10-01)
+                """;
 
     public void startCommand(TelegramLongPollingBot bot, @NotNull Update update, Long chatId) {
         var from = update.getMessage().getFrom();
@@ -71,7 +85,7 @@ public class CommandService {
 
     public void raspCommand(TelegramLongPollingBot bot, Long chatId, UserSettings settings) throws Exception {
         if (!userService.hasDefaultGroup(chatId)) {
-            messageUtil.sendMessage(bot, chatId, "⚠️Сначала выберите группу через /setdefaultgroup");
+            messageUtil.sendMessage(bot, chatId, SCHEDULE_ALERT_MESSAGE);
             return;
         }
 
@@ -111,25 +125,42 @@ public class CommandService {
         messageUtil.sendKeyboard(bot, chatId, botConfig.getKeyboardMessage(), keyboardMarkup);
     }
 
-    public void setThemeCommand(TelegramLongPollingBot bot, Long chatId) {
-        userSettingService.toggleTheme(chatId);
-        messageUtil.sendMessage(bot, chatId, "Тема сменена");
+    public void settings(TelegramLongPollingBot bot, Long chatId) {
+        UserSettings settings = userSettingService.getSetting(chatId).get();
+
+        String theme = "🖼️Тема: " + (settings.isDarkTheme() ? "🌙Темная" : "☀️Светлая");
+        String notification = "🔔Уведомления: " + (settings.isNotification() ? "✅Включены" : "❌Отключены");
+
+        InlineKeyboardMarkup keyboardMarkup = settingsKeyboardService.buildKeyboard();
+        messageUtil.sendKeyboard(bot, chatId, "⚙️Меню настроек\nтекущие значения\n" + theme + "\n" + notification, keyboardMarkup);
     }
 
     public void infoCommand(TelegramLongPollingBot bot, Long chatId) {
-        messageUtil.sendMessage(bot, chatId, botConfig.getINFO_MESSAGE());
+        messageUtil.sendMessage(bot, chatId, INFO_MESSAGE);
     }
 
-    public void logCommand(TelegramLongPollingBot bot, Long chatId) {
-        if (chatId == appConfig.getAdminId()) {
+    public void sendMessage(TelegramLongPollingBot bot, @NotNull Long chatId, List<UserSettings> userSettings, String text) {
+        if (chatId.equals(ADMIN_ID)) {
+            for (UserSettings settings : userSettings) {
+                if (settings.isNotification()) {
+                    messageUtil.sendMessage(bot, settings.getChatId(), text);
+                }
+            }
+        } else {
+            messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
+        }
+    }
+
+    public void logCommand(TelegramLongPollingBot bot, @NotNull Long chatId) {
+        if (chatId.equals(ADMIN_ID)) {
             messageUtil.sendDocument(bot, chatId, "🗒️Отсчет о работе бота:", StorageConfig.logger());
         } else {
             messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
         }
     }
 
-    public void usersCommand(TelegramLongPollingBot bot, Long chatId) {
-        if (chatId == appConfig.getAdminId()) {
+    public void usersCommand(TelegramLongPollingBot bot, @NotNull Long chatId) {
+        if (chatId.equals(ADMIN_ID)) {
             try {
                 Path report = userReportService.generateUsersReport();
                 messageUtil.sendDocument(bot, chatId, "📃 Отчёт о пользователях\n👥Используемые группы\n" + userStatsService.generateStats(), report);

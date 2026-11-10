@@ -10,6 +10,7 @@ import ru.stavarachi.application.service.report.UserReportService;
 import ru.stavarachi.application.service.report.UserStatsService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
+import ru.stavarachi.infrastructure.telegram.SettingsKeyboardService;
 
 public record TelegramComponent(
         MessageUtil messageUtil,
@@ -18,6 +19,7 @@ public record TelegramComponent(
         UserSettingService userSettingService,
         UserInfoService userInfoService,
         GroupKeyboardService groupKeyboardService,
+        SettingsKeyboardService settingsKeyboardService,
         CommandService commandService,
         UserExcelGenerator userExcelGenerator,
         UserReportService userReportService,
