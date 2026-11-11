@@ -43,8 +43,8 @@ public class FileDownloader {
             int status = connection.getResponseCode();
             String contentType = connection.getContentType();
 
-            logger.info("Download HTTP status: {}", status);
-            logger.info("Content-Type: {}", contentType);
+            // logger.info("Download HTTP status: {}", status);
+            // logger.info("Content-Type: {}", contentType);
 
             if (status != 200) {
                 throw new IOException(
@@ -92,7 +92,7 @@ public class FileDownloader {
                     StandardCopyOption.REPLACE_EXISTING
             );
 
-            logger.info("File saved: {}", output.toAbsolutePath());
+            // logger.info("File saved: {}", output.toAbsolutePath());
             logger.info("File size: {} bytes", Files.size(output));
 
             return output;

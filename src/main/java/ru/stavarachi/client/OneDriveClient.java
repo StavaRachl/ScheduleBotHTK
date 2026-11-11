@@ -1,6 +1,7 @@
 
 package ru.stavarachi.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,10 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Slf4j
 public class OneDriveClient {
-
-    private static final Logger logger =
-            LoggerFactory.getLogger(OneDriveClient.class);
 
     private static final String USER_AGENT =
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -37,7 +36,7 @@ public class OneDriveClient {
             try {
                 status = connection.getResponseCode();
                 location = connection.getHeaderField("Location");
-                logger.info("{} {}", status, current);
+                // log.info("{} {}", status, current);
             } finally {
                 connection.disconnect();
             }
@@ -73,7 +72,7 @@ public class OneDriveClient {
                 + (shareUrl.contains("?") ? "&" : "?")
                 + "download=1";
 
-        logger.info("Download URL: {}", downloadUrl);
+        // log.info("Download URL: {}", downloadUrl);
         return downloadUrl;
     }
 

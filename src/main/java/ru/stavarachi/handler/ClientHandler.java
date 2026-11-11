@@ -39,7 +39,7 @@ public class ClientHandler {
         String downloadUrl =
                 oneDriveClient.getDownloadUrl(ONEDRIVE_URL);
 
-        log.info("Resolved download URL: {}", downloadUrl);
+        // log.info("Resolved download URL: {}", downloadUrl);
 
         Path result = fileDownloader.download(
                 downloadUrl,
@@ -49,7 +49,7 @@ public class ClientHandler {
 
         log.info(
                 "Successfully saved: {}",
-                result.toAbsolutePath()
+                result.getFileName()
         );
     }
 }
