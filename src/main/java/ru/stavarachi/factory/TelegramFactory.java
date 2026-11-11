@@ -9,6 +9,7 @@ import ru.stavarachi.application.service.UserSettingService;
 import ru.stavarachi.factory.components.DatabaseComponent;
 import ru.stavarachi.factory.components.ScheduleComponent;
 import ru.stavarachi.factory.components.TelegramComponent;
+import ru.stavarachi.infrastructure.telegram.BotCommandService;
 import ru.stavarachi.infrastructure.telegram.CommandService;
 import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
 import ru.stavarachi.application.service.report.UserExcelGenerator;
@@ -50,6 +51,8 @@ public final class TelegramFactory {
                 userExcelGenerator
         );
 
+        BotCommandService botCommandService = new BotCommandService();
+
         UserStatsService userStatsService = new UserStatsService(userService);
 
 
@@ -74,6 +77,7 @@ public final class TelegramFactory {
                 userInfoService,
                 groupKeyboardService,
                 settingsKeyboardService,
+                botCommandService,
                 commandService,
                 userExcelGenerator,
                 userReportService,

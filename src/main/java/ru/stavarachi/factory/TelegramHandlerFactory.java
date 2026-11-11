@@ -16,6 +16,7 @@ public final class TelegramHandlerFactory {
     public static TelegramHandlerComponent create(@NotNull TelegramComponent telegramComponent) {
 
         CommandHandler commandHandler = new CommandHandler(
+                telegramComponent.botCommandService(),
                 telegramComponent.userSettingService(),
                 telegramComponent.commandService()
         );

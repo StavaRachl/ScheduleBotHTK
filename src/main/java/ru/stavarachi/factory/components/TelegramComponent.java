@@ -3,6 +3,7 @@ package ru.stavarachi.factory.components;
 import ru.stavarachi.application.service.UserInfoService;
 import ru.stavarachi.application.service.UserService;
 import ru.stavarachi.application.service.UserSettingService;
+import ru.stavarachi.infrastructure.telegram.BotCommandService;
 import ru.stavarachi.infrastructure.telegram.CommandService;
 import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
 import ru.stavarachi.application.service.report.UserExcelGenerator;
@@ -20,6 +21,7 @@ public record TelegramComponent(
         UserInfoService userInfoService,
         GroupKeyboardService groupKeyboardService,
         SettingsKeyboardService settingsKeyboardService,
+        BotCommandService botCommandService,
         CommandService commandService,
         UserExcelGenerator userExcelGenerator,
         UserReportService userReportService,

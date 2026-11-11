@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.List;
@@ -17,7 +18,6 @@ public class BotCommandService {
             new BotCommand("/setdefaultgroup", "Выбрать группу"),
             new BotCommand("/settings", "Открыть настройки"),
             new BotCommand("/zvonki", "Получить расписание звонков"),
-            new BotCommand("/zvonkijune", "Получить расписание звонков на июнь"),
             new BotCommand("/info", "Информация о боте")
     );
 

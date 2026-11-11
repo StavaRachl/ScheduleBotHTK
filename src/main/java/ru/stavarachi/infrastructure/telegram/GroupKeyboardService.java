@@ -26,9 +26,10 @@ public class GroupKeyboardService {
         List<InlineKeyboardButton> row = new ArrayList<>();
 
         for (int i = startPage; i < end; i++) {
-            InlineKeyboardButton button = new InlineKeyboardButton();
-            button.setText(groups[i]);
-            button.setCallbackData("group:" + groups[i]);
+            InlineKeyboardButton button = InlineKeyboardButton.builder()
+                    .text(groups[i])
+                    .callbackData("group:" + groups[i])
+                    .build();
 
             row.add(button);
 
@@ -45,27 +46,28 @@ public class GroupKeyboardService {
         int prevPage = Math.max(page - 1, 0);
         int nextPage = Math.min(page + 1, totalPage - 1);
 
-        InlineKeyboardButton prevButton = new InlineKeyboardButton();
-        prevButton.setText("⬅️");
-        prevButton.setCallbackData("group_page:" + prevPage);
+        InlineKeyboardButton prevButton = InlineKeyboardButton.builder()
+                .text("⬅️")
+                .callbackData("group_page:" + prevPage)
+                .build();
 
-        InlineKeyboardButton pageButton = new InlineKeyboardButton();
-        pageButton.setText((page + 1) + "/" + totalPage);
-        pageButton.setCallbackData("noop");
+        InlineKeyboardButton pageButton = InlineKeyboardButton.builder()
+                .text((page + 1) + "/" + totalPage)
+                .callbackData("noop")
+                .build();
 
-        InlineKeyboardButton nextButton = new InlineKeyboardButton();
-        nextButton.setText("➡️");
-        nextButton.setCallbackData("group_page:" + nextPage);
+        InlineKeyboardButton nextButton = InlineKeyboardButton.builder()
+                .text("➡️")
+                .callbackData("group_page:" + nextPage)
+                .build();
 
         inlineKeyboardButtonList.add(prevButton);
         inlineKeyboardButtonList.add(pageButton);
         inlineKeyboardButtonList.add(nextButton);
-
         listOfInlineKeyboardButton.add(inlineKeyboardButtonList);
 
-        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
-        inlineKeyboardMarkup.setKeyboard(listOfInlineKeyboardButton);
-
-        return inlineKeyboardMarkup;
+        return InlineKeyboardMarkup.builder()
+                .keyboard(listOfInlineKeyboardButton)
+                .build();
     }
 }

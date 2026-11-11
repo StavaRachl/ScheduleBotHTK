@@ -6,18 +6,21 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.application.service.UserSettingService;
 import ru.stavarachi.config.*;
 import ru.stavarachi.domain.user.UserSettings;
+import ru.stavarachi.infrastructure.telegram.BotCommandService;
 import ru.stavarachi.infrastructure.telegram.CommandService;
 import ru.stavarachi.port.Handler;
 
 import java.util.Optional;
 
 public class CommandHandler implements Handler<Void> {
+    private final BotCommandService botCommandService;
     private final UserSettingService userSettingService;
     private final CommandService commandService;
 
     private final PathConfig pathConfig = new PathConfig();
 
-    public CommandHandler(UserSettingService userSettingService, CommandService commandService) {
+    public CommandHandler(BotCommandService botCommandService, UserSettingService userSettingService, CommandService commandService) {
+        this.botCommandService = botCommandService;
         this.userSettingService = userSettingService;
         this.commandService = commandService;
     }
@@ -25,6 +28,7 @@ public class CommandHandler implements Handler<Void> {
     private final String callsPath = pathConfig.getCallsPath();
 
     public Void handle(@NotNull Update update, TelegramLongPollingBot bot) throws Exception {
+        botCommandService.register(bot);
         if (!update.hasMessage() || !update.getMessage().hasText()) return null;
 
         String command = update.getMessage().getText();
