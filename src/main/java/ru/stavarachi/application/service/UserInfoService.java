@@ -1,15 +1,15 @@
 package ru.stavarachi.application.service;
 
 import ru.stavarachi.domain.user.UserInfo;
-import ru.stavarachi.port.UserInfoRepository;
+import ru.stavarachi.port.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserInfoService {
-    private final UserInfoRepository<UserInfo, Long> repository;
+    private final Repository<UserInfo, Long> repository;
 
-    public UserInfoService(UserInfoRepository<UserInfo, Long> repository) {
+    public UserInfoService(Repository<UserInfo, Long> repository) {
         this.repository = repository;
     }
 

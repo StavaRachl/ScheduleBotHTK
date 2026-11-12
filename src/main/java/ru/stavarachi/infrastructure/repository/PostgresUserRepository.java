@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.database.DatabaseManager;
 import ru.stavarachi.domain.user.User;
-import ru.stavarachi.port.UserRepository;
+import ru.stavarachi.port.Repository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-public class PostgresUserRepository implements UserRepository<User, Long> {
+public class PostgresUserRepository implements Repository<User, Long> {
 
     private final DatabaseManager databaseManager;
 

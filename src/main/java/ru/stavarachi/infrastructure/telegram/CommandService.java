@@ -1,5 +1,6 @@
 package ru.stavarachi.infrastructure.telegram;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -24,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+@Slf4j
 public class CommandService {
     private final MessageUtil messageUtil;
     private final TimeUtil timeUtil;
@@ -54,6 +56,7 @@ public class CommandService {
     }
 
     private static final Long ADMIN_ID = appConfig.getAdminId();
+    private static final Long ADMIN_GROUP_ID = appConfig.getAdminGroupId();
 
     private static final String SCHEDULE_ALERT_MESSAGE = "⚠️Сначала выберите группу через /setdefaultgroup";
     private static final String INFO_MESSAGE = """
@@ -143,6 +146,21 @@ public class CommandService {
 
     public void infoCommand(TelegramLongPollingBot bot, Long chatId) {
         messageUtil.sendMessage(bot, chatId, INFO_MESSAGE);
+    }
+
+    public void sendFeedback(TelegramLongPollingBot bot, Long chatId, String text) {
+        if (chatId < 0) {
+            messageUtil.sendMessage(bot, chatId, "⚠️Отправлять ошибки можно только в личном чате с ботом - @khtcbot");
+            return;
+        }
+
+        if (text.isBlank()) {
+            messageUtil.sendMessage(bot, chatId, "⚠️Корректная форма заполнения - /feedback <Сообщение об ошибке>");
+            return;
+        }
+
+        messageUtil.sendMessage(bot, ADMIN_GROUP_ID, text);
+        log.info("Feedback message saved: {}", text);
     }
 
     public void sendMessage(TelegramLongPollingBot bot, @NotNull Long chatId, List<UserSettings> userSettings, String text) {

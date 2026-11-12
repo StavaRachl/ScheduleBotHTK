@@ -1,15 +1,15 @@
 package ru.stavarachi.application.service;
 
 import ru.stavarachi.domain.user.User;
-import ru.stavarachi.port.UserRepository;
+import ru.stavarachi.port.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserService {
-    private final UserRepository<User, Long> repository;
+    private final Repository<User, Long> repository;
 
-    public UserService(UserRepository<User, Long> repository) {
+    public UserService(Repository<User, Long> repository) {
         this.repository = repository;
     }
 

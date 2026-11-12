@@ -16,6 +16,13 @@ public class DatabaseInitializer {
     }
     public void initialize() {
         String sql = """
+                CREATE TYPE request_status as ENUM (
+                    'PENDING',
+                    'REJECTED',
+                    'APPROVED',
+                    'IN_PROCESS'
+                );
+                
                 CREATE TABLE IF NOT EXISTS groups (
                     chat_id BIGINT PRIMARY KEY,
                     group_name VARCHAR(8)
@@ -44,6 +51,18 @@ public class DatabaseInitializer {
                             REFERENCES groups (chat_id)
                             ON DELETE CASCADE
                 );
+                
+                CREATE TABLE requests (
+                    id BIGSERIAL PRIMARY KEY,
+                    chat_id BIGINT NOT NULL,
+                    message text NOT NULL,
+                    feedback_status request_status NOT NULL DEFAULT 'PENDING',
+                
+                    CONSTRAINT fk_request_chat
+                        FOREIGN KEY (chat_id)
+                                      REFERENCES groups(chat_id)
+                                      ON DELETE CASCADE
+                )
                 """;
 
         try (Connection connection = databaseManager.getConnection(); Statement statement = connection.createStatement()) {

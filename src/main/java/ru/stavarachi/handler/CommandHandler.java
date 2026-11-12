@@ -56,6 +56,7 @@ public class CommandHandler implements Handler<Void> {
             case "/nextrasp" -> commandService.nextRaspCommand(bot, chatId, userSettings);
             case "/setdefaultgroup" -> commandService.setDefaultGroupCommand(bot, chatId);
             case "/settings" -> commandService.settings(bot, chatId);
+            case "/feedback" -> commandService.sendFeedback(bot, chatId, commandSplit[1]);
             case "/zvonki" -> commandService.zvonkiCommand(bot, chatId, callsPath);
             case "/info" -> commandService.infoCommand(bot, chatId);
             case "/log" -> commandService.logCommand(bot, chatId);

@@ -5,9 +5,8 @@ import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.database.DatabaseManager;
-import ru.stavarachi.domain.user.UserInfo;
 import ru.stavarachi.domain.user.UserSettings;
-import ru.stavarachi.port.UserSettingsRepository;
+import ru.stavarachi.port.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,7 +18,7 @@ import java.util.Optional;
 
 @Slf4j
 public class PostgresUserSettingRepository
-        implements UserSettingsRepository<UserSettings, Long> {
+        implements Repository<UserSettings, Long> {
 
     private final DatabaseManager databaseManager;
 

@@ -49,18 +49,11 @@ public class GroupCallbackHandler implements Handler<String> {
 
                 if (page < 0) page = 0;
 
-                EditMessageReplyMarkup edit = new EditMessageReplyMarkup();
-
-                edit.setChatId(chatId);
-
-                edit.setMessageId(messageId);
-
-                edit.setReplyMarkup(
-                        groupKeyboardService.buildKeyboardForGroup(
-                                scheduleConfig.getGROUP_NAMES(),
-                                page
-                        )
-                );
+                EditMessageReplyMarkup edit = EditMessageReplyMarkup.builder()
+                        .chatId(chatId)
+                        .messageId(messageId)
+                        .replyMarkup(groupKeyboardService.buildKeyboardForGroup(scheduleConfig.getGROUP_NAMES(), page))
+                        .build();
 
                 bot.execute(edit);
 
