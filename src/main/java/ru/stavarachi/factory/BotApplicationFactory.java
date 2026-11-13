@@ -11,7 +11,7 @@ public final class BotApplicationFactory {
     private BotApplicationFactory() {}
 
     @NotNull
-    public static BotApplication create(String botToken, String userName, DatabaseComponent databaseComponent) throws IOException {
+    public static BotApplication create(String botToken, String userName, DatabaseComponent databaseComponent) throws Exception {
         ScheduleConfig scheduleConfig = new ScheduleConfig();
         PathConfig pathConfig = new PathConfig();
 

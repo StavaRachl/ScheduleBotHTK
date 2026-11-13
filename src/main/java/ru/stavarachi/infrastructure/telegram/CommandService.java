@@ -7,6 +7,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import ru.stavarachi.application.service.FeedbackService;
 import ru.stavarachi.application.service.RegistrationService;
 import ru.stavarachi.application.service.UserService;
 import ru.stavarachi.application.service.UserSettingService;
@@ -16,6 +17,7 @@ import ru.stavarachi.application.service.report.UserStatsService;
 import ru.stavarachi.application.service.schedule.ScheduleService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
+import ru.stavarachi.domain.feedback.Feedback;
 import ru.stavarachi.domain.user.UserInfo;
 import ru.stavarachi.domain.user.UserSettings;
 
@@ -33,7 +35,9 @@ public class CommandService {
     private final ScheduleService scheduleService;
     private final GroupKeyboardService groupKeyboardService;
     private final SettingsKeyboardService settingsKeyboardService;
+    private final FeedbackKeyboardService feedbackKeyboardService;
     private final UserReportService userReportService;
+    private final FeedbackService feedbackService;
     private final UserStatsService userStatsService;
     private final UserService userService;
     private final UserSettingService userSettingService;
@@ -42,14 +46,16 @@ public class CommandService {
     private final BotConfig botConfig = new BotConfig();
     private static final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, UserReportService userReportService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, FeedbackKeyboardService feedbackKeyboardService, UserReportService userReportService, FeedbackService feedbackService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
         this.registrationService = registrationService;
         this.scheduleService = scheduleService;
         this.groupKeyboardService = groupKeyboardService;
         this.settingsKeyboardService = settingsKeyboardService;
+        this.feedbackKeyboardService = feedbackKeyboardService;
         this.userReportService = userReportService;
+        this.feedbackService = feedbackService;
         this.userStatsService = userStatsService;
         this.userService = userService;
         this.userSettingService = userSettingService;
@@ -159,7 +165,11 @@ public class CommandService {
             return;
         }
 
+        Feedback feedback = new Feedback(chatId, text);
+        feedbackService.save(feedback);
+
         messageUtil.sendMessage(bot, ADMIN_GROUP_ID, text);
+        messageUtil.sendKeyboard(bot, ADMIN_GROUP_ID, "Новая заявка от " + feedback.getId(), feedbackKeyboardService.build());
         log.info("Feedback message saved: {}", text);
     }
 

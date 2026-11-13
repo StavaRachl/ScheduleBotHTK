@@ -1,5 +1,6 @@
 package ru.stavarachi.database;
 
+import org.intellij.lang.annotations.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,14 +16,8 @@ public class DatabaseInitializer {
         this.databaseManager = databaseManager;
     }
     public void initialize() {
+        @Language("SQL")
         String sql = """
-                CREATE TYPE request_status as ENUM (
-                    'PENDING',
-                    'REJECTED',
-                    'APPROVED',
-                    'IN_PROCESS'
-                );
-                
                 CREATE TABLE IF NOT EXISTS groups (
                     chat_id BIGINT PRIMARY KEY,
                     group_name VARCHAR(8)
@@ -52,7 +47,7 @@ public class DatabaseInitializer {
                             ON DELETE CASCADE
                 );
                 
-                CREATE TABLE requests (
+                CREATE TABLE IF NOT EXISTS requests (
                     id BIGSERIAL PRIMARY KEY,
                     chat_id BIGINT NOT NULL,
                     message text NOT NULL,
@@ -62,11 +57,26 @@ public class DatabaseInitializer {
                         FOREIGN KEY (chat_id)
                                       REFERENCES groups(chat_id)
                                       ON DELETE CASCADE
-                )
+                );
                 """;
 
         try (Connection connection = databaseManager.getConnection(); Statement statement = connection.createStatement()) {
             statement.execute(sql);
+
+            statement.execute("""
+                DO $$
+                BEGIN
+                    CREATE TYPE request_status AS ENUM (
+                        'PENDING',
+                        'REJECTED',
+                        'APPROVED',
+                        'IN_PROCESS'
+                    );
+                EXCEPTION
+                    WHEN duplicate_object THEN NULL;
+                END
+                $$;
+                """);
             logger.info("database initialize successfully");
         } catch (SQLException e) {
             throw new RuntimeException(e);

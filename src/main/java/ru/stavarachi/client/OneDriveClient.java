@@ -22,7 +22,41 @@ public class OneDriveClient {
                     + "AppleWebKit/537.36 (KHTML, like Gecko) "
                     + "Chrome/120.0.0.0 Safari/537.36";
 
+
     public String getDownloadUrl(String shortUrl) throws IOException {
+        for (int attempt = 1; attempt <= 3; attempt++) {
+            try {
+                String result = resolveDownloadUrl(shortUrl);
+
+                log.info("OneDrive URL resolved on attempt {}", attempt);
+                return result;
+
+            } catch (IllegalStateException e) {
+                log.warn(
+                        "OneDrive URL resolution failed. Attempt {}/3",
+                        attempt
+                );
+
+                if (attempt == 3) {
+                    throw e;
+                }
+
+                try {
+                    Thread.sleep(attempt * 1000L);
+                } catch (InterruptedException interruptedException) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException(
+                            "OneDrive retry interrupted",
+                            interruptedException
+                    );
+                }
+            }
+        }
+
+        throw new IOException("Unable to resolve OneDrive URL");
+    }
+
+    private @NotNull String resolveDownloadUrl(String shortUrl) throws IOException {
         List<String> chain = new ArrayList<>();
         String current = shortUrl;
 

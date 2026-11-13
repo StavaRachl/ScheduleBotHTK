@@ -77,7 +77,18 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
 
     @Override
     public void save(Feedback entity) {
+        @Language("SQL")
+        String sql = "INSERT INTO requests (chat_id, message)  VALUES (?, ?)";
+        try (Connection connection = databaseManager.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setLong(1, entity.getId());
+            statement.setString(2, entity.getMessage());
 
+            statement.executeQuery();
+        } catch (SQLException e) {
+            log.error("SQLException: {}", e, e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -87,7 +98,22 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
 
     @Override
     public void update(Feedback entity) {
+        @Language("SQL")
+        String sql = """
+                UPDATE requests
+                SET feedback_status = ?
+                WHERE chat_id = ?
+                """;
+        try (Connection connection = databaseManager.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, entity.getRequestStatus());
+            statement.setLong(2, entity.getChatId());
 
+            statement.executeQuery();
+        } catch (SQLException e) {
+            log.error("SQLException: {}", e, e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

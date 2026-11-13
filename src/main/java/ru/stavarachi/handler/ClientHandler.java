@@ -9,17 +9,26 @@ import ru.stavarachi.infrastructure.downloader.FileDownloader;
 import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class ClientHandler {
-
-    private final OneDriveClient oneDriveClient;
-    private final FileDownloader fileDownloader;
+public class ClientHandler implements AutoCloseable {
 
     private static final String ONEDRIVE_URL =
             "https://1drv.ms/x/c/31511f965faf70b6/"
                     + "IQDyk8xKWRQKRbGz_6v0skl8AVb0i5u5S50vRRH7SabQ38g";
+
+    private static final String FILE_NAME = "Книга.xlsx";
+
+    private final OneDriveClient oneDriveClient;
+    private final FileDownloader fileDownloader;
+
+    private final ScheduledExecutorService scheduler =
+            Executors.newSingleThreadScheduledExecutor();
 
     public ClientHandler() {
         CookieManager cookies = new CookieManager(
@@ -33,23 +42,61 @@ public class ClientHandler {
         this.fileDownloader = new FileDownloader();
     }
 
-    public void getChange() throws Exception {
-        log.info("Starting OneDrive download");
+    // Вызывается один раз при запуске бота
+    public void start() throws Exception {
+        updateFile();
+
+        scheduler.scheduleAtFixedRate(
+                this::updateSafely,
+                1,
+                1,
+                TimeUnit.HOURS
+        );
+
+        log.info("OneDrive auto-update started: every 1 hour");
+    }
+
+    // Обновление файла
+    private void updateSafely() {
+        try {
+            updateFile();
+        } catch (Exception e) {
+            log.error("OneDrive scheduled update failed", e);
+        }
+    }
+
+    private synchronized void updateFile() throws Exception {
+        log.info("Starting OneDrive file update");
 
         String downloadUrl =
                 oneDriveClient.getDownloadUrl(ONEDRIVE_URL);
 
-        // log.info("Resolved download URL: {}", downloadUrl);
-
-        Path result = fileDownloader.download(
+        Path downloaded = fileDownloader.download(
                 downloadUrl,
-                "Книга.xlsx",
+                FILE_NAME,
                 StorageConfig.DOWNLOADS
         );
 
-        log.info(
-                "Successfully saved: {}",
-                result.getFileName()
-        );
+        if (!Files.exists(downloaded) || Files.size(downloaded) == 0) {
+            throw new IllegalStateException("Downloaded file is empty");
+        }
+
+        log.info("OneDrive file updated: {}", downloaded);
+    }
+
+    // Больше не скачивает файл!
+    public void getChange() {
+        Path file = StorageConfig.DOWNLOADS.resolve(FILE_NAME);
+
+        if (!Files.exists(file)) {
+            throw new IllegalStateException(
+                    "Schedule file does not exist: " + file
+            );
+        }
+    }
+
+    @Override
+    public void close() {
+        scheduler.shutdownNow();
     }
 }

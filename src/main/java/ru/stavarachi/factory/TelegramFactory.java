@@ -63,7 +63,9 @@ public final class TelegramFactory {
                 scheduleComponent.scheduleService(),
                 groupKeyboardService,
                 settingsKeyboardService,
+                null,
                 userReportService,
+                null,
                 userStatsService,
                 userService,
                 userSettingService
