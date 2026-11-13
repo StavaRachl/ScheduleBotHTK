@@ -42,21 +42,26 @@ public class ClientHandler implements AutoCloseable {
         this.fileDownloader = new FileDownloader();
     }
 
-    // Вызывается один раз при запуске бота
-    public void start() throws Exception {
-        updateFile();
+    public void start() {
+        try {
+            updateFile();
+        } catch (Exception e) {
+            log.error(
+                    "Initial OneDrive update failed. Trying to use cached file.",
+                    e
+            );
+        }
 
-        scheduler.scheduleAtFixedRate(
+        scheduler.scheduleWithFixedDelay(
                 this::updateSafely,
-                1,
-                1,
-                TimeUnit.HOURS
+                15,
+                15,
+                TimeUnit.MINUTES
         );
 
-        log.info("OneDrive auto-update started: every 1 hour");
+        log.info("OneDrive updater started");
     }
 
-    // Обновление файла
     private void updateSafely() {
         try {
             updateFile();
@@ -84,7 +89,6 @@ public class ClientHandler implements AutoCloseable {
         log.info("OneDrive file updated: {}", downloaded);
     }
 
-    // Больше не скачивает файл!
     public void getChange() {
         Path file = StorageConfig.DOWNLOADS.resolve(FILE_NAME);
 
