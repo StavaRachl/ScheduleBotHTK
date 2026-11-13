@@ -19,9 +19,10 @@ public final class ScheduleFactory {
 
     @NotNull
     @Contract("_, _, _ -> new")
-    public static ScheduleComponent create(PathConfig pathConfig, ScheduleConfig scheduleConfig, @NotNull ExcelComponent excelComponent) throws IOException {
+    public static ScheduleComponent create(PathConfig pathConfig, ScheduleConfig scheduleConfig, @NotNull ExcelComponent excelComponent) throws Exception {
 
         ClientHandler clientHandler = new ClientHandler();
+        clientHandler.start();
 
         HtmlUtil htmlUtil = new HtmlUtil();
         HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();
