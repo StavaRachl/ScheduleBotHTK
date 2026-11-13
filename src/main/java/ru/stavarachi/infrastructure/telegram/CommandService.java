@@ -1,11 +1,13 @@
 package ru.stavarachi.infrastructure.telegram;
 
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import ru.stavarachi.application.service.FeedbackService;
 import ru.stavarachi.application.service.RegistrationService;
 import ru.stavarachi.application.service.UserService;
 import ru.stavarachi.application.service.UserSettingService;
@@ -15,6 +17,7 @@ import ru.stavarachi.application.service.report.UserStatsService;
 import ru.stavarachi.application.service.schedule.ScheduleService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
+import ru.stavarachi.domain.feedback.Feedback;
 import ru.stavarachi.domain.user.UserInfo;
 import ru.stavarachi.domain.user.UserSettings;
 
@@ -24,6 +27,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+@Slf4j
 public class CommandService {
     private final MessageUtil messageUtil;
     private final TimeUtil timeUtil;
@@ -31,7 +35,9 @@ public class CommandService {
     private final ScheduleService scheduleService;
     private final GroupKeyboardService groupKeyboardService;
     private final SettingsKeyboardService settingsKeyboardService;
+    private final FeedbackKeyboardService feedbackKeyboardService;
     private final UserReportService userReportService;
+    private final FeedbackService feedbackService;
     private final UserStatsService userStatsService;
     private final UserService userService;
     private final UserSettingService userSettingService;
@@ -40,20 +46,23 @@ public class CommandService {
     private final BotConfig botConfig = new BotConfig();
     private static final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, UserReportService userReportService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, FeedbackKeyboardService feedbackKeyboardService, UserReportService userReportService, FeedbackService feedbackService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
         this.registrationService = registrationService;
         this.scheduleService = scheduleService;
         this.groupKeyboardService = groupKeyboardService;
         this.settingsKeyboardService = settingsKeyboardService;
+        this.feedbackKeyboardService = feedbackKeyboardService;
         this.userReportService = userReportService;
+        this.feedbackService = feedbackService;
         this.userStatsService = userStatsService;
         this.userService = userService;
         this.userSettingService = userSettingService;
     }
 
     private static final Long ADMIN_ID = appConfig.getAdminId();
+    private static final Long ADMIN_GROUP_ID = appConfig.getAdminGroupId();
 
     private static final String SCHEDULE_ALERT_MESSAGE = "⚠️Сначала выберите группу через /setdefaultgroup";
     private static final String INFO_MESSAGE = """
@@ -143,6 +152,25 @@ public class CommandService {
 
     public void infoCommand(TelegramLongPollingBot bot, Long chatId) {
         messageUtil.sendMessage(bot, chatId, INFO_MESSAGE);
+    }
+
+    public void sendFeedback(TelegramLongPollingBot bot, Long chatId, String text) {
+        if (chatId < 0) {
+            messageUtil.sendMessage(bot, chatId, "⚠️Отправлять ошибки можно только в личном чате с ботом - @khtcbot");
+            return;
+        }
+
+        if (text.isBlank()) {
+            messageUtil.sendMessage(bot, chatId, "⚠️Корректная форма заполнения - /feedback <Сообщение об ошибке>");
+            return;
+        }
+
+        Feedback feedback = new Feedback(chatId, text);
+        feedbackService.save(feedback);
+
+        messageUtil.sendMessage(bot, ADMIN_GROUP_ID, text);
+        messageUtil.sendKeyboard(bot, ADMIN_GROUP_ID, "Новая заявка от " + feedback.getId(), feedbackKeyboardService.build());
+        log.info("Feedback message saved: {}", text);
     }
 
     public void sendMessage(TelegramLongPollingBot bot, @NotNull Long chatId, List<UserSettings> userSettings, String text) {

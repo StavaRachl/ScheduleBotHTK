@@ -5,19 +5,17 @@ import ru.stavarachi.database.DatabaseManager;
 import ru.stavarachi.domain.user.User;
 import ru.stavarachi.domain.user.UserInfo;
 import ru.stavarachi.domain.user.UserSettings;
-import ru.stavarachi.port.UserInfoRepository;
-import ru.stavarachi.port.UserRepository;
-import ru.stavarachi.port.UserSettingsRepository;
+import ru.stavarachi.port.Repository;
 
 import java.util.Objects;
 
 public class RegistrationService {
-    private final UserRepository<User, Long> userRepository;
-    private final UserSettingsRepository<UserSettings, Long> userSettingsRepository;
-    private final UserInfoRepository<UserInfo, Long> userInfoRepository;
+    private final Repository<User, Long> userRepository;
+    private final Repository<UserSettings, Long> userSettingsRepository;
+    private final Repository<UserInfo, Long> userInfoRepository;
     private final DatabaseManager databaseManager;
 
-    public RegistrationService(UserRepository<User, Long> userRepository, UserSettingsRepository<UserSettings, Long> userSettingsRepository, UserInfoRepository<UserInfo, Long> userInfoRepository, DatabaseManager databaseManager) {
+    public RegistrationService(Repository<User, Long> userRepository, Repository<UserSettings, Long> userSettingsRepository, Repository<UserInfo, Long> userInfoRepository, DatabaseManager databaseManager) {
         this.userRepository = userRepository;
         this.userSettingsRepository = userSettingsRepository;
         this.userInfoRepository = userInfoRepository;

@@ -23,6 +23,7 @@ public class AppConfig {
     private final String userNameMain = get("BOT_USERNAME");
     private final String userNameDev = get("BOT_USERNAME_DEV");
     private final long adminId = Long.parseLong(get("ADMIN_ID"));
+    private final long adminGroupId = Long.parseLong(get("ADMIN_GROUP_ID"));
     private final String changeInSchedule = get("FILE_URL");
 
     public DatabaseConfig getDatabaseConfig() {
@@ -57,5 +58,9 @@ public class AppConfig {
 
     public String getChangeInSchedule() {
         return changeInSchedule;
+    }
+
+    public long getAdminGroupId() {
+        return adminGroupId;
     }
 }

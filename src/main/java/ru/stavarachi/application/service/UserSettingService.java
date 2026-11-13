@@ -1,15 +1,15 @@
 package ru.stavarachi.application.service;
 
 import ru.stavarachi.domain.user.UserSettings;
-import ru.stavarachi.port.UserSettingsRepository;
+import ru.stavarachi.port.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
 public class UserSettingService {
-    private final UserSettingsRepository<UserSettings, Long> repository;
+    private final Repository<UserSettings, Long> repository;
 
-    public UserSettingService(UserSettingsRepository<UserSettings, Long> repository) {
+    public UserSettingService(Repository<UserSettings, Long> repository) {
         this.repository = repository;
     }
 
