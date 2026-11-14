@@ -6,6 +6,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.stavarachi.config.*;
 import ru.stavarachi.handler.CommandHandler;
+import ru.stavarachi.handler.FeedbackCallbackHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
 import ru.stavarachi.handler.SettingsCallbackHandler;
 
@@ -16,17 +17,19 @@ public class BotApplication extends TelegramLongPollingBot {
     private final CommandHandler commandHandler;
     private final GroupCallbackHandler groupCallbackHandler;
     private final SettingsCallbackHandler settingsCallbackHandler;
+    private final FeedbackCallbackHandler feedbackCallbackHandler;
 
     private final Logger log = LoggerFactory.getLogger(BotApplication.class);
     private final ScheduleConfig scheduleConfig = new ScheduleConfig();
 
-    public BotApplication(String botToken, String userName, CommandHandler commandHandler, GroupCallbackHandler groupCallbackHandler, SettingsCallbackHandler settingsCallbackHandler) throws IOException {
+    public BotApplication(String botToken, String userName, CommandHandler commandHandler, GroupCallbackHandler groupCallbackHandler, SettingsCallbackHandler settingsCallbackHandler, FeedbackCallbackHandler feedbackCallbackHandler) throws IOException {
         super(botToken);
 
         this.userName = userName;
         this.commandHandler = commandHandler;
         this.groupCallbackHandler = groupCallbackHandler;
         this.settingsCallbackHandler = settingsCallbackHandler;
+        this.feedbackCallbackHandler = feedbackCallbackHandler;
     }
 
     @Override
@@ -45,6 +48,10 @@ public class BotApplication extends TelegramLongPollingBot {
 
                 if (data.startsWith("settings:")) {
                     settingsCallbackHandler.handle(update, this);
+                }
+
+                if (data.startsWith("feedback:")) {
+                    feedbackCallbackHandler.handle(update, this);
                 }
             }
         } catch (Exception e) {

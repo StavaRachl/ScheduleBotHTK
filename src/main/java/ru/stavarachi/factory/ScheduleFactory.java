@@ -22,6 +22,7 @@ public final class ScheduleFactory {
     public static ScheduleComponent create(PathConfig pathConfig, ScheduleConfig scheduleConfig, @NotNull ExcelComponent excelComponent) throws IOException {
 
         ClientHandler clientHandler = new ClientHandler();
+        clientHandler.start();
 
         HtmlUtil htmlUtil = new HtmlUtil();
         HtmlDarkThemeUtil htmlDarkThemeUtil = new HtmlDarkThemeUtil();

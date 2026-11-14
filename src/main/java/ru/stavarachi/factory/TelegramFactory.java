@@ -2,22 +2,16 @@ package ru.stavarachi.factory;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import ru.stavarachi.application.service.RegistrationService;
-import ru.stavarachi.application.service.UserInfoService;
-import ru.stavarachi.application.service.UserService;
-import ru.stavarachi.application.service.UserSettingService;
+import ru.stavarachi.application.service.*;
 import ru.stavarachi.factory.components.DatabaseComponent;
 import ru.stavarachi.factory.components.ScheduleComponent;
 import ru.stavarachi.factory.components.TelegramComponent;
-import ru.stavarachi.infrastructure.telegram.BotCommandService;
-import ru.stavarachi.infrastructure.telegram.CommandService;
-import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
+import ru.stavarachi.infrastructure.telegram.*;
 import ru.stavarachi.application.service.report.UserExcelGenerator;
 import ru.stavarachi.application.service.report.UserReportService;
 import ru.stavarachi.application.service.report.UserStatsService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
-import ru.stavarachi.infrastructure.telegram.SettingsKeyboardService;
 
 public final class TelegramFactory {
     private TelegramFactory() {}
@@ -38,9 +32,11 @@ public final class TelegramFactory {
         UserService userService = new UserService(databaseComponent.postgresUserRepository());
         UserSettingService userSettingService = new UserSettingService(databaseComponent.postgresUserSettingRepository());
         UserInfoService userInfoService = new UserInfoService(databaseComponent.postgresUserInfoRepository());
+        FeedbackService feedbackService = new FeedbackService(databaseComponent.integerPostgresFeedback());
 
         GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
         SettingsKeyboardService settingsKeyboardService = new SettingsKeyboardService();
+        FeedbackKeyboardService feedbackKeyboardService = new FeedbackKeyboardService();
 
         UserExcelGenerator userExcelGenerator = new UserExcelGenerator();
 
@@ -63,9 +59,9 @@ public final class TelegramFactory {
                 scheduleComponent.scheduleService(),
                 groupKeyboardService,
                 settingsKeyboardService,
-                null,
+                feedbackKeyboardService,
                 userReportService,
-                null,
+                feedbackService,
                 userStatsService,
                 userService,
                 userSettingService
@@ -79,11 +75,13 @@ public final class TelegramFactory {
                 userInfoService,
                 groupKeyboardService,
                 settingsKeyboardService,
+                feedbackKeyboardService,
                 botCommandService,
                 commandService,
                 userExcelGenerator,
                 userReportService,
-                userStatsService
+                userStatsService,
+                feedbackService
         );
     }
 }

@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class FeedbackService {
-    private final Repository<Feedback, Long> repository;
+    private final Repository<Feedback, Integer> repository;
 
-    public FeedbackService(Repository<Feedback, Long> repository) {
+    public FeedbackService(Repository<Feedback, Integer> repository) {
         this.repository = repository;
     }
 
@@ -18,12 +18,12 @@ public class FeedbackService {
         return repository.findAll();
     }
 
-    public Optional<Feedback> getFeedback(Long chatId) {
-        return repository.findById(chatId);
+    public Optional<Feedback> getFeedback(Integer id) {
+        return repository.findById(id);
     }
 
-    public void setRequestStatus(Long chatId, RequestStatus status) {
-        repository.findById(chatId)
+    public void setRequestStatus(Integer id, RequestStatus status) {
+        repository.findById(id)
                 .ifPresent(feedback -> {
                     feedback.setRequestStatus(status);
                     repository.update(feedback);

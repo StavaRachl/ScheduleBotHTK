@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.factory.components.TelegramComponent;
 import ru.stavarachi.factory.components.TelegramHandlerComponent;
 import ru.stavarachi.handler.CommandHandler;
+import ru.stavarachi.handler.FeedbackCallbackHandler;
 import ru.stavarachi.handler.GroupCallbackHandler;
 import ru.stavarachi.handler.SettingsCallbackHandler;
 
@@ -33,10 +34,17 @@ public final class TelegramHandlerFactory {
                 telegramComponent.settingsKeyboardService()
         );
 
+        FeedbackCallbackHandler feedbackCallbackHandler = new FeedbackCallbackHandler(
+                telegramComponent.messageUtil(),
+                telegramComponent.feedbackKeyboardService(),
+                telegramComponent.feedbackService()
+        );
+
         return new TelegramHandlerComponent(
                 commandHandler,
                 groupCallbackHandler,
-                settingsCallbackHandler
+                settingsCallbackHandler,
+                feedbackCallbackHandler
         );
     }
 }

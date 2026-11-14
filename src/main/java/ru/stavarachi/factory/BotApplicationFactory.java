@@ -25,7 +25,8 @@ public final class BotApplicationFactory {
                 userName,
                 telegramHandlerComponent.commandHandler(),
                 telegramHandlerComponent.groupCallbackHandler(),
-                telegramHandlerComponent.settingsCallbackHandler()
+                telegramHandlerComponent.settingsCallbackHandler(),
+                telegramHandlerComponent.feedbackCallbackHandler()
         );
     }
 }

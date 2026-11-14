@@ -169,7 +169,7 @@ public class CommandService {
         feedbackService.save(feedback);
 
         messageUtil.sendMessage(bot, ADMIN_GROUP_ID, text);
-        messageUtil.sendKeyboard(bot, ADMIN_GROUP_ID, "Новая заявка от " + feedback.getId(), feedbackKeyboardService.build());
+        messageUtil.sendKeyboard(bot, ADMIN_GROUP_ID, "Новая заявка от: " + feedback.getChatId() + "\nАйди заявки: " + feedback.getId(), feedbackKeyboardService.build());
         log.info("Feedback message saved: {}", text);
     }
 

@@ -6,9 +6,7 @@ import ru.stavarachi.config.DatabaseConfig;
 import ru.stavarachi.database.DatabaseInitializer;
 import ru.stavarachi.database.DatabaseManager;
 import ru.stavarachi.factory.components.DatabaseComponent;
-import ru.stavarachi.infrastructure.repository.PostgresUserInfoRepository;
-import ru.stavarachi.infrastructure.repository.PostgresUserRepository;
-import ru.stavarachi.infrastructure.repository.PostgresUserSettingRepository;
+import ru.stavarachi.infrastructure.repository.*;
 
 public final class DatabaseFactory {
     private DatabaseFactory() {}
@@ -21,13 +19,17 @@ public final class DatabaseFactory {
         PostgresUserRepository postgresUserRepository = new PostgresUserRepository(databaseManager);
         PostgresUserInfoRepository postgresUserInfoRepository = new PostgresUserInfoRepository(databaseManager);
         PostgresUserSettingRepository postgresUserSettingRepository = new PostgresUserSettingRepository(databaseManager);
+        PostgresFeedbackRepository postgresFeedbackRepository = new PostgresFeedbackRepository(databaseManager);
+        IntegerPostgresFeedback integerPostgresFeedback = new IntegerPostgresFeedback(databaseManager);
 
         return new DatabaseComponent(
                 databaseManager,
                 databaseInitializer,
                 postgresUserRepository,
                 postgresUserInfoRepository,
-                postgresUserSettingRepository
+                postgresUserSettingRepository,
+                postgresFeedbackRepository,
+                integerPostgresFeedback
         );
     }
 }
