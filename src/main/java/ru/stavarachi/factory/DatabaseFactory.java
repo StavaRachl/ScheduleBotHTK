@@ -20,7 +20,6 @@ public final class DatabaseFactory {
         PostgresUserInfoRepository postgresUserInfoRepository = new PostgresUserInfoRepository(databaseManager);
         PostgresUserSettingRepository postgresUserSettingRepository = new PostgresUserSettingRepository(databaseManager);
         PostgresFeedbackRepository postgresFeedbackRepository = new PostgresFeedbackRepository(databaseManager);
-        IntegerPostgresFeedback integerPostgresFeedback = new IntegerPostgresFeedback(databaseManager);
 
         return new DatabaseComponent(
                 databaseManager,
@@ -28,8 +27,7 @@ public final class DatabaseFactory {
                 postgresUserRepository,
                 postgresUserInfoRepository,
                 postgresUserSettingRepository,
-                postgresFeedbackRepository,
-                integerPostgresFeedback
+                postgresFeedbackRepository
         );
     }
 }

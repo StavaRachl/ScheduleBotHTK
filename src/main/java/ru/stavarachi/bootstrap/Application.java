@@ -31,8 +31,8 @@ public class Application {
 
             log.info("initializing telegram bot...");
 
-            String token = appConfig.getTokenMain();
-            String userName = appConfig.getUserNameMain();
+            String token = appConfig.getTokenDev();
+            String userName = appConfig.getUserNameDev();
 
             BotApplication bot = BotApplicationFactory.create(token, userName, databaseComponent);
 

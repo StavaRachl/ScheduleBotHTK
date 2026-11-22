@@ -3,6 +3,7 @@ package ru.stavarachi.infrastructure.excel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import ru.stavarachi.config.ScheduleConfig;
 import ru.stavarachi.domain.schedule.Break;
@@ -39,29 +40,13 @@ public class ExcelService implements ScheduleReader<Pair> {
             }
 
             if (targetDay.equals("Понедельник") && !targetMonth.equals("JUNE")) {
-                for (int i = 1; i <= 4; i++) {
-                    Row row = sheet.getRow(rowIndex - 1 + i);
-                    Cell cell = row.getCell(colIndex);
-
-                    String textOfPair = formatter.formatCellValue(cell);
-
-                    if (!textOfPair.isBlank()) {
-                        Pair pair = new Pair(i, textOfPair, timeSlotsForMonday[i]);
-                        listOfPair.add(pair);
-                    }
+                if (isFirstCourse(targetSheet)) {
+                    getPair(sheet, rowIndex, colIndex, listOfPair, formatter, pairCount(targetSheet));
+                } else {
+                    getPair(sheet, rowIndex, colIndex, listOfPair, formatter, pairCount(targetSheet));
                 }
             } else {
-                for (int i = 1; i <= 4; i++) {
-                    Row row = sheet.getRow(rowIndex -1 + i);
-                    Cell cell = row.getCell(colIndex);
-
-                    String pairText = formatter.formatCellValue(cell);
-
-                    if (!pairText.isBlank()) {
-                        Pair pair = new Pair(i, pairText, timeSlots[i - 1]);
-                        listOfPair.add(pair);
-                    }
-                }
+                getPair(sheet, rowIndex, colIndex, listOfPair, formatter, pairCount(targetSheet));
             }
             return listOfPair;
         } catch (Exception e) {
@@ -114,5 +99,29 @@ public class ExcelService implements ScheduleReader<Pair> {
         listPairWithChange.addAll(listPairWithChangeClassroom);
 
         return listPairWithChange;
+    }
+
+    private void getPair(@NotNull Sheet sheet, int rowIndex, int colIndex, List<Pair> listOfPair, @NotNull DataFormatter formatter, int range) {
+        for (int i = 1; i <= range; i++) {
+            Row row = sheet.getRow(rowIndex -1 + i);
+            Cell cell = row.getCell(colIndex);
+
+            String pairText = formatter.formatCellValue(cell);
+
+            if (!pairText.isBlank()) {
+                Pair pair = new Pair(i, pairText, timeSlots[i - 1]);
+                listOfPair.add(pair);
+            }
+        }
+    }
+
+    @Contract(pure = true)
+    private int pairCount(@NotNull String targetSheet) {
+        return targetSheet.equals("1,2") ? 3 : 4;
+    }
+
+    @Contract(pure = true)
+    private boolean isFirstCourse(@NotNull String targetSheet) {
+        return targetSheet.equals("1,2");
     }
 }

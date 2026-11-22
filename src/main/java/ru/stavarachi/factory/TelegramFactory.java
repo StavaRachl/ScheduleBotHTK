@@ -12,6 +12,10 @@ import ru.stavarachi.application.service.report.UserReportService;
 import ru.stavarachi.application.service.report.UserStatsService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
+import ru.stavarachi.infrastructure.telegram.keyboards.DayOfWeekKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.FeedbackKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.GroupKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.SettingsKeyboardService;
 
 public final class TelegramFactory {
     private TelegramFactory() {}
@@ -32,11 +36,12 @@ public final class TelegramFactory {
         UserService userService = new UserService(databaseComponent.postgresUserRepository());
         UserSettingService userSettingService = new UserSettingService(databaseComponent.postgresUserSettingRepository());
         UserInfoService userInfoService = new UserInfoService(databaseComponent.postgresUserInfoRepository());
-        FeedbackService feedbackService = new FeedbackService(databaseComponent.integerPostgresFeedback());
+        FeedbackService feedbackService = new FeedbackService(databaseComponent.postgresFeedbackRepository());
 
         GroupKeyboardService groupKeyboardService = new GroupKeyboardService();
         SettingsKeyboardService settingsKeyboardService = new SettingsKeyboardService();
         FeedbackKeyboardService feedbackKeyboardService = new FeedbackKeyboardService();
+        DayOfWeekKeyboardService dayOfWeekKeyboardService = new DayOfWeekKeyboardService();
 
         UserExcelGenerator userExcelGenerator = new UserExcelGenerator();
 
@@ -60,6 +65,7 @@ public final class TelegramFactory {
                 groupKeyboardService,
                 settingsKeyboardService,
                 feedbackKeyboardService,
+                dayOfWeekKeyboardService,
                 userReportService,
                 feedbackService,
                 userStatsService,
@@ -76,6 +82,7 @@ public final class TelegramFactory {
                 groupKeyboardService,
                 settingsKeyboardService,
                 feedbackKeyboardService,
+                dayOfWeekKeyboardService,
                 botCommandService,
                 commandService,
                 userExcelGenerator,

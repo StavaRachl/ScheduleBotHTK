@@ -9,7 +9,7 @@ import ru.stavarachi.port.Handler;
 import ru.stavarachi.application.service.UserSettingService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.domain.user.UserSettings;
-import ru.stavarachi.infrastructure.telegram.SettingsKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.SettingsKeyboardService;
 
 import java.util.Optional;
 

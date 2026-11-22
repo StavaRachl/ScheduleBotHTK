@@ -53,7 +53,7 @@ public class CommandHandler implements Handler<Void> {
         switch (cmd) {
             case "/start" -> commandService.startCommand(bot, update, chatId);
             case "/rasp" -> commandService.raspCommand(bot, chatId, userSettings);
-            case "/nextrasp" -> commandService.nextRaspCommand(bot, chatId, userSettings);
+            case "/nextrasp" -> commandService.setDayForRaspCommand(bot, chatId);
             case "/setdefaultgroup" -> commandService.setDefaultGroupCommand(bot, chatId);
             case "/settings" -> commandService.settings(bot, chatId);
             case "/feedback" -> commandService.sendFeedback(bot, chatId, commandSplit[1]);

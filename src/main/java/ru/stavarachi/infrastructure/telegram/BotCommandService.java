@@ -14,7 +14,7 @@ public class BotCommandService {
     private static final List<BotCommand> COMMANDS = List.of(
             new BotCommand("/start", "Запуск бота"),
             new BotCommand("/rasp", "Получить расписание"),
-            new BotCommand("/nextrasp", "Получить расписание на день вперед"),
+            new BotCommand("/nextrasp", "Получить расписание на другой день"),
             new BotCommand("/setdefaultgroup", "Выбрать группу"),
             new BotCommand("/settings", "Открыть настройки"),
             new BotCommand("/feedback", "Сообщить об ошибке"),

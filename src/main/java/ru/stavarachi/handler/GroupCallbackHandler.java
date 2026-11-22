@@ -8,7 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.stavarachi.application.service.UserService;
 import ru.stavarachi.config.ScheduleConfig;
-import ru.stavarachi.infrastructure.telegram.GroupKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.GroupKeyboardService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.port.Handler;
 

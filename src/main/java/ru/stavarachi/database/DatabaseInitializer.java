@@ -48,10 +48,10 @@ public class DatabaseInitializer {
                 );
                 
                 CREATE TABLE IF NOT EXISTS requests (
-                    id BIGSERIAL PRIMARY KEY,
+                    id uuid PRIMARY KEY,
                     chat_id BIGINT NOT NULL,
                     message text NOT NULL,
-                    feedback_status request_status NOT NULL DEFAULT 'PENDING',
+                    feedback_status VARCHAR(255) NOT NULL DEFAULT 'PENDING',
                 
                     CONSTRAINT fk_request_chat
                         FOREIGN KEY (chat_id)
@@ -62,21 +62,6 @@ public class DatabaseInitializer {
 
         try (Connection connection = databaseManager.getConnection(); Statement statement = connection.createStatement()) {
             statement.execute(sql);
-
-            statement.execute("""
-                DO $$
-                BEGIN
-                    CREATE TYPE request_status AS ENUM (
-                        'PENDING',
-                        'REJECTED',
-                        'APPROVED',
-                        'IN_PROCESS'
-                    );
-                EXCEPTION
-                    WHEN duplicate_object THEN NULL;
-                END
-                $$;
-                """);
             logger.info("database initialize successfully");
         } catch (SQLException e) {
             throw new RuntimeException(e);

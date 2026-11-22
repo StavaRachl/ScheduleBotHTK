@@ -18,9 +18,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
-public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
+public class PostgresFeedbackRepository implements Repository<Feedback, UUID> {
     private final DatabaseManager databaseManager;
 
     public PostgresFeedbackRepository(DatabaseManager databaseManager) {
@@ -54,21 +55,24 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
     }
 
     @Override
-    public Optional<Feedback> findById(Long chatId) {
+    public Optional<Feedback> findById(UUID chatId) {
         @Language("SQL")
         String sql = """
-                SELECT * FROM requests WHERE chat_id = ?
+                SELECT * FROM requests WHERE id = ?
                 """;
 
         try (Connection connection = databaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)){
 
-            statement.setLong(1, chatId);
+            statement.setObject(1, chatId);
 
-            ResultSet resultSet = statement.executeQuery();
+            try (ResultSet resultSet = statement.executeQuery()){
+                if (!resultSet.next()) {
+                    return Optional.empty();
+                }
 
-            return Optional.of(mapRequest(resultSet));
-
+                return Optional.of(mapRequest(resultSet));
+            }
         } catch (SQLException e) {
             log.error("SQLException: {}", e, e);
             throw new RuntimeException(e);
@@ -78,13 +82,19 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
     @Override
     public void save(@NotNull Feedback entity) {
         @Language("SQL")
-        String sql = "INSERT INTO requests (chat_id, message)  VALUES (?, ?)";
+        String sql = "INSERT INTO requests (id, chat_id, message)  VALUES (?, ?, ?) RETURNING id";
         try (Connection connection = databaseManager.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setLong(1, entity.getChatId());
-            statement.setString(2, entity.getMessage());
 
-            statement.executeUpdate();
+            statement.setObject(1, UUID.randomUUID());
+            statement.setLong(2, entity.getChatId());
+            statement.setString(3, entity.getMessage());
+
+            try (ResultSet resultSet = statement.executeQuery()){
+                if (resultSet.next()) {
+                    entity.setId(resultSet.getObject("id", UUID.class));
+                }
+            }
         } catch (SQLException e) {
             log.error("SQLException: {}", e, e);
             throw new RuntimeException(e);
@@ -97,17 +107,17 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
     }
 
     @Override
-    public void update(Feedback entity) {
+    public void update(@NotNull Feedback entity) {
         @Language("SQL")
         String sql = """
                 UPDATE requests
                 SET feedback_status = ?
-                WHERE chat_id = ?
+                WHERE id = ?
                 """;
         try (Connection connection = databaseManager.getConnection();
                 PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setObject(1, entity.getRequestStatus());
-            statement.setLong(2, entity.getChatId());
+            statement.setString(1, entity.getRequestStatus().name());
+            statement.setObject(2, entity.getId());
 
             statement.executeUpdate();
         } catch (SQLException e) {
@@ -117,7 +127,7 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
     }
 
     @Override
-    public void delete(Long chatId) {
+    public void delete(UUID chatId) {
 
     }
 
@@ -125,7 +135,7 @@ public class PostgresFeedbackRepository implements Repository<Feedback, Long> {
     @Contract("_ -> new")
     private Feedback mapRequest(@NotNull ResultSet resultSet) throws SQLException {
         return new Feedback(
-                resultSet.getInt("id"),
+                (UUID) resultSet.getObject("id"),
                 resultSet.getLong("chat_id"),
                 resultSet.getString("message"),
                 RequestStatus.valueOf(resultSet.getString("feedback_status"))

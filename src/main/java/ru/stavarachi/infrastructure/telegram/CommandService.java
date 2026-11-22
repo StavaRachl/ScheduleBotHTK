@@ -20,6 +20,10 @@ import ru.stavarachi.application.util.TimeUtil;
 import ru.stavarachi.domain.feedback.Feedback;
 import ru.stavarachi.domain.user.UserInfo;
 import ru.stavarachi.domain.user.UserSettings;
+import ru.stavarachi.infrastructure.telegram.keyboards.DayOfWeekKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.FeedbackKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.GroupKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.SettingsKeyboardService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,6 +40,7 @@ public class CommandService {
     private final GroupKeyboardService groupKeyboardService;
     private final SettingsKeyboardService settingsKeyboardService;
     private final FeedbackKeyboardService feedbackKeyboardService;
+    private final DayOfWeekKeyboardService dayOfWeekKeyboardService;
     private final UserReportService userReportService;
     private final FeedbackService feedbackService;
     private final UserStatsService userStatsService;
@@ -46,7 +51,7 @@ public class CommandService {
     private final BotConfig botConfig = new BotConfig();
     private static final AppConfig appConfig = new AppConfig();
 
-    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, FeedbackKeyboardService feedbackKeyboardService, UserReportService userReportService, FeedbackService feedbackService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
+    public CommandService(MessageUtil messageUtil, TimeUtil timeUtil, RegistrationService registrationService, ScheduleService scheduleService, GroupKeyboardService groupKeyboardService, SettingsKeyboardService settingsKeyboardService, FeedbackKeyboardService feedbackKeyboardService, DayOfWeekKeyboardService dayOfWeekKeyboardService, UserReportService userReportService, FeedbackService feedbackService, UserStatsService userStatsService, UserService userService, UserSettingService userSettingService) {
         this.messageUtil = messageUtil;
         this.timeUtil = timeUtil;
         this.registrationService = registrationService;
@@ -54,6 +59,7 @@ public class CommandService {
         this.groupKeyboardService = groupKeyboardService;
         this.settingsKeyboardService = settingsKeyboardService;
         this.feedbackKeyboardService = feedbackKeyboardService;
+        this.dayOfWeekKeyboardService = dayOfWeekKeyboardService;
         this.userReportService = userReportService;
         this.feedbackService = feedbackService;
         this.userStatsService = userStatsService;
@@ -68,7 +74,7 @@ public class CommandService {
     private static final String INFO_MESSAGE = """
                 📋Информация о боте
                 🧑‍💻Разработчик: @StavaRaChiii
-                🛎️Версия: 7.2.2
+                🛎️Версия: 7.3.0
                 ❗Проект не является официальным продуктом КГБ ПОУ "Хабаровский Технический Колледж"
                 ⚙️Информация о настройках:
                 ```
@@ -110,6 +116,11 @@ public class CommandService {
         Path path = scheduleService.generateScheduleImage(StorageConfig.scheduleExcel(), group, timeUtil.getDayOfWeek(), settings, timeUtil.getMonth());
 
         messageUtil.sendPhoto(bot, chatId, "🗓️Расписание для " + group + "\n" + timeUtil.getDayOfWeek() + ": " + timeUtil.getNumeratorOrDenominator() + "\n[Изменения в расписании](https://1drv.ms/x/c/31511f965faf70b6/IQDyk8xKWRQKRbGz_6v0skl8AVb0i5u5S50vRRH7SabQ38g)", path);
+    }
+
+    public void setDayForRaspCommand(TelegramLongPollingBot bot, Long chatId) {
+        InlineKeyboardMarkup markup = dayOfWeekKeyboardService.build();
+        messageUtil.sendKeyboard(bot, chatId, "📆выберите день:", markup);
     }
 
     public void nextRaspCommand(TelegramLongPollingBot bot, Long chatId, UserSettings settings) throws Exception {
@@ -167,6 +178,7 @@ public class CommandService {
 
         Feedback feedback = new Feedback(chatId, text);
         feedbackService.save(feedback);
+
 
         messageUtil.sendMessage(bot, ADMIN_GROUP_ID, text);
         messageUtil.sendKeyboard(bot, ADMIN_GROUP_ID, "Новая заявка от: " + feedback.getChatId() + "\nАйди заявки: " + feedback.getId(), feedbackKeyboardService.build());

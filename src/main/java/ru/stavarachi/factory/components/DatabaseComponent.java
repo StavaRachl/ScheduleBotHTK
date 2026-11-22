@@ -10,7 +10,6 @@ public record DatabaseComponent(
         PostgresUserRepository postgresUserRepository,
         PostgresUserInfoRepository postgresUserInfoRepository,
         PostgresUserSettingRepository postgresUserSettingRepository,
-        PostgresFeedbackRepository postgresFeedbackRepository,
-        IntegerPostgresFeedback integerPostgresFeedback
+        PostgresFeedbackRepository postgresFeedbackRepository
 ) {
 }

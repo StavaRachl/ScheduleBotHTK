@@ -11,8 +11,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import ru.stavarachi.application.service.FeedbackService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.domain.feedback.RequestStatus;
-import ru.stavarachi.infrastructure.telegram.FeedbackKeyboardService;
+import ru.stavarachi.infrastructure.telegram.keyboards.FeedbackKeyboardService;
 import ru.stavarachi.port.Handler;
+
+import java.util.UUID;
 
 public class FeedbackCallbackHandler implements Handler<String> {
     private final MessageUtil messageUtil;
@@ -58,12 +60,14 @@ public class FeedbackCallbackHandler implements Handler<String> {
 
         try {
             Long chatId = Long.parseLong(lines[0].split(": ", 2)[1].trim());
-            Integer id = Integer.parseInt(lines[1].split(": ", 2)[1].trim());
+            UUID id = UUID.fromString(lines[1].split(": ", 2)[1].trim());
 
             messageUtil.answerCallbackQuery(bot, callbackQuery, null, false);
 
+            System.out.println(data);
+
             switch (data) {
-                case "feedback:approved" -> {
+                case "feedback:accept" -> {
                     feedbackService.setRequestStatus(id, RequestStatus.APPROVED);
 
                     InlineKeyboardMarkup markup = feedbackKeyboardService.build();

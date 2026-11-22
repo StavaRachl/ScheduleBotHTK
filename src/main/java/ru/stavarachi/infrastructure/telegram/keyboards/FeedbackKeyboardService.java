@@ -1,4 +1,4 @@
-package ru.stavarachi.infrastructure.telegram;
+package ru.stavarachi.infrastructure.telegram.keyboards;
 
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FeedbackKeyboardService {
     public InlineKeyboardMarkup build() {
-        InlineKeyboardButton accept = InlineKeyboardButton.builder()
+        InlineKeyboardButton approved = InlineKeyboardButton.builder()
                 .text("✅Принять заявку")
                 .callbackData("feedback:accept")
                 .build();
@@ -20,8 +20,7 @@ public class FeedbackKeyboardService {
         return InlineKeyboardMarkup.builder()
                 .keyboard(
                         List.of(
-                                List.of(accept),
-                                List.of(reject)
+                                List.of(approved, reject)
                         )
                 )
                 .build();

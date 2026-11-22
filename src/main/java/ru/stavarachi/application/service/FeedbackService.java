@@ -6,11 +6,12 @@ import ru.stavarachi.port.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class FeedbackService {
-    private final Repository<Feedback, Integer> repository;
+    private final Repository<Feedback, UUID> repository;
 
-    public FeedbackService(Repository<Feedback, Integer> repository) {
+    public FeedbackService(Repository<Feedback, UUID> repository) {
         this.repository = repository;
     }
 
@@ -18,11 +19,11 @@ public class FeedbackService {
         return repository.findAll();
     }
 
-    public Optional<Feedback> getFeedback(Integer id) {
+    public Optional<Feedback> getFeedback(UUID id) {
         return repository.findById(id);
     }
 
-    public void setRequestStatus(Integer id, RequestStatus status) {
+    public void setRequestStatus(UUID id, RequestStatus status) {
         repository.findById(id)
                 .ifPresent(feedback -> {
                     feedback.setRequestStatus(status);
@@ -35,5 +36,9 @@ public class FeedbackService {
             throw new NullPointerException("feedback is null");
         }
         repository.save(feedback);
+    }
+
+    public void getFeedbackId() {
+
     }
 }
