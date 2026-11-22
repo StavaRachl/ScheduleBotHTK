@@ -18,6 +18,7 @@ import ru.stavarachi.application.service.schedule.ScheduleService;
 import ru.stavarachi.application.util.MessageUtil;
 import ru.stavarachi.application.util.TimeUtil;
 import ru.stavarachi.domain.feedback.Feedback;
+import ru.stavarachi.domain.feedback.RequestStatus;
 import ru.stavarachi.domain.user.UserInfo;
 import ru.stavarachi.domain.user.UserSettings;
 import ru.stavarachi.infrastructure.telegram.keyboards.DayOfWeekKeyboardService;
@@ -74,7 +75,7 @@ public class CommandService {
     private static final String INFO_MESSAGE = """
                 📋Информация о боте
                 🧑‍💻Разработчик: @StavaRaChiii
-                🛎️Версия: 7.3.0
+                🛎️Версия: 7.3.1
                 ❗Проект не является официальным продуктом КГБ ПОУ "Хабаровский Технический Колледж"
                 ⚙️Информация о настройках:
                 ```
@@ -215,6 +216,38 @@ public class CommandService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        } else {
+            messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
+        }
+    }
+
+    public void feedbackMessages(TelegramLongPollingBot bot, @NotNull Long chatId) {
+        if (chatId.equals(ADMIN_ID)) {
+            List<Feedback> feedbackList = feedbackService.getAll();
+
+            StringBuilder text = new StringBuilder();
+
+            for (Feedback feedback : feedbackList) {
+                String emoji;
+
+                switch (feedback.getRequestStatus()) {
+                    case APPROVED -> {
+                        String message = "✅" + "Сообщение:" + feedback.getMessage() + "\n\n";
+                        text.append(message);
+                    }
+                    case REJECTED -> {
+                        String message = "❌" + "Сообщение:" + feedback.getMessage() + "\n\n";
+                        text.append(message);
+                    }
+                    case PENDING -> {
+                        String message = "🕐" + "Сообщение:" + feedback.getMessage() + "\n\n";
+                        text.append(message);
+                    }
+                    default -> {}
+                }
+            }
+
+            messageUtil.sendMessage(bot, chatId, String.valueOf(text));
         } else {
             messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
         }

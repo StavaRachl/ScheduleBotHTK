@@ -62,6 +62,7 @@ public class CommandHandler implements Handler<Void> {
             case "/log" -> commandService.logCommand(bot, chatId);
             case "/users" -> commandService.usersCommand(bot, chatId);
             case "/send" -> commandService.sendMessage(bot, chatId, userSettingService.getAll(), commandSplit[1]);
+            case "/fb" -> commandService.feedbackMessages(bot, chatId);
             default -> {}
         }
         return null;
