@@ -221,30 +221,42 @@ public class CommandService {
         }
     }
 
-    public void feedbackMessages(TelegramLongPollingBot bot, @NotNull Long chatId) {
+    public void feedbackArchive(TelegramLongPollingBot bot, @NotNull Long chatId) {
         if (chatId.equals(ADMIN_ID)) {
-            List<Feedback> feedbackList = feedbackService.getAll();
+            List<Feedback> feedbackList = feedbackService.getAll()
+                    .stream()
+                    .filter(feedback -> feedback.getRequestStatus().equals(RequestStatus.REJECTED))
+                    .toList();
 
             StringBuilder text = new StringBuilder();
 
             for (Feedback feedback : feedbackList) {
-                String emoji;
+                String message = "❌" + "Сообщение: " + feedback.getMessage() + "\n\n";
+                text.append(message);
+            }
 
-                switch (feedback.getRequestStatus()) {
-                    case APPROVED -> {
-                        String message = "✅" + "Сообщение:" + feedback.getMessage() + "\n\n";
-                        text.append(message);
-                    }
-                    case REJECTED -> {
-                        String message = "❌" + "Сообщение:" + feedback.getMessage() + "\n\n";
-                        text.append(message);
-                    }
-                    case PENDING -> {
-                        String message = "🕐" + "Сообщение:" + feedback.getMessage() + "\n\n";
-                        text.append(message);
-                    }
-                    default -> {}
-                }
+            messageUtil.sendMessage(bot, chatId, String.valueOf(text));
+        } else {
+            messageUtil.sendMessage(bot, chatId, "❌У вас недостаточно прав!");
+        }
+    }
+
+    public void feedbackActive(TelegramLongPollingBot bot, @NotNull Long chatId) {
+        if (chatId.equals(ADMIN_ID)) {
+            List<Feedback> feedbackList = feedbackService.getAll()
+                    .stream()
+                    .filter(
+                            feedback -> feedback.getRequestStatus().equals(RequestStatus.APPROVED) ||
+                                    feedback.getRequestStatus().equals(RequestStatus.PENDING)
+                    )
+                    .toList();
+
+            StringBuilder text = new StringBuilder();
+
+            for (Feedback feedback : feedbackList) {
+                String emoji = feedback.getRequestStatus() == RequestStatus.APPROVED ? "✅" : "🕐";
+                String message = emoji + "Сообщение: " + feedback.getMessage() + "\n\n";
+                text.append(message);
             }
 
             messageUtil.sendMessage(bot, chatId, String.valueOf(text));
