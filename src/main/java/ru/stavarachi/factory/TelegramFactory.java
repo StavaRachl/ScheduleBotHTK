@@ -54,7 +54,7 @@ public final class TelegramFactory {
 
         BotCommandService botCommandService = new BotCommandService();
 
-        UserStatsService userStatsService = new UserStatsService(userService);
+        UserStatsService userStatsService = new UserStatsService(userService, userSettingService);
 
 
         CommandService commandService = new CommandService(
